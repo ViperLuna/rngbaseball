@@ -1,0 +1,2 @@
+# rngbaseball
+Baseball RNG game
