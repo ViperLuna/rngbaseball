@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team Builder — Admin</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+    --accent-disabled: #93c5fd;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  main {
+    width: 100%;
+    max-width: 640px;
+  }
+  h1 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .toolbar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .toolbar input[type="text"] {
+    flex: 1;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+    background: var(--panel);
+    color: var(--text);
+  }
+  button {
+    padding: 0.55rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  button.primary:disabled {
+    background: var(--accent-disabled);
+    border-color: var(--accent-disabled);
+    cursor: not-allowed;
+  }
+  button:hover:not(:disabled) {
+    filter: brightness(0.97);
+  }
+  .file-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .file-row button { font-size: 0.85rem; padding: 0.35rem 0.6rem; }
+  #cardPane {
+    height: 60vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem;
+    background: var(--panel);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .empty-msg {
+    color: var(--muted);
+    text-align: center;
+    margin-top: 2rem;
+  }
+  .team-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+  }
+  .team-card h3 {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.05rem;
+  }
+  .team-card ol {
+    margin: 0;
+    padding-left: 1.2rem;
+    columns: 2;
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+  .team-card li span.pos {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  /* Popup */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .overlay.open { display: flex; }
+  .popup {
+    background: var(--panel);
+    border-radius: 10px;
+    padding: 1.25rem;
+    width: 100%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .popup h2 {
+    margin-top: 0;
+    font-size: 1.2rem;
+  }
+  .field-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.55rem;
+  }
+  .field-row label {
+    width: 3.2rem;
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .field-row input {
+    flex: 1;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background: var(--bg);
+    color: var(--text);
+  }
+  .popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --panel: #232326;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Team Builder</h1>
+
+  <div class="file-row">
+    <span id="fileStatus">No file loaded — first save will ask where to create teams.json</span>
+    <button id="loadBtn" type="button">Load Existing teams.json</button>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="teamNameInput" placeholder="Team name" autocomplete="off">
+    <button id="addBtn" class="primary" disabled type="button">Add</button>
+  </div>
+
+  <div id="cardPane">
+    <p class="empty-msg" id="emptyMsg">No teams yet.</p>
+  </div>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="popup">
+    <h2 id="popupTeamName">Team Name</h2>
+    <form id="rosterForm">
+      <!-- position fields injected here -->
+    </form>
+    <div class="popup-actions">
+      <button id="cancelBtn" type="button">Cancel</button>
+      <button id="saveBtn" class="primary" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const POSITIONS = ["CF", "2B", "RF", "1B", "LF", "3B", "C", "SS", "P"];
+
+  let teams = [];        // { name, lineup: [{ position, name }, ...] }
+  let fileHandle = null; // FileSystemFileHandle for teams.json
+
+  const teamNameInput = document.getElementById("teamNameInput");
+  const addBtn = document.getElementById("addBtn");
+  const cardPane = document.getElementById("cardPane");
+  const emptyMsg = document.getElementById("emptyMsg");
+  const overlay = document.getElementById("overlay");
+  const popupTeamName = document.getElementById("popupTeamName");
+  const rosterForm = document.getElementById("rosterForm");
+  const cancelBtn = document.getElementById("cancelBtn");
+  const saveBtn = document.getElementById("saveBtn");
+  const loadBtn = document.getElementById("loadBtn");
+  const fileStatus = document.getElementById("fileStatus");
+
+  teamNameInput.addEventListener("input", () => {
+    addBtn.disabled = teamNameInput.value.trim().length === 0;
+  });
+
+  addBtn.addEventListener("click", openPopup);
+  cancelBtn.addEventListener("click", closePopup);
+  saveBtn.addEventListener("click", saveTeamFromPopup);
+  loadBtn.addEventListener("click", loadExistingFile);
+
+  function openPopup() {
+    const name = teamNameInput.value.trim();
+    if (!name) return;
+
+    popupTeamName.textContent = name;
+    rosterForm.innerHTML = "";
+    POSITIONS.forEach((pos, i) => {
+      const row = document.createElement("div");
+      row.className = "field-row";
+      row.innerHTML = `
+        <label for="pos-${i}">${pos}</label>
+        <input type="text" id="pos-${i}" autocomplete="off">
+      `;
+      rosterForm.appendChild(row);
+    });
+    overlay.classList.add("open");
+  }
+
+  function closePopup() {
+    overlay.classList.remove("open");
+  }
+
+  async function saveTeamFromPopup() {
+    const inputs = POSITIONS.map((pos, i) => ({
+      position: pos,
+      name: document.getElementById(`pos-${i}`).value.trim()
+    }));
+
+    if (inputs.some(p => p.name.length === 0)) {
+      alert("Fill in all 9 players before saving.");
+      return;
+    }
+
+    teams.push({
+      name: popupTeamName.textContent,
+      lineup: inputs
+    });
+
+    closePopup();
+    teamNameInput.value = "";
+    addBtn.disabled = true;
+    renderCards();
+    await persistTeams();
+  }
+
+  function renderCards() {
+    cardPane.innerHTML = "";
+    if (teams.length === 0) {
+      cardPane.appendChild(emptyMsg);
+      return;
+    }
+    teams.forEach(team => {
+      const card = document.createElement("div");
+      card.className = "team-card";
+      card.innerHTML = `
+        <h3>${escapeHtml(team.name)}</h3>
+        <ol>
+          ${team.lineup.map(p => `<li>${escapeHtml(p.name)} <span class="pos">(${p.position})</span></li>`).join("")}
+        </ol>
+      `;
+      cardPane.appendChild(card);
+    });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  async function loadExistingFile() {
+    try {
+      const [handle] = await window.showOpenFilePicker({
+        types: [{ description: "Teams JSON", accept: { "application/json": [".json"] } }]
+      });
+      const file = await handle.getFile();
+      const text = await file.text();
+      const data = JSON.parse(text);
+      teams = Array.isArray(data.teams) ? data.teams : [];
+      fileHandle = handle;
+      fileStatus.textContent = `Loaded: ${handle.name} — saving directly to this file`;
+      renderCards();
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        alert("Couldn't load that file: " + err.message);
+      }
+    }
+  }
+
+  async function persistTeams() {
+    try {
+      if (!fileHandle) {
+        fileHandle = await window.showSaveFilePicker({
+          suggestedName: "teams.json",
+          types: [{ description: "Teams JSON", accept: { "application/json": [".json"] } }]
+        });
+        fileStatus.textContent = `Saving directly to: ${fileHandle.name}`;
+      }
+      const writable = await fileHandle.createWritable();
+      await writable.write(JSON.stringify({ teams }, null, 2));
+      await writable.close();
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        alert("Couldn't save teams.json: " + err.message);
+      }
+    }
+  }
+</script>
+</body>
+</html>
