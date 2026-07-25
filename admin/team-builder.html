@@ -94,12 +94,34 @@
     margin-top: 2rem;
   }
   .team-card {
+    position: relative;
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 0.6rem 0.8rem;
+    cursor: pointer;
+  }
+  .team-card:hover {
+    border-color: var(--accent);
+  }
+  .team-card .delete-btn {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.45rem;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 1.15rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+  }
+  .team-card .delete-btn:hover {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.12);
   }
   .team-card h3 {
-    margin: 0 0 0.4rem 0;
+    margin: 0 1.3rem 0.4rem 0;
     font-size: 1.05rem;
   }
   .team-card ol {
@@ -137,6 +159,24 @@
   .popup h2 {
     margin-top: 0;
     font-size: 1.2rem;
+  }
+  .popup-mode-label {
+    margin: 0 0 0.3rem 0;
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .popup-team-name {
+    width: 100%;
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding: 0.4rem 0.6rem;
+    margin-bottom: 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
   }
   .field-row {
     display: flex;
@@ -197,7 +237,8 @@
 
 <div class="overlay" id="overlay">
   <div class="popup">
-    <h2 id="popupTeamName">Team Name</h2>
+    <p class="popup-mode-label" id="popupModeLabel">Add Team</p>
+    <input type="text" id="popupTeamNameInput" class="popup-team-name" placeholder="Team name" autocomplete="off">
     <form id="rosterForm">
       <!-- position fields injected here -->
     </form>
@@ -211,15 +252,17 @@
 <script>
   const POSITIONS = ["CF", "2B", "RF", "1B", "LF", "3B", "C", "SS", "P"];
 
-  let teams = [];        // { name, lineup: [{ position, name }, ...] }
-  let fileHandle = null; // FileSystemFileHandle for teams.json
+  let teams = [];         // { name, lineup: [{ position, name }, ...] }
+  let fileHandle = null;  // FileSystemFileHandle for teams.json
+  let editingIndex = null; // null = adding a new team; number = editing teams[index]
 
   const teamNameInput = document.getElementById("teamNameInput");
   const addBtn = document.getElementById("addBtn");
   const cardPane = document.getElementById("cardPane");
   const emptyMsg = document.getElementById("emptyMsg");
   const overlay = document.getElementById("overlay");
-  const popupTeamName = document.getElementById("popupTeamName");
+  const popupTeamNameInput = document.getElementById("popupTeamNameInput");
+  const popupModeLabel = document.getElementById("popupModeLabel");
   const rosterForm = document.getElementById("rosterForm");
   const cancelBtn = document.getElementById("cancelBtn");
   const saveBtn = document.getElementById("saveBtn");
@@ -235,11 +278,7 @@
   saveBtn.addEventListener("click", saveTeamFromPopup);
   loadBtn.addEventListener("click", loadExistingFile);
 
-  function openPopup() {
-    const name = teamNameInput.value.trim();
-    if (!name) return;
-
-    popupTeamName.textContent = name;
+  function buildRosterFields(prefill) {
     rosterForm.innerHTML = "";
     POSITIONS.forEach((pos, i) => {
       const row = document.createElement("div");
@@ -249,15 +288,44 @@
         <input type="text" id="pos-${i}" autocomplete="off">
       `;
       rosterForm.appendChild(row);
+      if (prefill) {
+        document.getElementById(`pos-${i}`).value = prefill[i].name;
+      }
     });
+  }
+
+  function openPopup() {
+    const name = teamNameInput.value.trim();
+    if (!name) return;
+
+    editingIndex = null;
+    popupModeLabel.textContent = "Add Team";
+    popupTeamNameInput.value = name;
+    buildRosterFields(null);
+    overlay.classList.add("open");
+  }
+
+  function openEditPopup(index) {
+    const team = teams[index];
+    editingIndex = index;
+    popupModeLabel.textContent = "Edit Team";
+    popupTeamNameInput.value = team.name;
+    buildRosterFields(team.lineup);
     overlay.classList.add("open");
   }
 
   function closePopup() {
     overlay.classList.remove("open");
+    editingIndex = null;
   }
 
   async function saveTeamFromPopup() {
+    const name = popupTeamNameInput.value.trim();
+    if (!name) {
+      alert("Team name can't be blank.");
+      return;
+    }
+
     const inputs = POSITIONS.map((pos, i) => ({
       position: pos,
       name: document.getElementById(`pos-${i}`).value.trim()
@@ -268,14 +336,24 @@
       return;
     }
 
-    teams.push({
-      name: popupTeamName.textContent,
-      lineup: inputs
-    });
+    const teamData = { name, lineup: inputs };
+    if (editingIndex === null) {
+      teams.push(teamData);
+    } else {
+      teams[editingIndex] = teamData;
+    }
 
     closePopup();
     teamNameInput.value = "";
     addBtn.disabled = true;
+    renderCards();
+    await persistTeams();
+  }
+
+  async function deleteTeam(index) {
+    const confirmed = confirm(`Delete "${teams[index].name}"? This can't be undone.`);
+    if (!confirmed) return;
+    teams.splice(index, 1);
     renderCards();
     await persistTeams();
   }
@@ -286,15 +364,21 @@
       cardPane.appendChild(emptyMsg);
       return;
     }
-    teams.forEach(team => {
+    teams.forEach((team, index) => {
       const card = document.createElement("div");
       card.className = "team-card";
       card.innerHTML = `
+        <button class="delete-btn" type="button" title="Delete team">&times;</button>
         <h3>${escapeHtml(team.name)}</h3>
         <ol>
           ${team.lineup.map(p => `<li>${escapeHtml(p.name)} <span class="pos">(${p.position})</span></li>`).join("")}
         </ol>
       `;
+      card.addEventListener("click", () => openEditPopup(index));
+      card.querySelector(".delete-btn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteTeam(index);
+      });
       cardPane.appendChild(card);
     });
   }
