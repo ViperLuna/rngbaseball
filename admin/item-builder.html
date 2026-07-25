@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Item Builder — Admin</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  main {
+    width: 100%;
+    max-width: 700px;
+  }
+  h1 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  .file-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .file-row button { font-size: 0.85rem; padding: 0.35rem 0.6rem; }
+  button {
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(0.97); }
+  button.toggle.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* Rarity summary */
+  .rarity-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+  }
+  .rarity-chip {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+    background: var(--panel);
+  }
+
+  /* Form panel */
+  .form-panel {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  .form-row {
+    margin-bottom: 0.7rem;
+  }
+  .form-row label.field-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+  .form-row input[type="text"] {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+    background: var(--bg);
+    color: var(--text);
+  }
+  .toggle-group {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .stat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+  }
+  .stat-row .stat-label {
+    flex: 1;
+    font-size: 0.9rem;
+  }
+  .stat-row input[type="number"] {
+    width: 6.5rem;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background: var(--panel);
+    color: var(--text);
+  }
+  .stat-row input[type="number"]:disabled {
+    opacity: 0.4;
+  }
+  .form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.8rem;
+  }
+  .form-footer .status {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  /* Sort controls */
+  .sort-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.85rem;
+    align-items: center;
+  }
+  .sort-row select {
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+  }
+
+  /* Card pane - deliberately dark, matches loot-list convention regardless of theme */
+  #cardPane {
+    height: 55vh;
+    overflow-y: auto;
+    border: 1px solid #27272a;
+    border-radius: 8px;
+    padding: 0.75rem;
+    background: #101012;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .empty-msg {
+    color: #71717a;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  .item-card {
+    position: relative;
+    border: 1px solid #27272a;
+    border-radius: 6px;
+    padding: 0.55rem 0.75rem;
+    cursor: pointer;
+    background: #18181b;
+  }
+  .item-card:hover {
+    border-color: #52525b;
+  }
+  .item-card .delete-btn {
+    position: absolute;
+    top: 0.3rem;
+    right: 0.4rem;
+    border: none;
+    background: transparent;
+    color: #71717a;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .item-card .delete-btn:hover {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.12);
+  }
+  .item-card .item-name {
+    font-weight: 700;
+    font-size: 1rem;
+    padding-right: 1.2rem;
+  }
+  .item-card .item-meta {
+    color: #a1a1aa;
+    font-size: 0.78rem;
+    margin: 0.15rem 0 0.35rem 0;
+  }
+  .item-card .stat-line {
+    font-size: 0.85rem;
+    color: #d4d4d8;
+  }
+  .item-card .stat-value.positive { color: #4ade80; }
+  .item-card .stat-value.negative { color: #f87171; }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --panel: #232326;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Item Builder</h1>
+
+  <div class="file-row">
+    <span id="fileStatus">No file loaded — first change will ask where to create items.json</span>
+    <button id="loadBtn" type="button">Load Existing items.json</button>
+  </div>
+
+  <div class="rarity-summary" id="raritySummary"></div>
+
+  <div class="form-panel">
+    <div class="form-row">
+      <label class="field-label" for="nameInput">Item name</label>
+      <input type="text" id="nameInput" autocomplete="off">
+    </div>
+
+    <div class="form-row">
+      <label class="field-label">Player type</label>
+      <div class="toggle-group" id="typeToggle">
+        <button type="button" class="toggle" data-type="Pitcher">Pitcher</button>
+        <button type="button" class="toggle" data-type="Batter">Batter</button>
+      </div>
+    </div>
+
+    <div class="form-row" id="slotRow" style="display:none;">
+      <label class="field-label">Slot</label>
+      <div class="toggle-group" id="slotToggle"></div>
+    </div>
+
+    <div class="form-row" id="statsRow" style="display:none;"></div>
+
+    <div class="form-footer">
+      <span class="status" id="formStatus"></span>
+      <button type="button" id="newItemBtn">+ New Item</button>
+    </div>
+  </div>
+
+  <div class="sort-row">
+    <label for="sortSelect">Sort:</label>
+    <select id="sortSelect">
+      <option value="natural">Natural (save order)</option>
+      <option value="name-asc">Name A-Z</option>
+      <option value="name-desc">Name Z-A</option>
+      <option value="rarity-desc">Rarity High-Low</option>
+      <option value="rarity-asc">Rarity Low-High</option>
+    </select>
+  </div>
+
+  <div id="cardPane">
+    <p class="empty-msg" id="emptyMsg">No items yet.</p>
+  </div>
+</main>
+
+<script>
+  const SLOTS = {
+    Pitcher: {
+      Hat: ["Stuff", "Control"],
+      Glove: ["Contact Suppression", "Batted-Ball Tendency"]
+    },
+    Batter: {
+      Bat: ["Contact", "Power"],
+      Helmet: ["Discipline", "Batted-Ball Tendency"]
+    }
+  };
+
+  const RARITY_ORDER = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythical"];
+  const RARITY_COLORS = {
+    Common: "#f4f4f5",
+    Uncommon: "#4ade80",
+    Rare: "#60a5fa",
+    Epic: "#c084fc",
+    Legendary: "#fb923c",
+    Mythical: "#f87171"
+  };
+  const RARITY_TARGET_PCT = {
+    Common: 45, Uncommon: 27, Rare: 15, Epic: 8, Legendary: 4, Mythical: 1
+  };
+  const STAT_CAP = 25;
+
+  let items = [];        // { id, name, type, slot, stats: [{stat, value}, ...], rarity }
+  let nextId = 1;
+  let fileHandle = null;
+  let editingId = null;  // null = drafting a new item; number = editing items[id]
+  let currentType = null;
+  let currentSlot = null;
+  let sortMode = "natural";
+
+  const nameInput = document.getElementById("nameInput");
+  const typeToggle = document.getElementById("typeToggle");
+  const slotRow = document.getElementById("slotRow");
+  const slotToggle = document.getElementById("slotToggle");
+  const statsRow = document.getElementById("statsRow");
+  const formStatus = document.getElementById("formStatus");
+  const newItemBtn = document.getElementById("newItemBtn");
+  const raritySummary = document.getElementById("raritySummary");
+  const cardPane = document.getElementById("cardPane");
+  const emptyMsg = document.getElementById("emptyMsg");
+  const loadBtn = document.getElementById("loadBtn");
+  const fileStatus = document.getElementById("fileStatus");
+  const sortSelect = document.getElementById("sortSelect");
+
+  nameInput.addEventListener("change", handleFieldCommit);
+  loadBtn.addEventListener("click", loadExistingFile);
+  newItemBtn.addEventListener("click", resetDraft);
+  sortSelect.addEventListener("change", () => {
+    sortMode = sortSelect.value;
+    renderCards();
+  });
+
+  typeToggle.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentType = btn.dataset.type;
+      currentSlot = null;
+      [...typeToggle.querySelectorAll("button")].forEach(b => b.classList.toggle("active", b === btn));
+      buildSlotToggle();
+      statsRow.style.display = "none";
+      statsRow.innerHTML = "";
+      handleFieldCommit();
+    });
+  });
+
+  function buildSlotToggle() {
+    slotToggle.innerHTML = "";
+    if (!currentType) {
+      slotRow.style.display = "none";
+      return;
+    }
+    slotRow.style.display = "block";
+    Object.keys(SLOTS[currentType]).forEach(slotName => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "toggle";
+      b.textContent = slotName;
+      b.dataset.slot = slotName;
+      b.addEventListener("click", () => {
+        currentSlot = slotName;
+        [...slotToggle.querySelectorAll("button")].forEach(bb => bb.classList.toggle("active", bb === b));
+        buildStatFields(null);
+        handleFieldCommit();
+      });
+      slotToggle.appendChild(b);
+    });
+  }
+
+  function buildStatFields(prefillStats) {
+    statsRow.innerHTML = "";
+    if (!currentType || !currentSlot) {
+      statsRow.style.display = "none";
+      return;
+    }
+    statsRow.style.display = "block";
+    const label = document.createElement("label");
+    label.className = "field-label";
+    label.textContent = "Stats (leave a value blank to skip that stat)";
+    statsRow.appendChild(label);
+
+    SLOTS[currentType][currentSlot].forEach(statName => {
+      const row = document.createElement("div");
+      row.className = "stat-row";
+      const existing = prefillStats ? prefillStats.find(s => s.stat === statName) : null;
+      row.innerHTML = `
+        <input type="checkbox" class="stat-enable" data-stat="${statName}" ${existing ? "checked" : ""}>
+        <span class="stat-label">${statName}</span>
+        <input type="number" class="stat-value" data-stat="${statName}"
+               min="-${STAT_CAP}" max="${STAT_CAP}" step="0.1"
+               value="${existing ? existing.value : ""}" ${existing ? "" : "disabled"}>
+      `;
+      statsRow.appendChild(row);
+    });
+
+    statsRow.querySelectorAll(".stat-enable").forEach(cb => {
+      cb.addEventListener("change", () => {
+        const valInput = statsRow.querySelector(`.stat-value[data-stat="${cb.dataset.stat}"]`);
+        valInput.disabled = !cb.checked;
+        if (!cb.checked) valInput.value = "";
+        handleFieldCommit();
+      });
+    });
+    statsRow.querySelectorAll(".stat-value").forEach(inp => {
+      inp.addEventListener("change", handleFieldCommit);
+    });
+  }
+
+  function collectDraftStats() {
+    if (!currentSlot) return [];
+    return SLOTS[currentType][currentSlot]
+      .map(statName => {
+        const cb = statsRow.querySelector(`.stat-enable[data-stat="${statName}"]`);
+        const valInput = statsRow.querySelector(`.stat-value[data-stat="${statName}"]`);
+        if (!cb || !cb.checked || valInput.value === "") return null;
+        const num = parseFloat(valInput.value);
+        if (Number.isNaN(num)) return null;
+        return { stat: statName, value: Math.max(-STAT_CAP, Math.min(STAT_CAP, num)) };
+      })
+      .filter(Boolean);
+  }
+
+  function calcRarity(stats) {
+    const net = stats.reduce((sum, s) => sum + s.value, 0);
+    if (net >= 17) return "Mythical";
+    if (net >= 13) return "Legendary";
+    if (net >= 10) return "Epic";
+    if (net >= 7) return "Rare";
+    if (net >= 4) return "Uncommon";
+    return "Common";
+  }
+
+  async function handleFieldCommit() {
+    const name = nameInput.value.trim();
+    const stats = collectDraftStats();
+    const valid = name.length > 0 && currentType && currentSlot && stats.length > 0;
+
+    if (!valid) {
+      formStatus.textContent = "Fill in name, type, slot, and at least one stat to save.";
+      return;
+    }
+
+    const rarity = calcRarity(stats);
+    const itemData = { name, type: currentType, slot: currentSlot, stats, rarity };
+
+    if (editingId === null) {
+      itemData.id = nextId++;
+      items.push(itemData);
+      editingId = itemData.id;
+      formStatus.textContent = `Saved as new item (${rarity}).`;
+    } else {
+      const idx = items.findIndex(it => it.id === editingId);
+      itemData.id = editingId;
+      items[idx] = itemData;
+      formStatus.textContent = `Updated (${rarity}).`;
+    }
+
+    renderCards();
+    await persistItems();
+  }
+
+  function resetDraft() {
+    editingId = null;
+    currentType = null;
+    currentSlot = null;
+    nameInput.value = "";
+    [...typeToggle.querySelectorAll("button")].forEach(b => b.classList.remove("active"));
+    slotToggle.innerHTML = "";
+    slotRow.style.display = "none";
+    statsRow.innerHTML = "";
+    statsRow.style.display = "none";
+    formStatus.textContent = "";
+  }
+
+  function loadItemIntoForm(id) {
+    const item = items.find(it => it.id === id);
+    if (!item) return;
+    editingId = id;
+    currentType = item.type;
+    currentSlot = item.slot;
+    nameInput.value = item.name;
+    [...typeToggle.querySelectorAll("button")].forEach(b => b.classList.toggle("active", b.dataset.type === item.type));
+    buildSlotToggle();
+    [...slotToggle.querySelectorAll("button")].forEach(b => b.classList.toggle("active", b.dataset.slot === item.slot));
+    buildStatFields(item.stats);
+    formStatus.textContent = `Editing "${item.name}".`;
+  }
+
+  async function deleteItem(id) {
+    const item = items.find(it => it.id === id);
+    const confirmed = confirm(`Delete "${item.name}"? This can't be undone.`);
+    if (!confirmed) return;
+    items = items.filter(it => it.id !== id);
+    if (editingId === id) resetDraft();
+    renderCards();
+    await persistItems();
+  }
+
+  function sortedItems() {
+    const copy = [...items];
+    switch (sortMode) {
+      case "natural": return copy;
+      case "name-asc": return copy.sort((a, b) => a.name.localeCompare(b.name));
+      case "name-desc": return copy.sort((a, b) => b.name.localeCompare(a.name));
+      case "rarity-desc": return copy.sort((a, b) => RARITY_ORDER.indexOf(b.rarity) - RARITY_ORDER.indexOf(a.rarity));
+      case "rarity-asc": return copy.sort((a, b) => RARITY_ORDER.indexOf(a.rarity) - RARITY_ORDER.indexOf(b.rarity));
+      default: return copy;
+    }
+  }
+
+  function renderCards() {
+    renderRaritySummary();
+    cardPane.innerHTML = "";
+    if (items.length === 0) {
+      cardPane.appendChild(emptyMsg);
+      return;
+    }
+    sortedItems().forEach(item => {
+      const card = document.createElement("div");
+      card.className = "item-card";
+      const statLines = item.stats.map(s => {
+        const cls = s.value >= 0 ? "positive" : "negative";
+        const sign = s.value >= 0 ? "+" : "";
+        return `<div class="stat-line">${escapeHtml(s.stat)}: <span class="stat-value ${cls}">${sign}${s.value.toFixed(1)}</span></div>`;
+      }).join("");
+      card.innerHTML = `
+        <button class="delete-btn" type="button" title="Delete item">&times;</button>
+        <div class="item-name" style="color:${RARITY_COLORS[item.rarity]}">${escapeHtml(item.name)}</div>
+        <div class="item-meta">${item.type} — ${item.slot} — ${item.rarity}</div>
+        ${statLines}
+      `;
+      card.addEventListener("click", () => loadItemIntoForm(item.id));
+      card.querySelector(".delete-btn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteItem(item.id);
+      });
+      cardPane.appendChild(card);
+    });
+  }
+
+  function renderRaritySummary() {
+    const counts = Object.fromEntries(RARITY_ORDER.map(r => [r, 0]));
+    items.forEach(it => { counts[it.rarity] = (counts[it.rarity] || 0) + 1; });
+    const total = items.length;
+    raritySummary.innerHTML = RARITY_ORDER.map(r => {
+      const pct = total > 0 ? Math.round((counts[r] / total) * 100) : 0;
+      return `<span class="rarity-chip" style="color:${RARITY_COLORS[r]}">${r}: ${counts[r]} (${pct}% — target ${RARITY_TARGET_PCT[r]}%)</span>`;
+    }).join("");
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  async function loadExistingFile() {
+    try {
+      const [handle] = await window.showOpenFilePicker({
+        types: [{ description: "Items JSON", accept: { "application/json": [".json"] } }]
+      });
+      const file = await handle.getFile();
+      const text = await file.text();
+      const data = JSON.parse(text);
+      items = Array.isArray(data.items) ? data.items : [];
+      nextId = data.nextId || (items.reduce((max, it) => Math.max(max, it.id), 0) + 1);
+      fileHandle = handle;
+      fileStatus.textContent = `Loaded: ${handle.name} — saving directly to this file`;
+      renderCards();
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        alert("Couldn't load that file: " + err.message);
+      }
+    }
+  }
+
+  async function persistItems() {
+    try {
+      if (!fileHandle) {
+        fileHandle = await window.showSaveFilePicker({
+          suggestedName: "items.json",
+          types: [{ description: "Items JSON", accept: { "application/json": [".json"] } }]
+        });
+        fileStatus.textContent = `Saving directly to: ${fileHandle.name}`;
+      }
+      const writable = await fileHandle.createWritable();
+      await writable.write(JSON.stringify({ nextId, items }, null, 2));
+      await writable.close();
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        alert("Couldn't save items.json: " + err.message);
+      }
+    }
+  }
+
+  renderRaritySummary();
+</script>
+</body>
+</html>
