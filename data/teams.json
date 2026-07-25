@@ -1,0 +1,1234 @@
+{
+  "teams": [
+    {
+      "name": "Tampa Bay",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "John DeLuna"
+        },
+        {
+          "position": "2B",
+          "name": "Richard Palace"
+        },
+        {
+          "position": "RF",
+          "name": "Victor Table Jr."
+        },
+        {
+          "position": "1B",
+          "name": "Dandy Diaz"
+        },
+        {
+          "position": "LF",
+          "name": "Chandelier Simple"
+        },
+        {
+          "position": "3B",
+          "name": "Junior Camino"
+        },
+        {
+          "position": "C",
+          "name": "Hunter Fedora"
+        },
+        {
+          "position": "SS",
+          "name": "Ben Willis"
+        },
+        {
+          "position": "P",
+          "name": "Draw Ramens"
+        }
+      ]
+    },
+    {
+      "name": "New York A",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Treant Grissly"
+        },
+        {
+          "position": "2B",
+          "name": "Jazzy Chisel"
+        },
+        {
+          "position": "RF",
+          "name": "Erin Jury"
+        },
+        {
+          "position": "1B",
+          "name": "Paul Goldilocks"
+        },
+        {
+          "position": "LF",
+          "name": "Coda Bell"
+        },
+        {
+          "position": "3B",
+          "name": "Ryan MacMan"
+        },
+        {
+          "position": "C",
+          "name": "Austin Sinks"
+        },
+        {
+          "position": "SS",
+          "name": "Jose Caballo"
+        },
+        {
+          "position": "P",
+          "name": "Cammy Shifter"
+        }
+      ]
+    },
+    {
+      "name": "Las Vegas",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Henny Bottle"
+        },
+        {
+          "position": "2B",
+          "name": "Jeffrey NcMeil"
+        },
+        {
+          "position": "RF",
+          "name": "Carl Cortina"
+        },
+        {
+          "position": "1B",
+          "name": "Nick Hurtz"
+        },
+        {
+          "position": "LF",
+          "name": "Ty Soberstorm"
+        },
+        {
+          "position": "3B",
+          "name": "Zac Giraffe"
+        },
+        {
+          "position": "C",
+          "name": "Jon Helm"
+        },
+        {
+          "position": "SS",
+          "name": "Jacob Wolsin"
+        },
+        {
+          "position": "P",
+          "name": "T.J. Djinn"
+        }
+      ]
+    },
+    {
+      "name": "Baltimore",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Loddy Travelers"
+        },
+        {
+          "position": "2B",
+          "name": "Jackday Hollison"
+        },
+        {
+          "position": "RF",
+          "name": "Tyler O'No"
+        },
+        {
+          "position": "1B",
+          "name": "Peter Alfalfa"
+        },
+        {
+          "position": "LF",
+          "name": "Taylard Wor"
+        },
+        {
+          "position": "3B",
+          "name": "Cody Ketchup"
+        },
+        {
+          "position": "C",
+          "name": "Sam Baseballo"
+        },
+        {
+          "position": "SS",
+          "name": "Gunny Gunderson"
+        },
+        {
+          "position": "P",
+          "name": "Kale Radish"
+        }
+      ]
+    },
+    {
+      "name": "Boston",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Cadence Rafiki"
+        },
+        {
+          "position": "2B",
+          "name": "Maro Major"
+        },
+        {
+          "position": "RF",
+          "name": "Wiley Abacus"
+        },
+        {
+          "position": "1B",
+          "name": "Will Contrary"
+        },
+        {
+          "position": "LF",
+          "name": "Jared Durhur"
+        },
+        {
+          "position": "3B",
+          "name": "Cable Turban"
+        },
+        {
+          "position": "C",
+          "name": "Carliz Navidad"
+        },
+        {
+          "position": "SS",
+          "name": "Andy Monster"
+        },
+        {
+          "position": "P",
+          "name": "Ranged Suave"
+        }
+      ]
+    },
+    {
+      "name": "Chicago A",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Triton Pants"
+        },
+        {
+          "position": "2B",
+          "name": "Chasid LeeRoth"
+        },
+        {
+          "position": "RF",
+          "name": "Herek Dill"
+        },
+        {
+          "position": "1B",
+          "name": "Monchichi Matada"
+        },
+        {
+          "position": "LF",
+          "name": "Sam Anchovi"
+        },
+        {
+          "position": "3B",
+          "name": "Mike Vegas"
+        },
+        {
+          "position": "C",
+          "name": "Drawn Room"
+        },
+        {
+          "position": "SS",
+          "name": "Colton Montecarlo"
+        },
+        {
+          "position": "P",
+          "name": "Shawn Kirk"
+        }
+      ]
+    },
+    {
+      "name": "Cleveland",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Danny Sneezin"
+        },
+        {
+          "position": "2B",
+          "name": "Travels Bonanza"
+        },
+        {
+          "position": "RF",
+          "name": "Choice DeLaughter"
+        },
+        {
+          "position": "1B",
+          "name": "Kole Manbun"
+        },
+        {
+          "position": "LF",
+          "name": "Angelo Martini"
+        },
+        {
+          "position": "3B",
+          "name": "Josie Ramsey"
+        },
+        {
+          "position": "C",
+          "name": "Pat Bailed"
+        },
+        {
+          "position": "SS",
+          "name": "Bray Rocko"
+        },
+        {
+          "position": "P",
+          "name": "Gavel Willis"
+        }
+      ]
+    },
+    {
+      "name": "Detroit",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Mateo Veering"
+        },
+        {
+          "position": "2B",
+          "name": "Hey-You Lou"
+        },
+        {
+          "position": "RF",
+          "name": "Harry Carpet"
+        },
+        {
+          "position": "1B",
+          "name": "Spends Tokens"
+        },
+        {
+          "position": "LF",
+          "name": "Riled Groine"
+        },
+        {
+          "position": "3B",
+          "name": "Celt Teeth"
+        },
+        {
+          "position": "C",
+          "name": "Dally Dinger"
+        },
+        {
+          "position": "SS",
+          "name": "Kav McGilligan"
+        },
+        {
+          "position": "P",
+          "name": "Jake Flattery"
+        }
+      ]
+    },
+    {
+      "name": "Houston",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Jace Meijer"
+        },
+        {
+          "position": "2B",
+          "name": "Joe Altuna"
+        },
+        {
+          "position": "RF",
+          "name": "Camp Snitch"
+        },
+        {
+          "position": "1B",
+          "name": "Chris Crawler"
+        },
+        {
+          "position": "LF",
+          "name": "Brace Mattress"
+        },
+        {
+          "position": "3B",
+          "name": "Ike Parade"
+        },
+        {
+          "position": "C",
+          "name": "Yoinks Daze"
+        },
+        {
+          "position": "SS",
+          "name": "Jerome Pencil"
+        },
+        {
+          "position": "P",
+          "name": "Pete Sheepbert"
+        }
+      ]
+    },
+    {
+      "name": "Kansas City",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Lake Thames"
+        },
+        {
+          "position": "2B",
+          "name": "Jonathan Pakistan"
+        },
+        {
+          "position": "RF",
+          "name": "Jack Cagliasome"
+        },
+        {
+          "position": "1B",
+          "name": "Vince Pascal"
+        },
+        {
+          "position": "LF",
+          "name": "Isaiah Collinsworth"
+        },
+        {
+          "position": "3B",
+          "name": "Nicholas Lofty"
+        },
+        {
+          "position": "C",
+          "name": "Center Jetson"
+        },
+        {
+          "position": "SS",
+          "name": "Baby Watt"
+        },
+        {
+          "position": "P",
+          "name": "Mike Watchamacallit"
+        }
+      ]
+    },
+    {
+      "name": "Los Angeles A",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Michael Tilapia"
+        },
+        {
+          "position": "2B",
+          "name": "Oz Pizza"
+        },
+        {
+          "position": "RF",
+          "name": "Joah Dell"
+        },
+        {
+          "position": "1B",
+          "name": "Nylon Schedule"
+        },
+        {
+          "position": "LF",
+          "name": "Josh Menard"
+        },
+        {
+          "position": "3B",
+          "name": "Denzel Gunman"
+        },
+        {
+          "position": "C",
+          "name": "Logo O'Hippo"
+        },
+        {
+          "position": "SS",
+          "name": "Zane Neato"
+        },
+        {
+          "position": "P",
+          "name": "Rude Dimplers"
+        }
+      ]
+    },
+    {
+      "name": "Minnesota",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Bryan Baxter"
+        },
+        {
+          "position": "2B",
+          "name": "Kule Seashell"
+        },
+        {
+          "position": "RF",
+          "name": "Matthew Roofner"
+        },
+        {
+          "position": "1B",
+          "name": "Kod Clementine"
+        },
+        {
+          "position": "LF",
+          "name": "Tremor Launch"
+        },
+        {
+          "position": "3B",
+          "name": "Bark Ley"
+        },
+        {
+          "position": "C",
+          "name": "Ray Jeffrey"
+        },
+        {
+          "position": "SS",
+          "name": "Trenton Gary"
+        },
+        {
+          "position": "P",
+          "name": "Roe Jyant"
+        }
+      ]
+    },
+    {
+      "name": "Seattle",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "July Rodstewart"
+        },
+        {
+          "position": "2B",
+          "name": "Cold Lung"
+        },
+        {
+          "position": "RF",
+          "name": "Like Riley"
+        },
+        {
+          "position": "1B",
+          "name": "Robin Besyder"
+        },
+        {
+          "position": "LF",
+          "name": "Randolph Arizona"
+        },
+        {
+          "position": "3B",
+          "name": "Brindle Caravan"
+        },
+        {
+          "position": "C",
+          "name": "Sal Rally"
+        },
+        {
+          "position": "SS",
+          "name": "Filly Emerald"
+        },
+        {
+          "position": "P",
+          "name": "Lagoon Gilligan"
+        }
+      ]
+    },
+    {
+      "name": "Texas",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Even Carver"
+        },
+        {
+          "position": "2B",
+          "name": "Joust Forclue"
+        },
+        {
+          "position": "RF",
+          "name": "Banded Nismo"
+        },
+        {
+          "position": "1B",
+          "name": "Jade Burglar"
+        },
+        {
+          "position": "LF",
+          "name": "Watt Lightford"
+        },
+        {
+          "position": "3B",
+          "name": "Jonk Junk"
+        },
+        {
+          "position": "C",
+          "name": "Klay Hiroshima"
+        },
+        {
+          "position": "SS",
+          "name": "Ezmerelda Durable"
+        },
+        {
+          "position": "P",
+          "name": "Nate Neovodka"
+        }
+      ]
+    },
+    {
+      "name": "Toronto",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Dauntin Varnish"
+        },
+        {
+          "position": "2B",
+          "name": "Earned Cement"
+        },
+        {
+          "position": "RF",
+          "name": "Nate Klues"
+        },
+        {
+          "position": "1B",
+          "name": "Stin Key"
+        },
+        {
+          "position": "LF",
+          "name": "Yohenry Piano"
+        },
+        {
+          "position": "3B",
+          "name": "Kazoo Oklahoma"
+        },
+        {
+          "position": "C",
+          "name": "Brandy Valentine"
+        },
+        {
+          "position": "SS",
+          "name": "Andean Gremlinz"
+        },
+        {
+          "position": "P",
+          "name": "Dull Chase"
+        }
+      ]
+    },
+    {
+      "name": "Arizona",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Gorge Barracuda"
+        },
+        {
+          "position": "2B",
+          "name": "Kettle Mart"
+        },
+        {
+          "position": "RF",
+          "name": "Corn Corral"
+        },
+        {
+          "position": "1B",
+          "name": "LuJu Groovy"
+        },
+        {
+          "position": "LF",
+          "name": "Tom Wata"
+        },
+        {
+          "position": "3B",
+          "name": "Molar Avocado"
+        },
+        {
+          "position": "C",
+          "name": "Gabe Lessno"
+        },
+        {
+          "position": "SS",
+          "name": "Grelda Pardonme"
+        },
+        {
+          "position": "P",
+          "name": "Edmond Rodneyz"
+        }
+      ]
+    },
+    {
+      "name": "Atlanta",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Mitchell Harness"
+        },
+        {
+          "position": "2B",
+          "name": "Ozwald Albatross"
+        },
+        {
+          "position": "RF",
+          "name": "Reginald Acura"
+        },
+        {
+          "position": "1B",
+          "name": "Ott Malson"
+        },
+        {
+          "position": "LF",
+          "name": "Marauder Dublin"
+        },
+        {
+          "position": "3B",
+          "name": "Aster Riled"
+        },
+        {
+          "position": "C",
+          "name": "Quack Duckwin"
+        },
+        {
+          "position": "SS",
+          "name": "George Tomato"
+        },
+        {
+          "position": "P",
+          "name": "Kris Sold"
+        }
+      ]
+    },
+    {
+      "name": "Chicago N",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Peter Strongcrow"
+        },
+        {
+          "position": "2B",
+          "name": "Nick Homer"
+        },
+        {
+          "position": "RF",
+          "name": "Saiyan Suzie"
+        },
+        {
+          "position": "1B",
+          "name": "Michael Anheuser"
+        },
+        {
+          "position": "LF",
+          "name": "Eeyore Sadd"
+        },
+        {
+          "position": "3B",
+          "name": "Lexi Brakeman"
+        },
+        {
+          "position": "C",
+          "name": "Karson Cello"
+        },
+        {
+          "position": "SS",
+          "name": "Dancin Swans"
+        },
+        {
+          "position": "P",
+          "name": "Colon Read"
+        }
+      ]
+    },
+    {
+      "name": "Cincinnati",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "KFC Fried"
+        },
+        {
+          "position": "2B",
+          "name": "Matthew Laying"
+        },
+        {
+          "position": "RF",
+          "name": "Willful Bendin"
+        },
+        {
+          "position": "1B",
+          "name": "Spent Steed"
+        },
+        {
+          "position": "LF",
+          "name": "JK Bloody"
+        },
+        {
+          "position": "3B",
+          "name": "Ke'ebler Haze"
+        },
+        {
+          "position": "C",
+          "name": "Tyre Stepson"
+        },
+        {
+          "position": "SS",
+          "name": "Ella Do Re Crews"
+        },
+        {
+          "position": "P",
+          "name": "Cheese Buns"
+        }
+      ]
+    },
+    {
+      "name": "Colorado",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Cold Carriage"
+        },
+        {
+          "position": "2B",
+          "name": "Will Castrate"
+        },
+        {
+          "position": "RF",
+          "name": "Tyson Rentman"
+        },
+        {
+          "position": "1B",
+          "name": "RJ Tumfield"
+        },
+        {
+          "position": "LF",
+          "name": "Joke McFunny"
+        },
+        {
+          "position": "3B",
+          "name": "Cale Carrom"
+        },
+        {
+          "position": "C",
+          "name": "Blunt Sultan"
+        },
+        {
+          "position": "SS",
+          "name": "Eze Trover"
+        },
+        {
+          "position": "P",
+          "name": "Toyota Sugar"
+        }
+      ]
+    },
+    {
+      "name": "Los Angeles N",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Sandy Papers"
+        },
+        {
+          "position": "2B",
+          "name": "Axle Freehand"
+        },
+        {
+          "position": "RF",
+          "name": "Kale Tucked"
+        },
+        {
+          "position": "1B",
+          "name": "Fried Foreman"
+        },
+        {
+          "position": "LF",
+          "name": "Toescar Hermitz"
+        },
+        {
+          "position": "3B",
+          "name": "Min Munchy"
+        },
+        {
+          "position": "C",
+          "name": "Fresh Prince"
+        },
+        {
+          "position": "SS",
+          "name": "Bookie Mets"
+        },
+        {
+          "position": "P",
+          "name": "Just Wobbly"
+        }
+      ]
+    },
+    {
+      "name": "Miami",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Jack Marquee"
+        },
+        {
+          "position": "2B",
+          "name": "Xander Swords"
+        },
+        {
+          "position": "RF",
+          "name": "Own Chassis"
+        },
+        {
+          "position": "1B",
+          "name": "Corner Brony"
+        },
+        {
+          "position": "LF",
+          "name": "Koy Stews"
+        },
+        {
+          "position": "3B",
+          "name": "Javelin Senor"
+        },
+        {
+          "position": "C",
+          "name": "Moe Jack"
+        },
+        {
+          "position": "SS",
+          "name": "Lotto Polez"
+        },
+        {
+          "position": "P",
+          "name": "Handy Alcatraz"
+        }
+      ]
+    },
+    {
+      "name": "Milwaukee",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Great Michelle"
+        },
+        {
+          "position": "2B",
+          "name": "Bruce Tongue"
+        },
+        {
+          "position": "RF",
+          "name": "Pal Freelicks"
+        },
+        {
+          "position": "1B",
+          "name": "Andre Vroom"
+        },
+        {
+          "position": "LF",
+          "name": "Jack Churro"
+        },
+        {
+          "position": "3B",
+          "name": "Dave Hametown"
+        },
+        {
+          "position": "C",
+          "name": "Gory Sandwichez"
+        },
+        {
+          "position": "SS",
+          "name": "Joy Trioz"
+        },
+        {
+          "position": "P",
+          "name": "Ashton Arby"
+        }
+      ]
+    },
+    {
+      "name": "New York N",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Jay Wing"
+        },
+        {
+          "position": "2B",
+          "name": "Mucus Sandman"
+        },
+        {
+          "position": "RF",
+          "name": "Cars Binge"
+        },
+        {
+          "position": "1B",
+          "name": "Marks Vents"
+        },
+        {
+          "position": "LF",
+          "name": "Throne Trailer"
+        },
+        {
+          "position": "3B",
+          "name": "Botch Bettie"
+        },
+        {
+          "position": "C",
+          "name": "Franny Alvin"
+        },
+        {
+          "position": "SS",
+          "name": "Frank Limbo"
+        },
+        {
+          "position": "P",
+          "name": "Fred Perro"
+        }
+      ]
+    },
+    {
+      "name": "Philadelphia",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Jostling Crawfish"
+        },
+        {
+          "position": "2B",
+          "name": "Bigson Stout"
+        },
+        {
+          "position": "RF",
+          "name": "Adidas Gracious"
+        },
+        {
+          "position": "1B",
+          "name": "Bray Harpoon"
+        },
+        {
+          "position": "LF",
+          "name": "Abandon Mush"
+        },
+        {
+          "position": "3B",
+          "name": "Ale Bomb"
+        },
+        {
+          "position": "C",
+          "name": "J.J. Fakemuto"
+        },
+        {
+          "position": "SS",
+          "name": "Tree Tamer"
+        },
+        {
+          "position": "P",
+          "name": "Sanchopher Cristez"
+        }
+      ]
+    },
+    {
+      "name": "Pittsburgh",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "One Cruise"
+        },
+        {
+          "position": "2B",
+          "name": "Banding Love"
+        },
+        {
+          "position": "RF",
+          "name": "Esther Valuez"
+        },
+        {
+          "position": "1B",
+          "name": "Roy O'Hell"
+        },
+        {
+          "position": "LF",
+          "name": "Barren Reginalds"
+        },
+        {
+          "position": "3B",
+          "name": "Knack Gondolas"
+        },
+        {
+          "position": "C",
+          "name": "Horror Doves"
+        },
+        {
+          "position": "SS",
+          "name": "Kenner Griffey"
+        },
+        {
+          "position": "P",
+          "name": "Skull Pens"
+        }
+      ]
+    },
+    {
+      "name": "San Diego",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Jackie Moral"
+        },
+        {
+          "position": "2B",
+          "name": "Juke Conanbroth"
+        },
+        {
+          "position": "RF",
+          "name": "Nuke Castlellamas"
+        },
+        {
+          "position": "1B",
+          "name": "Toy Spain"
+        },
+        {
+          "position": "LF",
+          "name": "Rumor Laurels"
+        },
+        {
+          "position": "3B",
+          "name": "Money Muchacho"
+        },
+        {
+          "position": "C",
+          "name": "Lois CampUSA"
+        },
+        {
+          "position": "SS",
+          "name": "Xerox Bogeys"
+        },
+        {
+          "position": "P",
+          "name": "Michelle Queen"
+        }
+      ]
+    },
+    {
+      "name": "San Francisco",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Harry Broader"
+        },
+        {
+          "position": "2B",
+          "name": "Louse Arrears"
+        },
+        {
+          "position": "RF",
+          "name": "Vic Boycotto"
+        },
+        {
+          "position": "1B",
+          "name": "Rufus Endeavors"
+        },
+        {
+          "position": "LF",
+          "name": "Cassie Schlitz"
+        },
+        {
+          "position": "3B",
+          "name": "Chat Mappman"
+        },
+        {
+          "position": "C",
+          "name": "Enrique Hose"
+        },
+        {
+          "position": "SS",
+          "name": "Wild Idioms"
+        },
+        {
+          "position": "P",
+          "name": "Landin Poop"
+        }
+      ]
+    },
+    {
+      "name": "St. Louis",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Nutty Church"
+        },
+        {
+          "position": "2B",
+          "name": "WW Weatherbee"
+        },
+        {
+          "position": "RF",
+          "name": "Jargon Runner"
+        },
+        {
+          "position": "1B",
+          "name": "Alex Burlesque"
+        },
+        {
+          "position": "LF",
+          "name": "Joe Gremlin"
+        },
+        {
+          "position": "3B",
+          "name": "Nailin Norman"
+        },
+        {
+          "position": "C",
+          "name": "Peddle Papers"
+        },
+        {
+          "position": "SS",
+          "name": "Major Wynn"
+        },
+        {
+          "position": "P",
+          "name": "Matty Librarian"
+        }
+      ]
+    },
+    {
+      "name": "Washington",
+      "lineup": [
+        {
+          "position": "CF",
+          "name": "Yacob Jung"
+        },
+        {
+          "position": "2B",
+          "name": "Nasal Mooniez"
+        },
+        {
+          "position": "RF",
+          "name": "Jamie Cedar"
+        },
+        {
+          "position": "1B",
+          "name": "Loose Garbage"
+        },
+        {
+          "position": "LF",
+          "name": "Daylight Life"
+        },
+        {
+          "position": "3B",
+          "name": "Curtain Made"
+        },
+        {
+          "position": "C",
+          "name": "Keebler Ruinz"
+        },
+        {
+          "position": "SS",
+          "name": "JC Abraham"
+        },
+        {
+          "position": "P",
+          "name": "Fester Graphin"
+        }
+      ]
+    }
+  ]
+}
