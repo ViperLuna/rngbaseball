@@ -157,9 +157,10 @@ function advanceAllRunners(bases, batterName, numBases) {
 }
 
 // Force-advance runners exactly one base, cascading from first base outward,
-// only moving a runner if the base behind them is being filled. Used for
-// walks and for the "does everyone forced move up" part of a groundout.
-// Returns the name of anyone forced across home, if that happens.
+// only moving a runner if the base behind them is being filled, and placing
+// the batter on first. Used for walks and errors, where the batter actually
+// reaches base safely. NOT for groundouts/double plays -- see
+// forceAdvanceRunnersOnly() below for those, where the batter is out.
 function forceAdvance(bases, batterName) {
   const newBases = [...bases];
   if (newBases[0] === null) {
@@ -185,6 +186,25 @@ function forceAdvance(bases, batterName) {
   newBases[1] = newBases[0];
   newBases[0] = batterName;
   return { bases: newBases, runsScored: 1, scorers: [scorer] };
+}
+
+// Same cascade as forceAdvance(), but for plays where the batter is retired
+// (a groundout, or the batter's half of a double play) rather than reaching
+// base -- so first base is left empty instead of being occupied by the
+// batter's name. Preceding forced runners still advance normally.
+function forceAdvanceRunnersOnly(bases) {
+  if (bases[0] === null) {
+    return { bases: [...bases], runsScored: 0, scorers: [] };
+  }
+  if (bases[1] === null) {
+    return { bases: [null, bases[0], bases[2]], runsScored: 0, scorers: [] };
+  }
+  if (bases[2] === null) {
+    return { bases: [null, bases[0], bases[1]], runsScored: 0, scorers: [] };
+  }
+  // bases loaded, forced runner from third scores, first base stays empty
+  const scorer = bases[2];
+  return { bases: [null, bases[0], bases[1]], runsScored: 1, scorers: [scorer] };
 }
 
 // Builds the "X scores!" (or "X and Y score!") suffix to append to a play's
@@ -249,21 +269,41 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
 
   // Groundout: figure out forced advancement first, then decide if it's a
   // plain out or a double play (the common "21" case: runner on first,
-  // fewer than 2 outs, defense targets second then relays to first).
+  // fewer than 2 outs, defense targets second then relays to first). The
+  // batter is out in both cases, so use forceAdvanceRunnersOnly() -- not
+  // forceAdvance(), which would incorrectly leave the batter standing on
+  // first as if they'd reached safely.
   const dpEligible = bases[0] !== null && outs < 2;
-  const forced = forceAdvance(bases, batter.name);
+  const forced = forceAdvanceRunnersOnly(bases);
 
   if (dpEligible && Math.random() < DP_CHANCE) {
     // The runner forced from first to second is also retired; everyone
     // else who was forced still completes their advance safely.
     const dpBases = [...forced.bases];
     dpBases[1] = null;
-    return { type: "double_play", bases: dpBases, outsAdded: 2, runsScored: forced.runsScored,
-      text: `${batter.name} grounds into a double play.${scoringSuffix(forced.scorers)}` };
+    const dpEndsInning = outs + 2 >= 3;
+    // A run doesn't count if the inning-ending out is a force play (the
+    // batter or a preceding runner being forced out negates any run scored
+    // on the same play), so nullify it here rather than just in the text.
+    const dpRuns = dpEndsInning ? 0 : forced.runsScored;
+    const dpScorers = dpEndsInning ? [] : forced.scorers;
+    return { type: "double_play", bases: dpBases, outsAdded: 2, runsScored: dpRuns,
+      text: `${batter.name} grounds into a double play${dpEndsInning ? " to end the inning." : "."}${scoringSuffix(dpScorers)}` };
   }
 
-  return { type: "groundout", bases: forced.bases, outsAdded: 1, runsScored: forced.runsScored,
-    text: `${batter.name} grounds out, ${bases[0] ? "runners advance." : "batter out at first."}${scoringSuffix(forced.scorers)}` };
+  const inningEnds = outs + 1 >= 3;
+  const groundoutRuns = inningEnds ? 0 : forced.runsScored;
+  const groundoutScorers = inningEnds ? [] : forced.scorers;
+  let groundoutText;
+  if (inningEnds) {
+    groundoutText = `${batter.name} grounds out to end the inning.`;
+  } else if (bases[0]) {
+    groundoutText = `${batter.name} grounds out, runners advance.`;
+  } else {
+    groundoutText = `${batter.name} grounds out, batter out at first.`;
+  }
+  return { type: "groundout", bases: forced.bases, outsAdded: 1, runsScored: groundoutRuns,
+    text: `${groundoutText}${scoringSuffix(groundoutScorers)}` };
 }
 
 // --- Half-inning / full game simulation -------------------------------------
