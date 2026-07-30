@@ -161,7 +161,7 @@
       ${inn.bottom.log.map(line => `<div class="play-line">${escapeHtml(line)}</div>`).join("")}
     `).join("");
 
-    playLog.innerHTML += `<div class="inning-header">Final: ${result.winner} wins, ${result.scoreA}-${result.scoreB}</div>`;
+    playLog.innerHTML += `<div class="inning-header">Final: ${result.teamA} ${result.scoreA}, ${result.teamB} ${result.scoreB} — ${result.winner} wins</div>`;
   }
 
   function escapeHtml(str) {
