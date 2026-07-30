@@ -1,0 +1,5125 @@
+{
+  "nextId": 344,
+  "items": [
+    {
+      "name": "Wood",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 8
+    },
+    {
+      "name": "Wood",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 9
+    },
+    {
+      "name": "Wood",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 10
+    },
+    {
+      "name": "Wood",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 11
+    },
+    {
+      "name": "Plastic",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 12
+    },
+    {
+      "name": "Plastic",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 13
+    },
+    {
+      "name": "Plastic",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 14
+    },
+    {
+      "name": "Plastic",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 15
+    },
+    {
+      "name": "Tin",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 16
+    },
+    {
+      "name": "Tin",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 17
+    },
+    {
+      "name": "Tin",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 18
+    },
+    {
+      "name": "Tin",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 19
+    },
+    {
+      "name": "Scrap",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 20
+    },
+    {
+      "name": "Scrap",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 21
+    },
+    {
+      "name": "Scrap",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 22
+    },
+    {
+      "name": "Scrap",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 23
+    },
+    {
+      "name": "Dusty",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 1
+        },
+        {
+          "stat": "Control",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 24
+    },
+    {
+      "name": "Dusty",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 1
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 25
+    },
+    {
+      "name": "Dusty",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 1
+        },
+        {
+          "stat": "Power",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 26
+    },
+    {
+      "name": "Dusty",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 1
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 27
+    },
+    {
+      "name": "Clay",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 1.5
+        },
+        {
+          "stat": "Control",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 28
+    },
+    {
+      "name": "Clay",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 1.5
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 29
+    },
+    {
+      "name": "Clay",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 1.5
+        },
+        {
+          "stat": "Power",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 30
+    },
+    {
+      "name": "Clay",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 1.5
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 31
+    },
+    {
+      "name": "Rust",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 3
+        }
+      ],
+      "rarity": "Common",
+      "id": 32
+    },
+    {
+      "name": "Rust",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 3
+        }
+      ],
+      "rarity": "Common",
+      "id": 33
+    },
+    {
+      "name": "Rust",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 3
+        }
+      ],
+      "rarity": "Common",
+      "id": 34
+    },
+    {
+      "name": "Rust",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 3
+        }
+      ],
+      "rarity": "Common",
+      "id": 35
+    },
+    {
+      "name": "Faded",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 3
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Common",
+      "id": 36
+    },
+    {
+      "name": "Faded",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Common",
+      "id": 37
+    },
+    {
+      "name": "Faded",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 3
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Common",
+      "id": 38
+    },
+    {
+      "name": "Faded",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Common",
+      "id": 39
+    },
+    {
+      "name": "Iron",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 3
+        },
+        {
+          "stat": "Control",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 40
+    },
+    {
+      "name": "Iron",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 41
+    },
+    {
+      "name": "Iron",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 3
+        },
+        {
+          "stat": "Power",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 42
+    },
+    {
+      "name": "Iron",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 43
+    },
+    {
+      "name": "Junk",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 1
+        },
+        {
+          "stat": "Control",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 44
+    },
+    {
+      "name": "Junk",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 1
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 45
+    },
+    {
+      "name": "Junk",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 1
+        },
+        {
+          "stat": "Power",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 46
+    },
+    {
+      "name": "Junk",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 1
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 47
+    },
+    {
+      "name": "Chipped",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -1
+        },
+        {
+          "stat": "Control",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 48
+    },
+    {
+      "name": "Chipped",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -1
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 49
+    },
+    {
+      "name": "Chipped",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -1
+        },
+        {
+          "stat": "Power",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 50
+    },
+    {
+      "name": "Chipped",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -1
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 51
+    },
+    {
+      "name": "Cracked",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -3
+        },
+        {
+          "stat": "Control",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 52
+    },
+    {
+      "name": "Cracket",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 53
+    },
+    {
+      "name": "Cracked",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -3
+        },
+        {
+          "stat": "Power",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 54
+    },
+    {
+      "name": "Cracked",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 55
+    },
+    {
+      "name": "Bent",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 2
+        },
+        {
+          "stat": "Control",
+          "value": -3
+        }
+      ],
+      "rarity": "Common",
+      "id": 56
+    },
+    {
+      "name": "Bent",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -3
+        }
+      ],
+      "rarity": "Common",
+      "id": 57
+    },
+    {
+      "name": "Bent",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 2
+        },
+        {
+          "stat": "Power",
+          "value": -3
+        }
+      ],
+      "rarity": "Common",
+      "id": 58
+    },
+    {
+      "name": "Bent",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -3
+        }
+      ],
+      "rarity": "Common",
+      "id": 59
+    },
+    {
+      "name": "Worn",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 0.5
+        },
+        {
+          "stat": "Control",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 60
+    },
+    {
+      "name": "Worn",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 0.5
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 61
+    },
+    {
+      "name": "Worn",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 0.5
+        },
+        {
+          "stat": "Power",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 62
+    },
+    {
+      "name": "Worn",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 0.5
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 63
+    },
+    {
+      "name": "Prototype",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 64
+    },
+    {
+      "name": "Prototype",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 65
+    },
+    {
+      "name": "Prototype",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 66
+    },
+    {
+      "name": "Prototype",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 67
+    },
+    {
+      "name": "Carbon",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 68
+    },
+    {
+      "name": "Carbon",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 69
+    },
+    {
+      "name": "Carbon",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 70
+    },
+    {
+      "name": "Carbon",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 71
+    },
+    {
+      "name": "Hazard",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 6
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 72
+    },
+    {
+      "name": "Hazard",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 6
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 73
+    },
+    {
+      "name": "Hazard",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 6
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 74
+    },
+    {
+      "name": "Hazard",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 6
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 75
+    },
+    {
+      "name": "Stealth",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 76
+    },
+    {
+      "name": "Stealth",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 77
+    },
+    {
+      "name": "Stealth",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 78
+    },
+    {
+      "name": "Stealth",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 79
+    },
+    {
+      "name": "Reinforced",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 80
+    },
+    {
+      "name": "Reinforced",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 81
+    },
+    {
+      "name": "Reinforced",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 82
+    },
+    {
+      "name": "Reinforced",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 83
+    },
+    {
+      "name": "Alloy",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 84
+    },
+    {
+      "name": "Alloy",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 85
+    },
+    {
+      "name": "Alloy",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 86
+    },
+    {
+      "name": "Alloy",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 87
+    },
+    {
+      "name": "Tactical",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 3
+        },
+        {
+          "stat": "Control",
+          "value": 3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 88
+    },
+    {
+      "name": "Tactical",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 89
+    },
+    {
+      "name": "Tactical",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 3
+        },
+        {
+          "stat": "Power",
+          "value": 3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 90
+    },
+    {
+      "name": "Tactical",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 91
+    },
+    {
+      "name": "Nitro",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 7
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 92
+    },
+    {
+      "name": "Nitro",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 7
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 93
+    },
+    {
+      "name": "Nitro",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 7
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 94
+    },
+    {
+      "name": "Nitro",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 7
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 95
+    },
+    {
+      "name": "Turbo",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 7
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 96
+    },
+    {
+      "name": "Turbo",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 7
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 97
+    },
+    {
+      "name": "Turbo",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 7
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 98
+    },
+    {
+      "name": "Turbo",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 7
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 99
+    },
+    {
+      "name": "Vintage",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 2
+        },
+        {
+          "stat": "Control",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 100
+    },
+    {
+      "name": "Vintage",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 101
+    },
+    {
+      "name": "Vintage",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 2
+        },
+        {
+          "stat": "Power",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 102
+    },
+    {
+      "name": "Vintage",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 103
+    },
+    {
+      "name": "Cobalt",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 4
+        },
+        {
+          "stat": "Control",
+          "value": 2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 104
+    },
+    {
+      "name": "Cobalt",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 4
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 105
+    },
+    {
+      "name": "Cobalt",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 4
+        },
+        {
+          "stat": "Power",
+          "value": 2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 106
+    },
+    {
+      "name": "Cobalt",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 4
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 107
+    },
+    {
+      "name": "Riot",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 8
+        },
+        {
+          "stat": "Control",
+          "value": -3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 108
+    },
+    {
+      "name": "Riot",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 8
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 109
+    },
+    {
+      "name": "Riot",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 8
+        },
+        {
+          "stat": "Power",
+          "value": -3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 110
+    },
+    {
+      "name": "Riot",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 8
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 111
+    },
+    {
+      "name": "Static",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -3
+        },
+        {
+          "stat": "Control",
+          "value": 8
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 112
+    },
+    {
+      "name": "Static",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 8
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 113
+    },
+    {
+      "name": "Static",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -3
+        },
+        {
+          "stat": "Power",
+          "value": 8
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 114
+    },
+    {
+      "name": "Static",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 8
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 115
+    },
+    {
+      "name": "Signal",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 116
+    },
+    {
+      "name": "Signal",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 117
+    },
+    {
+      "name": "Signal",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 118
+    },
+    {
+      "name": "Signal",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 119
+    },
+    {
+      "name": "Inferno",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 120
+    },
+    {
+      "name": "Inferno",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 121
+    },
+    {
+      "name": "Inferno",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 122
+    },
+    {
+      "name": "Inferno",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 123
+    },
+    {
+      "name": "Frostbite",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 124
+    },
+    {
+      "name": "Frostbite",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 125
+    },
+    {
+      "name": "Frostbite",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 126
+    },
+    {
+      "name": "Frostbite",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 127
+    },
+    {
+      "name": "Overclocked",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 9
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 128
+    },
+    {
+      "name": "Overclocked",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 9
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 129
+    },
+    {
+      "name": "Overclocked",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 9
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 130
+    },
+    {
+      "name": "Overclocked",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 9
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 131
+    },
+    {
+      "name": "Venom",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 132
+    },
+    {
+      "name": "Venom",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 133
+    },
+    {
+      "name": "Venom",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 134
+    },
+    {
+      "name": "Venom",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 135
+    },
+    {
+      "name": "Blaze",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 136
+    },
+    {
+      "name": "Blaze",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 137
+    },
+    {
+      "name": "Blaze",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 138
+    },
+    {
+      "name": "Blaze",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 139
+    },
+    {
+      "name": "Cyclone",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 140
+    },
+    {
+      "name": "Cyclone",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 141
+    },
+    {
+      "name": "Cyclone",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 142
+    },
+    {
+      "name": "Cyclone",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 143
+    },
+    {
+      "name": "Rogue",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 5
+        },
+        {
+          "stat": "Control",
+          "value": 4
+        }
+      ],
+      "rarity": "Rare",
+      "id": 144
+    },
+    {
+      "name": "Rogue",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 5
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 4
+        }
+      ],
+      "rarity": "Rare",
+      "id": 145
+    },
+    {
+      "name": "Rogue",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 5
+        },
+        {
+          "stat": "Power",
+          "value": 4
+        }
+      ],
+      "rarity": "Rare",
+      "id": 146
+    },
+    {
+      "name": "Rogue",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 5
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 4
+        }
+      ],
+      "rarity": "Rare",
+      "id": 147
+    },
+    {
+      "name": "Widow",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 4
+        },
+        {
+          "stat": "Control",
+          "value": 5
+        }
+      ],
+      "rarity": "Rare",
+      "id": 148
+    },
+    {
+      "name": "Widow",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 4
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 5
+        }
+      ],
+      "rarity": "Rare",
+      "id": 149
+    },
+    {
+      "name": "Widow",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 4
+        },
+        {
+          "stat": "Power",
+          "value": 5
+        }
+      ],
+      "rarity": "Rare",
+      "id": 150
+    },
+    {
+      "name": "Widow",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 4
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 5
+        }
+      ],
+      "rarity": "Rare",
+      "id": 151
+    },
+    {
+      "name": "Volt",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 10
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 152
+    },
+    {
+      "name": "Volt",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 10
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 153
+    },
+    {
+      "name": "Volt",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 10
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 154
+    },
+    {
+      "name": "Volt",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 10
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 155
+    },
+    {
+      "name": "Shrapnel",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 10
+        }
+      ],
+      "rarity": "Rare",
+      "id": 156
+    },
+    {
+      "name": "Shrapnel",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 10
+        }
+      ],
+      "rarity": "Rare",
+      "id": 157
+    },
+    {
+      "name": "Shrapnel",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 10
+        }
+      ],
+      "rarity": "Rare",
+      "id": 158
+    },
+    {
+      "name": "Shrapnel",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 10
+        }
+      ],
+      "rarity": "Rare",
+      "id": 159
+    },
+    {
+      "name": "Corrosive",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 160
+    },
+    {
+      "name": "Corrosive",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 161
+    },
+    {
+      "name": "Corrosive",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 162
+    },
+    {
+      "name": "Corrosive",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 163
+    },
+    {
+      "name": "Tempest",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 164
+    },
+    {
+      "name": "Tempest",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 165
+    },
+    {
+      "name": "Tempest",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 166
+    },
+    {
+      "name": "Tempest",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 167
+    },
+    {
+      "name": "Wildfire",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 11
+        },
+        {
+          "stat": "Control",
+          "value": -3
+        }
+      ],
+      "rarity": "Rare",
+      "id": 168
+    },
+    {
+      "name": "Wildfire",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 11
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -3
+        }
+      ],
+      "rarity": "Rare",
+      "id": 169
+    },
+    {
+      "name": "Wildfire",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 11
+        },
+        {
+          "stat": "Power",
+          "value": -3
+        }
+      ],
+      "rarity": "Rare",
+      "id": 170
+    },
+    {
+      "name": "Wildfire",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 11
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -3
+        }
+      ],
+      "rarity": "Rare",
+      "id": 171
+    },
+    {
+      "name": "Serpent",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -3
+        },
+        {
+          "stat": "Control",
+          "value": 11
+        }
+      ],
+      "rarity": "Rare",
+      "id": 172
+    },
+    {
+      "name": "Serpent",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 11
+        }
+      ],
+      "rarity": "Rare",
+      "id": 173
+    },
+    {
+      "name": "Serpent",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -3
+        },
+        {
+          "stat": "Power",
+          "value": 11
+        }
+      ],
+      "rarity": "Rare",
+      "id": 174
+    },
+    {
+      "name": "Serpent",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -3
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 11
+        }
+      ],
+      "rarity": "Rare",
+      "id": 175
+    },
+    {
+      "name": "Supernova",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 176
+    },
+    {
+      "name": "Supernova",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 177
+    },
+    {
+      "name": "Supernova",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 178
+    },
+    {
+      "name": "Supernova",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 179
+    },
+    {
+      "name": "Diamond",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 180
+    },
+    {
+      "name": "Diamond",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 181
+    },
+    {
+      "name": "Diamond",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 182
+    },
+    {
+      "name": "Diamond",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 183
+    },
+    {
+      "name": "Tectonic",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 12
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 184
+    },
+    {
+      "name": "Tectonic",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 12
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 185
+    },
+    {
+      "name": "Tectonic",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 12
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 186
+    },
+    {
+      "name": "Tectonic",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 12
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 187
+    },
+    {
+      "name": "Glitch",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 188
+    },
+    {
+      "name": "Glitch",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 189
+    },
+    {
+      "name": "Glitch",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 190
+    },
+    {
+      "name": "Glitch",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 191
+    },
+    {
+      "name": "Eclipse",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 192
+    },
+    {
+      "name": "Eclipse",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 193
+    },
+    {
+      "name": "Eclipse",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 194
+    },
+    {
+      "name": "Eclipse",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 195
+    },
+    {
+      "name": "Platinum",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 196
+    },
+    {
+      "name": "Platinum",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 197
+    },
+    {
+      "name": "Platinum",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 198
+    },
+    {
+      "name": "Platinum",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 199
+    },
+    {
+      "name": "Seismic",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 6
+        },
+        {
+          "stat": "Control",
+          "value": 5
+        }
+      ],
+      "rarity": "Epic",
+      "id": 200
+    },
+    {
+      "name": "Seismic",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 6
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 5
+        }
+      ],
+      "rarity": "Epic",
+      "id": 201
+    },
+    {
+      "name": "Seismic",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 6
+        },
+        {
+          "stat": "Power",
+          "value": 5
+        }
+      ],
+      "rarity": "Epic",
+      "id": 202
+    },
+    {
+      "name": "Seismic",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 6
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 5
+        }
+      ],
+      "rarity": "Epic",
+      "id": 203
+    },
+    {
+      "name": "Vortex",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 5
+        },
+        {
+          "stat": "Control",
+          "value": 6
+        }
+      ],
+      "rarity": "Epic",
+      "id": 204
+    },
+    {
+      "name": "Vortex",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 5
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 6
+        }
+      ],
+      "rarity": "Epic",
+      "id": 205
+    },
+    {
+      "name": "Vortex",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 5
+        },
+        {
+          "stat": "Power",
+          "value": 6
+        }
+      ],
+      "rarity": "Epic",
+      "id": 206
+    },
+    {
+      "name": "Vortex",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 5
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 6
+        }
+      ],
+      "rarity": "Epic",
+      "id": 207
+    },
+    {
+      "name": "Radiant",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 13
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 208
+    },
+    {
+      "name": "Radiant",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 13
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 209
+    },
+    {
+      "name": "Radiant",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 13
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 210
+    },
+    {
+      "name": "Radiant",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 13
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 211
+    },
+    {
+      "name": "Cipher",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 13
+        }
+      ],
+      "rarity": "Epic",
+      "id": 212
+    },
+    {
+      "name": "Cipher",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 13
+        }
+      ],
+      "rarity": "Epic",
+      "id": 213
+    },
+    {
+      "name": "Cipher",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 13
+        }
+      ],
+      "rarity": "Epic",
+      "id": 214
+    },
+    {
+      "name": "Cipher",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 13
+        }
+      ],
+      "rarity": "Epic",
+      "id": 215
+    },
+    {
+      "name": "Meteor",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 216
+    },
+    {
+      "name": "Meteor",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 217
+    },
+    {
+      "name": "Meteor",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 218
+    },
+    {
+      "name": "Meteor",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 219
+    },
+    {
+      "name": "Prism",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 220
+    },
+    {
+      "name": "Prism",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 221
+    },
+    {
+      "name": "Prism",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 222
+    },
+    {
+      "name": "Prism",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 223
+    },
+    {
+      "name": "Fracture",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 14
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 224
+    },
+    {
+      "name": "Fracture",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 14
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 225
+    },
+    {
+      "name": "Fracture",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 14
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 226
+    },
+    {
+      "name": "Fracture",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 14
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 227
+    },
+    {
+      "name": "Singularity",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 14
+        }
+      ],
+      "rarity": "Epic",
+      "id": 228
+    },
+    {
+      "name": "Singularity",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 14
+        }
+      ],
+      "rarity": "Epic",
+      "id": 229
+    },
+    {
+      "name": "Singularity",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 14
+        }
+      ],
+      "rarity": "Epic",
+      "id": 230
+    },
+    {
+      "name": "Singularity",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 14
+        }
+      ],
+      "rarity": "Epic",
+      "id": 231
+    },
+    {
+      "name": "Dragon",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 232
+    },
+    {
+      "name": "Dragon",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 233
+    },
+    {
+      "name": "Dragon",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 234
+    },
+    {
+      "name": "Dragon",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 235
+    },
+    {
+      "name": "Gilded",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 236
+    },
+    {
+      "name": "Gilded",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 237
+    },
+    {
+      "name": "Gilded",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 238
+    },
+    {
+      "name": "Gilded",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 239
+    },
+    {
+      "name": "Void",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 15
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 240
+    },
+    {
+      "name": "Void",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 15
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 241
+    },
+    {
+      "name": "Void",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 15
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 242
+    },
+    {
+      "name": "Void",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 15
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 243
+    },
+    {
+      "name": "Thunder",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 244
+    },
+    {
+      "name": "Thunder",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 245
+    },
+    {
+      "name": "Thunder",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 246
+    },
+    {
+      "name": "Thunder",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 247
+    },
+    {
+      "name": "Phoenix",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 248
+    },
+    {
+      "name": "Phoenix",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 249
+    },
+    {
+      "name": "Phoenix",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 250
+    },
+    {
+      "name": "Phoenix",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 251
+    },
+    {
+      "name": "Kraken",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 252
+    },
+    {
+      "name": "Kraken",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 253
+    },
+    {
+      "name": "Kraken",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 254
+    },
+    {
+      "name": "Kraken",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 255
+    },
+    {
+      "name": "Sovereign",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 8
+        },
+        {
+          "stat": "Control",
+          "value": 6
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 256
+    },
+    {
+      "name": "Sovereign",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 8
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 6
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 257
+    },
+    {
+      "name": "Sovereign",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 8
+        },
+        {
+          "stat": "Power",
+          "value": 6
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 258
+    },
+    {
+      "name": "Sovereign",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 8
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 6
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 259
+    },
+    {
+      "name": "Titan",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 6
+        },
+        {
+          "stat": "Control",
+          "value": 8
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 260
+    },
+    {
+      "name": "Titan",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 6
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 8
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 261
+    },
+    {
+      "name": "Titan",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 6
+        },
+        {
+          "stat": "Power",
+          "value": 8
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 262
+    },
+    {
+      "name": "Titan",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 6
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 8
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 263
+    },
+    {
+      "name": "Griffin",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 264
+    },
+    {
+      "name": "Griffin",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 265
+    },
+    {
+      "name": "Griffin",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 266
+    },
+    {
+      "name": "Griffin",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 267
+    },
+    {
+      "name": "Behemoth",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 268
+    },
+    {
+      "name": "Behemoth",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 269
+    },
+    {
+      "name": "Behemoth",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 270
+    },
+    {
+      "name": "Behemoth",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 271
+    },
+    {
+      "name": "Colossus",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 17
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 272
+    },
+    {
+      "name": "Colossus",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 17
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 273
+    },
+    {
+      "name": "Colossus",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 17
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 274
+    },
+    {
+      "name": "Colossus",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 17
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 275
+    },
+    {
+      "name": "Valkyrie",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 17
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 276
+    },
+    {
+      "name": "Valkyrie",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 17
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 277
+    },
+    {
+      "name": "Valkyrie",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 17
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 278
+    },
+    {
+      "name": "Valkyrie",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 17
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 279
+    },
+    {
+      "name": "Leviathan",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 280
+    },
+    {
+      "name": "Leviathan",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 281
+    },
+    {
+      "name": "Leviathan",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 282
+    },
+    {
+      "name": "Leviathan",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 283
+    },
+    {
+      "name": "Warlord",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 284
+    },
+    {
+      "name": "Warlord",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 285
+    },
+    {
+      "name": "Warlord",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 286
+    },
+    {
+      "name": "Warlord",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 287
+    },
+    {
+      "name": "Rune",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 288
+    },
+    {
+      "name": "Rune",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 289
+    },
+    {
+      "name": "Rune",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 290
+    },
+    {
+      "name": "Rune",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 291
+    },
+    {
+      "name": "Celestial",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 292
+    },
+    {
+      "name": "Celestial",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 293
+    },
+    {
+      "name": "Celestial",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 294
+    },
+    {
+      "name": "Celestial",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 295
+    },
+    {
+      "name": "Phantom",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 19
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 296
+    },
+    {
+      "name": "Phantom",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 19
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 297
+    },
+    {
+      "name": "Phantom",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 19
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 298
+    },
+    {
+      "name": "Phantom",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 19
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 299
+    },
+    {
+      "name": "Quantum",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 19
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 300
+    },
+    {
+      "name": "Quantum",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 19
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 301
+    },
+    {
+      "name": "Quantum",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 19
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 302
+    },
+    {
+      "name": "Quantum",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 19
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 303
+    },
+    {
+      "name": "Ethereal",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 304
+    },
+    {
+      "name": "Ethereal",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 305
+    },
+    {
+      "name": "Ethereal",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 306
+    },
+    {
+      "name": "Ethereal",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 307
+    },
+    {
+      "name": "Nebula",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 308
+    },
+    {
+      "name": "Nebula",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 309
+    },
+    {
+      "name": "Nebula",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 310
+    },
+    {
+      "name": "Nebula",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 311
+    },
+    {
+      "name": "Paradox",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 10
+        },
+        {
+          "stat": "Control",
+          "value": 8
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 312
+    },
+    {
+      "name": "Paradox",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 10
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 8
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 313
+    },
+    {
+      "name": "Paradox",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 10
+        },
+        {
+          "stat": "Power",
+          "value": 8
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 314
+    },
+    {
+      "name": "Paradox",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 10
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 8
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 315
+    },
+    {
+      "name": "Genesis",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 8
+        },
+        {
+          "stat": "Control",
+          "value": 10
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 316
+    },
+    {
+      "name": "Genesis",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 8
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 10
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 317
+    },
+    {
+      "name": "Genesis",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 8
+        },
+        {
+          "stat": "Power",
+          "value": 10
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 318
+    },
+    {
+      "name": "Genesis",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 8
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 10
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 319
+    },
+    {
+      "name": "Oblivion",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 320
+    },
+    {
+      "name": "Oblivion",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 321
+    },
+    {
+      "name": "Oblivion",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 322
+    },
+    {
+      "name": "Oblivion",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 323
+    },
+    {
+      "name": "Zenith",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 324
+    },
+    {
+      "name": "Zenith",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 325
+    },
+    {
+      "name": "Zenith",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 326
+    },
+    {
+      "name": "Zenith",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 327
+    },
+    {
+      "name": "Infinity",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 22
+        },
+        {
+          "stat": "Control",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 328
+    },
+    {
+      "name": "Infinity",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 22
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 329
+    },
+    {
+      "name": "Infinity",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 22
+        },
+        {
+          "stat": "Power",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 330
+    },
+    {
+      "name": "Infinity",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 22
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 331
+    },
+    {
+      "name": "Chrono",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": -2
+        },
+        {
+          "stat": "Control",
+          "value": 22
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 332
+    },
+    {
+      "name": "Chrono",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 22
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 333
+    },
+    {
+      "name": "Chrono",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": -2
+        },
+        {
+          "stat": "Power",
+          "value": 22
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 334
+    },
+    {
+      "name": "Chrono",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": -2
+        },
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 22
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 335
+    },
+    {
+      "name": "Elysian",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Stuff",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 336
+    },
+    {
+      "name": "Elysian",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Contact Suppression",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 337
+    },
+    {
+      "name": "Elysian",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Contact",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 338
+    },
+    {
+      "name": "Elysian",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Discipline",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 339
+    },
+    {
+      "name": "Astral",
+      "type": "Pitcher",
+      "slot": "Hat",
+      "stats": [
+        {
+          "stat": "Control",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 340
+    },
+    {
+      "name": "Astral",
+      "type": "Pitcher",
+      "slot": "Glove",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 341
+    },
+    {
+      "name": "Astral",
+      "type": "Batter",
+      "slot": "Bat",
+      "stats": [
+        {
+          "stat": "Power",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 342
+    },
+    {
+      "name": "Astral",
+      "type": "Batter",
+      "slot": "Helmet",
+      "stats": [
+        {
+          "stat": "Batted-Ball Tendency",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 343
+    }
+  ]
+}
