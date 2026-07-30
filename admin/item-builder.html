@@ -269,6 +269,7 @@
     <label for="sortSelect">Sort:</label>
     <select id="sortSelect">
       <option value="natural">Natural (save order)</option>
+      <option value="natural-reverse">Natural (newest first)</option>
       <option value="name-asc">Name A-Z</option>
       <option value="name-desc">Name Z-A</option>
       <option value="rarity-desc">Rarity High-Low</option>
@@ -505,6 +506,7 @@
     const copy = [...items];
     switch (sortMode) {
       case "natural": return copy;
+      case "natural-reverse": return copy.reverse();
       case "name-asc": return copy.sort((a, b) => a.name.localeCompare(b.name));
       case "name-desc": return copy.sort((a, b) => b.name.localeCompare(a.name));
       case "rarity-desc": return copy.sort((a, b) => RARITY_ORDER.indexOf(b.rarity) - RARITY_ORDER.indexOf(a.rarity));
