@@ -245,19 +245,40 @@
     </div>
 
     <div class="form-row">
-      <label class="field-label">Player type</label>
-      <div class="toggle-group" id="typeToggle">
-        <button type="button" class="toggle" data-type="Pitcher">Pitcher</button>
-        <button type="button" class="toggle" data-type="Batter">Batter</button>
+      <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.85rem;">
+        <input type="checkbox" id="bulkModeToggle">
+        Bulk create — same name and stat shape, all 4 slots at once (Hat/Glove/Bat/Helmet)
+      </label>
+    </div>
+
+    <div id="singleModeFields">
+      <div class="form-row">
+        <label class="field-label">Player type</label>
+        <div class="toggle-group" id="typeToggle">
+          <button type="button" class="toggle" data-type="Pitcher">Pitcher</button>
+          <button type="button" class="toggle" data-type="Batter">Batter</button>
+        </div>
+      </div>
+
+      <div class="form-row" id="slotRow" style="display:none;">
+        <label class="field-label">Slot</label>
+        <div class="toggle-group" id="slotToggle"></div>
+      </div>
+
+      <div class="form-row" id="statsRow" style="display:none;"></div>
+    </div>
+
+    <div id="bulkModeFields" class="form-row" style="display:none;">
+      <label class="field-label">Stats (applied identically to whichever 2 stats each slot owns — leave blank to skip)</label>
+      <div class="stat-row">
+        <span class="stat-label">1st stat (Stuff / Contact Suppression / Contact / Discipline)</span>
+        <input type="number" id="bulkStat1" min="-25" max="25" step="0.1">
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">2nd stat (Control / Batted-Ball Tendency / Power / Batted-Ball Tendency)</span>
+        <input type="number" id="bulkStat2" min="-25" max="25" step="0.1">
       </div>
     </div>
-
-    <div class="form-row" id="slotRow" style="display:none;">
-      <label class="field-label">Slot</label>
-      <div class="toggle-group" id="slotToggle"></div>
-    </div>
-
-    <div class="form-row" id="statsRow" style="display:none;"></div>
 
     <div class="form-footer">
       <span class="status" id="formStatus"></span>
@@ -317,6 +338,11 @@
   let sortMode = "natural";
 
   const nameInput = document.getElementById("nameInput");
+  const bulkModeToggle = document.getElementById("bulkModeToggle");
+  const singleModeFields = document.getElementById("singleModeFields");
+  const bulkModeFields = document.getElementById("bulkModeFields");
+  const bulkStat1 = document.getElementById("bulkStat1");
+  const bulkStat2 = document.getElementById("bulkStat2");
   const typeToggle = document.getElementById("typeToggle");
   const slotRow = document.getElementById("slotRow");
   const slotToggle = document.getElementById("slotToggle");
@@ -330,7 +356,25 @@
   const fileStatus = document.getElementById("fileStatus");
   const sortSelect = document.getElementById("sortSelect");
 
-  nameInput.addEventListener("change", handleFieldCommit);
+  let bulkCommitTimer = null;
+  function scheduleBulkCommit() {
+    clearTimeout(bulkCommitTimer);
+    bulkCommitTimer = setTimeout(handleBulkCommit, 500);
+  }
+
+  nameInput.addEventListener("change", () => {
+    if (!bulkModeToggle.checked) handleFieldCommit();
+  });
+  nameInput.addEventListener("input", () => {
+    if (bulkModeToggle.checked) scheduleBulkCommit();
+  });
+  bulkStat1.addEventListener("input", scheduleBulkCommit);
+  bulkStat2.addEventListener("input", scheduleBulkCommit);
+  bulkModeToggle.addEventListener("change", () => {
+    resetDraft();
+    singleModeFields.style.display = bulkModeToggle.checked ? "none" : "block";
+    bulkModeFields.style.display = bulkModeToggle.checked ? "block" : "none";
+  });
   loadBtn.addEventListener("click", loadExistingFile);
   newItemBtn.addEventListener("click", resetDraft);
   sortSelect.addEventListener("change", () => {
@@ -465,11 +509,48 @@
     await persistItems();
   }
 
+  async function handleBulkCommit() {
+    const name = nameInput.value.trim();
+    const raw1 = bulkStat1.value === "" ? null : Math.max(-STAT_CAP, Math.min(STAT_CAP, parseFloat(bulkStat1.value)));
+    const raw2 = bulkStat2.value === "" ? null : Math.max(-STAT_CAP, Math.min(STAT_CAP, parseFloat(bulkStat2.value)));
+    const valid = name.length > 0 && (raw1 !== null || raw2 !== null);
+
+    if (!valid) {
+      formStatus.textContent = "Fill in name and at least one stat to bulk-create all 4 slots.";
+      return;
+    }
+
+    const created = [];
+    for (const type of Object.keys(SLOTS)) {
+      for (const slotName of Object.keys(SLOTS[type])) {
+        const [statA, statB] = SLOTS[type][slotName];
+        const stats = [];
+        if (raw1 !== null) stats.push({ stat: statA, value: raw1 });
+        if (raw2 !== null) stats.push({ stat: statB, value: raw2 });
+        const rarity = calcRarity(stats);
+        const itemData = { id: nextId++, name, type, slot: slotName, stats, rarity };
+        items.push(itemData);
+        created.push(itemData);
+      }
+    }
+
+    formStatus.textContent = `Created 4 items for "${name}" (${created[0].rarity}).`;
+    bulkStat1.value = "";
+    bulkStat2.value = "";
+    nameInput.value = "";
+    nameInput.focus();
+
+    renderCards();
+    await persistItems();
+  }
+
   function resetDraft() {
     editingId = null;
     currentType = null;
     currentSlot = null;
     nameInput.value = "";
+    bulkStat1.value = "";
+    bulkStat2.value = "";
     [...typeToggle.querySelectorAll("button")].forEach(b => b.classList.remove("active"));
     slotToggle.innerHTML = "";
     slotRow.style.display = "none";
@@ -482,6 +563,11 @@
   function loadItemIntoForm(id) {
     const item = items.find(it => it.id === id);
     if (!item) return;
+    if (bulkModeToggle.checked) {
+      bulkModeToggle.checked = false;
+      singleModeFields.style.display = "block";
+      bulkModeFields.style.display = "none";
+    }
     editingId = id;
     currentType = item.type;
     currentSlot = item.slot;
