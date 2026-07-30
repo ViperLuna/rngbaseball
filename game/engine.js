@@ -1,0 +1,332 @@
+// engine.js
+// -----------------------------------------------------------------------------
+// The actual baseball simulation engine for rngbaseball. This file has no UI
+// code in it at all -- it just exposes functions that index.html calls.
+//
+// What's in here:
+//   - League-average outcome rates (real MLB baseline percentages)
+//   - The log5 formula (blends a batter's rate and a pitcher's rate into one
+//     probability for a specific matchup)
+//   - resolvePlateAppearance(): decides what happens on a single at-bat
+//     (strikeout, walk, hit, groundout, flyout, double play, sac fly, error)
+//   - simulateGame(): plays a full 9-inning game between two teams and
+//     returns the play-by-play log plus the final boxscore
+//
+// Everyone's stats are flat baseline (rating 50 on every stat) for now, since
+// the items/gear system isn't wired in yet -- see getBatterRatings() and
+// getPitcherRatings() below, that's the one spot to change later.
+// -----------------------------------------------------------------------------
+
+const LEAGUE = (() => {
+  const K = 22.5;
+  const BB = 9.5;
+  const SINGLE = 14.5;
+  const DOUBLE = 4.8;
+  const TRIPLE = 0.2;
+  const HR = 3.0;
+  const hitTotal = SINGLE + DOUBLE + TRIPLE + HR; // 22.5
+  const bipTotal = 100 - K - BB; // 68, "ball in play" share of all PAs
+  return {
+    K, BB, SINGLE, DOUBLE, TRIPLE, HR,
+    HIT_ON_BIP: (hitTotal / bipTotal) * 100,       // ~33.09% of balls in play go for hits
+    SINGLE_SHARE_OF_HITS: SINGLE / hitTotal,        // ~64.4%
+    DOUBLE_SHARE_OF_HITS: DOUBLE / hitTotal,        // ~21.3%
+    TRIPLE_SHARE_OF_HITS: TRIPLE / hitTotal,        // ~0.9%
+    HR_SHARE_OF_HITS: HR / hitTotal,                // ~13.3%
+    XBH_SHARE_OF_HITS: 1 - (SINGLE / hitTotal),     // ~35.6%, doubles+triples+HR
+    GB_SHARE_OF_OUTS: 44,                           // groundball share of batted-ball outs
+    ERROR_RATE: 1.5                                 // flat passive trait, % of balls in play
+  };
+})();
+
+const DP_CHANCE = 0.12;   // conditional chance of turning a double play when eligible (runner on 1st, <2 outs)
+const STAT_CAP = 25;      // matches the item builder's per-item cap
+
+function clamp(v, lo, hi) {
+  return Math.max(lo, Math.min(hi, v));
+}
+
+// Converts a 1-99 player rating into a real-world rate (percentage), where
+// rating 50 always lands exactly on the league average. `slope` controls how
+// many percentage points the rate shifts per rating point; `invert` flips the
+// direction (used for stats where a higher rating means a *lower* rate, like
+// Contact reducing strikeouts).
+function ratingToRate(rating, leagueAvgPct, slope, invert) {
+  const delta = (rating - 50) * slope;
+  const rate = invert ? leagueAvgPct - delta : leagueAvgPct + delta;
+  return clamp(rate, 0.5, 75);
+}
+
+// The log5 formula (Bill James): blends a batter's rate and a pitcher's rate
+// for the same event into the actual probability for this specific matchup,
+// anchored against the league-average rate for that event. All three inputs
+// are fractions (0-1), not percentages.
+function log5(batterRate, pitcherRate, leagueAvg) {
+  const num = (batterRate * pitcherRate) / leagueAvg;
+  const denom = num + ((1 - batterRate) * (1 - pitcherRate)) / (1 - leagueAvg);
+  return num / denom;
+}
+
+// Placeholder rating providers -- everyone is flat baseline until the
+// items/gear system gets wired in. Swap these out later to apply a player's
+// equipped item modifiers on top of a base rating.
+function getBatterRatings(player) {
+  return { contact: 50, power: 50, discipline: 50, battedBallTendency: 50 };
+}
+function getPitcherRatings(player) {
+  return { stuff: 50, control: 50, contactSuppression: 50, battedBallTendency: 50 };
+}
+
+function rollStrikeout(batterRatings, pitcherRatings) {
+  const batterRate = ratingToRate(batterRatings.contact, LEAGUE.K, 0.28, true) / 100;
+  const pitcherRate = ratingToRate(pitcherRatings.stuff, LEAGUE.K, 0.28, false) / 100;
+  const p = log5(batterRate, pitcherRate, LEAGUE.K / 100);
+  return Math.random() < p;
+}
+
+// The walk check only ever runs on plate appearances that already survived
+// the strikeout check, so the anchor has to be the *conditional* rate (walks
+// as a share of non-strikeout PAs), not the raw league-wide 9.5% -- otherwise
+// the walk check under-fires relative to how often it's actually reached.
+const BB_CONDITIONAL_ANCHOR = (LEAGUE.BB / (100 - LEAGUE.K)) * 100;
+
+function rollWalk(batterRatings, pitcherRatings) {
+  const batterRate = ratingToRate(batterRatings.discipline, BB_CONDITIONAL_ANCHOR, 0.14, false) / 100;
+  const pitcherRate = ratingToRate(pitcherRatings.control, BB_CONDITIONAL_ANCHOR, 0.14, true) / 100;
+  const p = log5(batterRate, pitcherRate, BB_CONDITIONAL_ANCHOR / 100);
+  return Math.random() < p;
+}
+
+function rollError() {
+  return Math.random() < LEAGUE.ERROR_RATE / 100;
+}
+
+function rollHitOnBallInPlay(batterRatings, pitcherRatings) {
+  const batterRate = ratingToRate(batterRatings.power, LEAGUE.HIT_ON_BIP, 0.30, false) / 100;
+  const pitcherRate = ratingToRate(pitcherRatings.contactSuppression, LEAGUE.HIT_ON_BIP, 0.30, true) / 100;
+  return Math.random() < log5(batterRate, pitcherRate, LEAGUE.HIT_ON_BIP / 100);
+}
+
+// Given it's a hit, decide single vs. an extra-base hit, then which kind.
+function rollHitType(batterRatings, pitcherRatings) {
+  const xbhLeague = LEAGUE.XBH_SHARE_OF_HITS * 100;
+  const batterRate = ratingToRate(batterRatings.power, xbhLeague, 0.35, false) / 100;
+  const pitcherRate = ratingToRate(pitcherRatings.contactSuppression, xbhLeague, 0.35, true) / 100;
+  const isXBH = Math.random() < log5(batterRate, pitcherRate, xbhLeague / 100);
+
+  if (!isXBH) return "single";
+
+  // Split the extra-base hit into 2B/3B/HR using their fixed relative shares.
+  const roll = Math.random() * LEAGUE.XBH_SHARE_OF_HITS;
+  if (roll < LEAGUE.HR_SHARE_OF_HITS) return "home_run";
+  if (roll < LEAGUE.HR_SHARE_OF_HITS + LEAGUE.TRIPLE_SHARE_OF_HITS) return "triple";
+  return "double";
+}
+
+function rollGroundballOrFlyball(batterRatings, pitcherRatings) {
+  const league = LEAGUE.GB_SHARE_OF_OUTS;
+  const batterRate = ratingToRate(batterRatings.battedBallTendency, league, 0.25, false) / 100;
+  const pitcherRate = ratingToRate(pitcherRatings.battedBallTendency, league, 0.25, false) / 100;
+  return Math.random() < log5(batterRate, pitcherRate, league / 100) ? "groundout" : "flyout";
+}
+
+// --- Baserunner state -------------------------------------------------------
+// bases = [first, second, third], each either null or a runner name string.
+
+function emptyBases() {
+  return [null, null, null];
+}
+
+// Advance every existing runner by `numBases`, then place the batter.
+// Used for hits, where the rule is "everyone moves up by the hit's base
+// count," not just forced runners.
+function advanceAllRunners(bases, batterName, numBases) {
+  let runsScored = 0;
+  const newBases = emptyBases();
+  for (let i = 2; i >= 0; i--) {
+    if (bases[i] === null) continue;
+    const newPos = i + numBases;
+    if (newPos >= 3) runsScored++;
+    else newBases[newPos] = bases[i];
+  }
+  const batterPos = numBases - 1;
+  if (batterPos >= 3) runsScored++;
+  else newBases[batterPos] = batterName;
+  return { bases: newBases, runsScored };
+}
+
+// Force-advance runners exactly one base, cascading from first base outward,
+// only moving a runner if the base behind them is being filled. Used for
+// walks and for the "does everyone forced move up" part of a groundout.
+function forceAdvance(bases, batterName) {
+  let runsScored = 0;
+  const newBases = [...bases];
+  if (newBases[0] === null) {
+    newBases[0] = batterName;
+    return { bases: newBases, runsScored };
+  }
+  // first is occupied, so the runner there is forced to second
+  if (newBases[1] === null) {
+    newBases[1] = newBases[0];
+    newBases[0] = batterName;
+    return { bases: newBases, runsScored };
+  }
+  // first and second occupied, runner on second is forced to third
+  if (newBases[2] === null) {
+    newBases[2] = newBases[1];
+    newBases[1] = newBases[0];
+    newBases[0] = batterName;
+    return { bases: newBases, runsScored };
+  }
+  // bases loaded, forced runner from third scores
+  runsScored++;
+  newBases[2] = newBases[1];
+  newBases[1] = newBases[0];
+  newBases[0] = batterName;
+  return { bases: newBases, runsScored };
+}
+
+// --- Plate appearance resolution --------------------------------------------
+
+function resolvePlateAppearance(batter, pitcher, bases, outs) {
+  const batterRatings = getBatterRatings(batter);
+  const pitcherRatings = getPitcherRatings(pitcher);
+
+  if (rollStrikeout(batterRatings, pitcherRatings)) {
+    return { type: "strikeout", bases, outsAdded: 1, runsScored: 0,
+      text: `${batter.name} strikes out.` };
+  }
+
+  if (rollWalk(batterRatings, pitcherRatings)) {
+    const result = forceAdvance(bases, batter.name);
+    return { type: "walk", bases: result.bases, outsAdded: 0, runsScored: result.runsScored,
+      text: `${batter.name} draws a walk.` };
+  }
+
+  if (rollHitOnBallInPlay(batterRatings, pitcherRatings)) {
+    const hitType = rollHitType(batterRatings, pitcherRatings);
+    const basesMap = { single: 1, double: 2, triple: 3, home_run: 4 };
+    const result = advanceAllRunners(bases, batter.name, basesMap[hitType]);
+    const labels = { single: "singles", double: "doubles", triple: "triples", home_run: "homers" };
+    return { type: hitType, bases: result.bases, outsAdded: 0, runsScored: result.runsScored,
+      text: `${batter.name} ${labels[hitType]}.` };
+  }
+
+  // What would otherwise be an out has a small flat chance of being an error
+  // instead -- errors are a passive trait, unaffected by ratings or items.
+  if (rollError()) {
+    const result = forceAdvance(bases, batter.name);
+    return { type: "error", bases: result.bases, outsAdded: 0, runsScored: result.runsScored,
+      text: `${batter.name} reaches on an error.` };
+  }
+
+  // Out on a ball in play.
+  const shape = rollGroundballOrFlyball(batterRatings, pitcherRatings);
+
+  if (shape === "flyout") {
+    // Sac fly rule: runner on third, fewer than 2 outs, run scores automatically.
+    if (bases[2] !== null && outs < 2) {
+      const newBases = [...bases];
+      newBases[2] = null;
+      return { type: "sac_fly", bases: newBases, outsAdded: 1, runsScored: 1,
+        text: `${batter.name} hits a sac fly. The runner from third scores.` };
+    }
+    return { type: "flyout", bases, outsAdded: 1, runsScored: 0,
+      text: `${batter.name} flies out.` };
+  }
+
+  // Groundout: figure out forced advancement first, then decide if it's a
+  // plain out or a double play (the common "21" case: runner on first,
+  // fewer than 2 outs, defense targets second then relays to first).
+  const dpEligible = bases[0] !== null && outs < 2;
+  const forced = forceAdvance(bases, batter.name);
+
+  if (dpEligible && Math.random() < DP_CHANCE) {
+    // The runner forced from first to second is also retired; everyone
+    // else who was forced still completes their advance safely.
+    const dpBases = [...forced.bases];
+    dpBases[1] = null;
+    return { type: "double_play", bases: dpBases, outsAdded: 2, runsScored: forced.runsScored,
+      text: `${batter.name} grounds into a double play.` };
+  }
+
+  return { type: "groundout", bases: forced.bases, outsAdded: 1, runsScored: forced.runsScored,
+    text: `${batter.name} grounds out, ${bases[0] ? "runners advance." : "batter out at first."}` };
+}
+
+// --- Half-inning / full game simulation -------------------------------------
+
+// `walkOffTarget`, when given, is "how many runs the batting team needs to
+// score this half-inning to take the lead." The instant they reach it, the
+// half-inning (and the game) ends immediately -- no need to finish the 3
+// outs. Only relevant for the home team batting in the 9th or later.
+function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget) {
+  let outs = 0;
+  let bases = emptyBases();
+  let runs = 0;
+  const log = [];
+
+  while (outs < 3) {
+    const batter = battingTeam.lineup[lineupState.index];
+    const result = resolvePlateAppearance(batter, pitcher, bases, outs);
+    outs += result.outsAdded;
+    runs += result.runsScored;
+    bases = result.bases;
+    log.push(result.text);
+    lineupState.index = (lineupState.index + 1) % battingTeam.lineup.length;
+
+    if (walkOffTarget !== null && runs >= walkOffTarget) {
+      log.push("Walk-off! The game ends here.");
+      break;
+    }
+  }
+
+  return { runs, log };
+}
+
+function findPitcher(team) {
+  return team.lineup.find(p => p.position === "P");
+}
+
+function simulateGame(teamA, teamB) {
+  const lineupStateA = { index: 0 };
+  const lineupStateB = { index: 0 };
+  const pitcherA = findPitcher(teamA);
+  const pitcherB = findPitcher(teamB);
+
+  const innings = [];
+  let scoreA = 0;
+  let scoreB = 0;
+  let inning = 1;
+
+  while (true) {
+    const top = simulateHalfInning(teamA, pitcherB, lineupStateA, null);
+    scoreA += top.runs;
+
+    // From the 9th inning on, the home team doesn't bat at all if they're
+    // already ahead after the top half -- the game's already decided.
+    const homeAlreadyWinning = inning >= 9 && scoreB > scoreA;
+    let bottom = { runs: 0, log: ["(not needed -- game already decided)"] };
+    if (!homeAlreadyWinning) {
+      const walkOffTarget = inning >= 9 ? (scoreA - scoreB) + 1 : null;
+      bottom = simulateHalfInning(teamB, pitcherA, lineupStateB, walkOffTarget);
+      scoreB += bottom.runs;
+    }
+
+    innings.push({ inning, top, bottom });
+
+    // The game can't end in a tie -- keep playing extra innings until
+    // someone's actually ahead once the 9th (or later) is complete.
+    if (inning >= 9 && scoreA !== scoreB) break;
+    inning++;
+  }
+
+  return {
+    teamA: teamA.name,
+    teamB: teamB.name,
+    scoreA,
+    scoreB,
+    innings,
+    winner: scoreA > scoreB ? teamA.name : teamB.name
+  };
+}
