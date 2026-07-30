@@ -139,51 +139,63 @@ function emptyBases() {
 
 // Advance every existing runner by `numBases`, then place the batter.
 // Used for hits, where the rule is "everyone moves up by the hit's base
-// count," not just forced runners.
+// count," not just forced runners. Returns the names of anyone who scored
+// so the play-by-play text can announce them.
 function advanceAllRunners(bases, batterName, numBases) {
-  let runsScored = 0;
+  const scorers = [];
   const newBases = emptyBases();
   for (let i = 2; i >= 0; i--) {
     if (bases[i] === null) continue;
     const newPos = i + numBases;
-    if (newPos >= 3) runsScored++;
+    if (newPos >= 3) scorers.push(bases[i]);
     else newBases[newPos] = bases[i];
   }
   const batterPos = numBases - 1;
-  if (batterPos >= 3) runsScored++;
+  if (batterPos >= 3) scorers.push(batterName);
   else newBases[batterPos] = batterName;
-  return { bases: newBases, runsScored };
+  return { bases: newBases, runsScored: scorers.length, scorers };
 }
 
 // Force-advance runners exactly one base, cascading from first base outward,
 // only moving a runner if the base behind them is being filled. Used for
 // walks and for the "does everyone forced move up" part of a groundout.
+// Returns the name of anyone forced across home, if that happens.
 function forceAdvance(bases, batterName) {
-  let runsScored = 0;
   const newBases = [...bases];
   if (newBases[0] === null) {
     newBases[0] = batterName;
-    return { bases: newBases, runsScored };
+    return { bases: newBases, runsScored: 0, scorers: [] };
   }
   // first is occupied, so the runner there is forced to second
   if (newBases[1] === null) {
     newBases[1] = newBases[0];
     newBases[0] = batterName;
-    return { bases: newBases, runsScored };
+    return { bases: newBases, runsScored: 0, scorers: [] };
   }
   // first and second occupied, runner on second is forced to third
   if (newBases[2] === null) {
     newBases[2] = newBases[1];
     newBases[1] = newBases[0];
     newBases[0] = batterName;
-    return { bases: newBases, runsScored };
+    return { bases: newBases, runsScored: 0, scorers: [] };
   }
   // bases loaded, forced runner from third scores
-  runsScored++;
+  const scorer = newBases[2];
   newBases[2] = newBases[1];
   newBases[1] = newBases[0];
   newBases[0] = batterName;
-  return { bases: newBases, runsScored };
+  return { bases: newBases, runsScored: 1, scorers: [scorer] };
+}
+
+// Builds the "X scores!" (or "X and Y score!") suffix to append to a play's
+// text whenever the play produced any runs outside the sac-fly case (which
+// already announces its own scorer inline).
+function scoringSuffix(scorers) {
+  if (scorers.length === 0) return "";
+  if (scorers.length === 1) return ` ${scorers[0]} scores!`;
+  const last = scorers[scorers.length - 1];
+  const rest = scorers.slice(0, -1).join(", ");
+  return ` ${rest} and ${last} score!`;
 }
 
 // --- Plate appearance resolution --------------------------------------------
@@ -200,7 +212,7 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
   if (rollWalk(batterRatings, pitcherRatings)) {
     const result = forceAdvance(bases, batter.name);
     return { type: "walk", bases: result.bases, outsAdded: 0, runsScored: result.runsScored,
-      text: `${batter.name} draws a walk.` };
+      text: `${batter.name} draws a walk.${scoringSuffix(result.scorers)}` };
   }
 
   if (rollHitOnBallInPlay(batterRatings, pitcherRatings)) {
@@ -209,7 +221,7 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
     const result = advanceAllRunners(bases, batter.name, basesMap[hitType]);
     const labels = { single: "singles", double: "doubles", triple: "triples", home_run: "homers" };
     return { type: hitType, bases: result.bases, outsAdded: 0, runsScored: result.runsScored,
-      text: `${batter.name} ${labels[hitType]}.` };
+      text: `${batter.name} ${labels[hitType]}.${scoringSuffix(result.scorers)}` };
   }
 
   // What would otherwise be an out has a small flat chance of being an error
@@ -217,7 +229,7 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
   if (rollError()) {
     const result = forceAdvance(bases, batter.name);
     return { type: "error", bases: result.bases, outsAdded: 0, runsScored: result.runsScored,
-      text: `${batter.name} reaches on an error.` };
+      text: `${batter.name} reaches on an error.${scoringSuffix(result.scorers)}` };
   }
 
   // Out on a ball in play.
@@ -247,11 +259,11 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
     const dpBases = [...forced.bases];
     dpBases[1] = null;
     return { type: "double_play", bases: dpBases, outsAdded: 2, runsScored: forced.runsScored,
-      text: `${batter.name} grounds into a double play.` };
+      text: `${batter.name} grounds into a double play.${scoringSuffix(forced.scorers)}` };
   }
 
   return { type: "groundout", bases: forced.bases, outsAdded: 1, runsScored: forced.runsScored,
-    text: `${batter.name} grounds out, ${bases[0] ? "runners advance." : "batter out at first."}` };
+    text: `${batter.name} grounds out, ${bases[0] ? "runners advance." : "batter out at first."}${scoringSuffix(forced.scorers)}` };
 }
 
 // --- Half-inning / full game simulation -------------------------------------
