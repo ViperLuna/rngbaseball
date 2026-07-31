@@ -78,6 +78,23 @@
   }
   button:hover { filter: brightness(0.95); }
   button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.secondary { background: var(--panel); color: var(--text); border-color: var(--border); }
+  .sort-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .sort-row select {
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+  }
+  .sort-row button { width: auto; padding: 0.3rem 0.6rem; font-size: 0.85rem; }
   .panel {
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -120,6 +137,15 @@
 
   <div class="panel">
     <h2 class="section">Inventory</h2>
+    <div class="sort-row">
+      <label for="sortKey">Sort by</label>
+      <select id="sortKey">
+        <option value="order">Order Gained</option>
+        <option value="rarity">Rarity</option>
+        <option value="name">Name</option>
+      </select>
+      <button type="button" class="secondary" id="sortDirBtn"></button>
+    </div>
     <div id="inventoryList"></div>
   </div>
 </main>
@@ -127,6 +153,9 @@
 <script src="season.js"></script>
 <script>
   let items = [];
+  const RARITY_ORDER = Object.keys(CRATES.basic.odds);
+  let sortKey = "order";
+  let sortDirection = "desc"; // matches the previous fixed "newest first" behavior
 
   async function load() {
     const res = await fetch("../data/items.json");
@@ -136,6 +165,32 @@
     renderBalance();
     renderCrates();
     renderInventory();
+
+    document.getElementById("sortKey").addEventListener("change", (e) => {
+      sortKey = e.target.value;
+      renderInventory();
+    });
+    document.getElementById("sortDirBtn").addEventListener("click", () => {
+      sortDirection = sortDirection === "asc" ? "desc" : "asc";
+      renderInventory();
+    });
+  }
+
+  function sortedInventory(inventory) {
+    const withOrder = inventory.map((item, idx) => ({ item, idx }));
+    const dir = sortDirection === "asc" ? 1 : -1;
+    withOrder.sort((a, b) => {
+      if (sortKey === "rarity") return dir * (RARITY_ORDER.indexOf(a.item.rarity) - RARITY_ORDER.indexOf(b.item.rarity));
+      if (sortKey === "name") return dir * a.item.name.localeCompare(b.item.name);
+      return dir * (a.idx - b.idx);
+    });
+    return withOrder.map(x => x.item);
+  }
+
+  function sortDirLabel() {
+    if (sortKey === "rarity") return sortDirection === "asc" ? "Common first" : "Mythical first";
+    if (sortKey === "name") return sortDirection === "asc" ? "A -> Z" : "Z -> A";
+    return sortDirection === "asc" ? "Oldest first" : "Newest first";
   }
 
   // Retrofits an _instanceId onto any inventory item that predates this
@@ -211,16 +266,19 @@
 
   function renderInventory() {
     const meta = getMeta();
+    document.getElementById("sortKey").value = sortKey;
+    document.getElementById("sortDirBtn").textContent = sortDirLabel();
+
     const inventoryList = document.getElementById("inventoryList");
     if (meta.inventory.length === 0) {
       inventoryList.innerHTML = `<p style="color:var(--muted); font-size:0.9rem;">No items yet -- open a crate to start collecting gear.</p>`;
       return;
     }
-    const rows = meta.inventory.map((item, idx) => ({ item, idx })).reverse();
+    const rows = sortedInventory(meta.inventory);
     inventoryList.innerHTML = `
       <table class="inventory-table">
         <tr><th>Item</th><th>Type</th><th>Slot</th><th>Stat</th><th>Rarity</th></tr>
-        ${rows.map(({ item }) => `
+        ${rows.map(item => `
           <tr>
             <td>${escapeHtml(item.name)}</td>
             <td>${escapeHtml(item.type)}</td>
