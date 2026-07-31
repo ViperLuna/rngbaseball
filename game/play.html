@@ -81,12 +81,13 @@
     font-weight: 600;
   }
   #playLog {
-    height: 55vh;
+    height: 40vh;
     overflow-y: auto;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 0.75rem 1rem;
     background: var(--panel);
+    margin-bottom: 1rem;
   }
   .inning-header {
     font-weight: 700;
@@ -98,6 +99,35 @@
     font-size: 0.9rem;
     padding: 0.15rem 0;
     color: var(--text);
+  }
+  #statsPane {
+    height: 35vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+  }
+  .stats-team-header {
+    font-weight: 700;
+    margin-top: 0.9rem;
+    color: var(--accent);
+  }
+  .stats-team-header:first-child { margin-top: 0; }
+  table.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+  table.stats-table th, table.stats-table td {
+    text-align: left;
+    padding: 0.2rem 0.4rem;
+  }
+  table.stats-table th {
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -125,6 +155,7 @@
   <div class="scoreboard" id="scoreboard" style="display:none;"></div>
 
   <div id="playLog"></div>
+  <div id="statsPane"></div>
 </main>
 
 <script src="engine.js"></script>
@@ -148,11 +179,14 @@
     playBtn.disabled = false;
   }
 
+  const statsPane = document.getElementById("statsPane");
+
   playBtn.addEventListener("click", () => {
     const teamA = teams[teamASelect.value];
     const teamB = teams[teamBSelect.value];
     const result = simulateGame(teamA, teamB);
     renderGame(result);
+    renderStats(result, teamA, teamB);
   });
 
   function renderGame(result) {
@@ -170,6 +204,34 @@
     `).join("");
 
     playLog.innerHTML += `<div class="inning-header">Final: ${result.teamA} ${result.scoreA}, ${result.teamB} ${result.scoreB} — ${result.winner} wins</div>`;
+  }
+
+  function renderStats(result, teamA, teamB) {
+    statsPane.innerHTML = [teamA, teamB].map(team => `
+      <div class="stats-team-header">${escapeHtml(team.name)}</div>
+      <table class="stats-table">
+        <tr><th>Player</th><th>Pos</th><th>AB</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>BB</th><th>K</th><th>R</th><th>AVG</th></tr>
+        ${team.lineup.map(p => {
+          const line = result.stats[p.name].batting;
+          return `<tr>
+            <td>${escapeHtml(p.name)}</td><td>${p.position}</td>
+            <td>${line.AB}</td><td>${line.H}</td><td>${line.doubles}</td><td>${line.triples}</td><td>${line.HR}</td>
+            <td>${line.BB}</td><td>${line.K}</td><td>${line.R}</td><td>${battingAverage(line).toFixed(3)}</td>
+          </tr>`;
+        }).join("")}
+      </table>
+      <table class="stats-table">
+        <tr><th>Pitcher</th><th>IP</th><th>H</th><th>BB</th><th>K</th><th>R</th><th>ERA</th></tr>
+        ${(() => {
+          const p = findPitcher(team);
+          const line = result.stats[p.name].pitching;
+          return `<tr>
+            <td>${escapeHtml(p.name)}</td><td>${(line.outs / 3).toFixed(1)}</td>
+            <td>${line.H}</td><td>${line.BB}</td><td>${line.K}</td><td>${line.R}</td><td>${era(line).toFixed(2)}</td>
+          </tr>`;
+        })()}
+      </table>
+    `).join("");
   }
 
   function escapeHtml(str) {
