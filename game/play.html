@@ -1,0 +1,184 @@
+<!--
+  play.html
+  -----------------------------------------------------------------------------
+  Placeholder game screen -- reached via "Start/Continue Season" on the main
+  menu (index.html). This is still just the single-instant-game test screen:
+  pick two teams, simulate one full 9-inning game, show the play-by-play.
+
+  This gets replaced by the real season loop (schedule, standings, playoff)
+  later; the menu doesn't need to change when that happens, since it just
+  links here.
+  -----------------------------------------------------------------------------
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rngbaseball</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  main { width: 100%; max-width: 640px; }
+  h1 { font-size: 1.4rem; margin-bottom: 1rem; }
+  .back-row { margin-bottom: 1rem; }
+  .back-row a {
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+  .back-row a:hover { text-decoration: underline; }
+  .setup-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  select {
+    flex: 1;
+    padding: 0.5rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+  }
+  button {
+    padding: 0.55rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(0.95); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .scoreboard {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  #playLog {
+    height: 55vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+  }
+  .inning-header {
+    font-weight: 700;
+    margin-top: 0.9rem;
+    color: var(--accent);
+  }
+  .inning-header:first-child { margin-top: 0; }
+  .play-line {
+    font-size: 0.9rem;
+    padding: 0.15rem 0;
+    color: var(--text);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --panel: #232326;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="back-row"><a href="index.html">&larr; Main Menu</a></div>
+  <h1>rngbaseball</h1>
+
+  <div class="setup-row">
+    <select id="teamASelect"></select>
+    <span>vs</span>
+    <select id="teamBSelect"></select>
+    <button id="playBtn" disabled>Play Game</button>
+  </div>
+
+  <div class="scoreboard" id="scoreboard" style="display:none;"></div>
+
+  <div id="playLog"></div>
+</main>
+
+<script src="engine.js"></script>
+<script>
+  let teams = [];
+
+  const teamASelect = document.getElementById("teamASelect");
+  const teamBSelect = document.getElementById("teamBSelect");
+  const playBtn = document.getElementById("playBtn");
+  const scoreboard = document.getElementById("scoreboard");
+  const playLog = document.getElementById("playLog");
+
+  async function loadTeams() {
+    const res = await fetch("../data/teams.json");
+    const data = await res.json();
+    teams = data.teams;
+    [teamASelect, teamBSelect].forEach((select, i) => {
+      select.innerHTML = teams.map((t, idx) => `<option value="${idx}">${t.name}</option>`).join("");
+      select.value = i === 0 ? 0 : 1;
+    });
+    playBtn.disabled = false;
+  }
+
+  playBtn.addEventListener("click", () => {
+    const teamA = teams[teamASelect.value];
+    const teamB = teams[teamBSelect.value];
+    const result = simulateGame(teamA, teamB);
+    renderGame(result);
+  });
+
+  function renderGame(result) {
+    scoreboard.style.display = "flex";
+    scoreboard.innerHTML = `
+      <span>${result.teamA}: ${result.scoreA}</span>
+      <span>${result.teamB}: ${result.scoreB}</span>
+    `;
+
+    playLog.innerHTML = result.innings.map(inn => `
+      <div class="inning-header">Top ${inn.inning} — ${result.teamA}</div>
+      ${inn.top.log.map(line => `<div class="play-line">${escapeHtml(line)}</div>`).join("")}
+      <div class="inning-header">Bottom ${inn.inning} — ${result.teamB}</div>
+      ${inn.bottom.log.map(line => `<div class="play-line">${escapeHtml(line)}</div>`).join("")}
+    `).join("");
+
+    playLog.innerHTML += `<div class="inning-header">Final: ${result.teamA} ${result.scoreA}, ${result.teamB} ${result.scoreB} — ${result.winner} wins</div>`;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  loadTeams();
+</script>
+</body>
+</html>
