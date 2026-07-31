@@ -394,6 +394,30 @@ function era(line) {
 //
 // `errors` is a shared { A, B } counter of errors charged to each team's
 // fielders (not the batting team), for the box score's E column.
+//
+// Real walk-off rule: the game ends the instant the winning run scores, so
+// any other runner who'd also cross the plate on the same play does NOT
+// get credited -- even though they're clearly about to score too -- except
+// on a home run, where the official exception for a fair ball leaving the
+// park lets the batter and everyone else score in full. This caps a play's
+// runsScored/scorers/text down to just what's needed to reach the target
+// when that's fewer than the play naturally produced.
+function applyWalkOffCap(result, runsSoFar, walkOffTarget) {
+  if (walkOffTarget === null || result.type === "home_run" || result.scorers.length === 0) return result;
+  const neededRuns = walkOffTarget - runsSoFar;
+  if (result.scorers.length <= neededRuns) return result;
+
+  const cappedScorers = result.scorers.slice(0, neededRuns);
+  const oldSuffix = scoringSuffix(result.scorers);
+  const newSuffix = scoringSuffix(cappedScorers);
+  return {
+    ...result,
+    runsScored: neededRuns,
+    scorers: cappedScorers,
+    text: oldSuffix ? result.text.slice(0, result.text.length - oldSuffix.length) + newSuffix : result.text
+  };
+}
+
 function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, stats, plays, inning, half, scoreRef, fieldingTeamLetter, errors) {
   let outs = 0;
   let bases = emptyBases();
@@ -402,7 +426,8 @@ function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, st
 
   while (outs < 3) {
     const batter = battingTeam.lineup[lineupState.index];
-    const result = resolvePlateAppearance(batter, pitcher, bases, outs);
+    const result = applyWalkOffCap(resolvePlateAppearance(batter, pitcher, bases, outs), runs, walkOffTarget);
+
     outs += result.outsAdded;
     runs += result.runsScored;
     bases = result.bases;
