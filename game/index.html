@@ -1,13 +1,16 @@
 <!--
   index.html
   -----------------------------------------------------------------------------
-  The main game page. This is the first playable slice of rngbaseball: pick
-  two teams from data/teams.json, simulate one full 9-inning game using the
-  resolution logic in engine.js, and show the play-by-play plus final score.
+  Main menu -- the actual entry point for rngbaseball, no separate splash
+  screen. Reads a minimal localStorage flag to decide Start vs Continue
+  Season and whether New Season should even be shown. Buttons that aren't
+  currently relevant are removed from the layout entirely (not disabled),
+  so the remaining ones just reflow.
 
-  No items/gear, no currency, no season/ladder yet -- just proving the core
-  simulation engine works. Needs to be served over HTTP (not opened directly
-  as a file://) so the fetch() call below can load data/teams.json.
+  "Start/Continue Season" currently just drops you into play.html (the
+  single-instant-game test screen) as a placeholder -- that gets swapped
+  for the real season loop (schedule, standings, playoff) later without
+  needing to touch this menu.
   -----------------------------------------------------------------------------
 -->
 <!doctype html>
@@ -33,64 +36,39 @@
     color: var(--text);
     display: flex;
     justify-content: center;
+    align-items: center;
+    min-height: 100vh;
     padding: 2rem 1rem;
   }
-  main { width: 100%; max-width: 640px; }
-  h1 { font-size: 1.4rem; margin-bottom: 1rem; }
-  .setup-row {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    margin-bottom: 1rem;
+  main {
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
   }
-  select {
-    flex: 1;
-    padding: 0.5rem 0.6rem;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--panel);
-    color: var(--text);
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+  #menuButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
   button {
-    padding: 0.55rem 1rem;
+    padding: 0.75rem 1rem;
     border-radius: 6px;
     border: 1px solid var(--accent);
     background: var(--accent);
     color: #fff;
-    font-size: 0.95rem;
+    font-size: 1rem;
     cursor: pointer;
+    width: 100%;
   }
   button:hover { filter: brightness(0.95); }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
-  .scoreboard {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+  button.secondary {
     background: var(--panel);
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-  #playLog {
-    height: 55vh;
-    overflow-y: auto;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    background: var(--panel);
-  }
-  .inning-header {
-    font-weight: 700;
-    margin-top: 0.9rem;
-    color: var(--accent);
-  }
-  .inning-header:first-child { margin-top: 0; }
-  .play-line {
-    font-size: 0.9rem;
-    padding: 0.15rem 0;
     color: var(--text);
+    border-color: var(--border);
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -106,71 +84,55 @@
 <body>
 <main>
   <h1>rngbaseball</h1>
-
-  <div class="setup-row">
-    <select id="teamASelect"></select>
-    <span>vs</span>
-    <select id="teamBSelect"></select>
-    <button id="playBtn" disabled>Play Game</button>
+  <div id="menuButtons">
+    <button id="seasonBtn" type="button"></button>
+    <button id="newSeasonBtn" type="button" class="secondary" style="display:none;">New Season</button>
+    <button id="loadoutsBtn" type="button" class="secondary">Loadouts</button>
   </div>
-
-  <div class="scoreboard" id="scoreboard" style="display:none;"></div>
-
-  <div id="playLog"></div>
 </main>
 
-<script src="engine.js"></script>
 <script>
-  let teams = [];
+  const SAVE_KEY = "rngbaseball_save";
 
-  const teamASelect = document.getElementById("teamASelect");
-  const teamBSelect = document.getElementById("teamBSelect");
-  const playBtn = document.getElementById("playBtn");
-  const scoreboard = document.getElementById("scoreboard");
-  const playLog = document.getElementById("playLog");
-
-  async function loadTeams() {
-    const res = await fetch("../data/teams.json");
-    const data = await res.json();
-    teams = data.teams;
-    [teamASelect, teamBSelect].forEach((select, i) => {
-      select.innerHTML = teams.map((t, idx) => `<option value="${idx}">${t.name}</option>`).join("");
-      select.value = i === 0 ? 0 : 1;
-    });
-    playBtn.disabled = false;
+  function getSave() {
+    const raw = localStorage.getItem(SAVE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }
+  function setSave(data) {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  }
+  function clearSave() {
+    localStorage.removeItem(SAVE_KEY);
   }
 
-  playBtn.addEventListener("click", () => {
-    const teamA = teams[teamASelect.value];
-    const teamB = teams[teamBSelect.value];
-    const result = simulateGame(teamA, teamB);
-    renderGame(result);
+  const seasonBtn = document.getElementById("seasonBtn");
+  const newSeasonBtn = document.getElementById("newSeasonBtn");
+  const loadoutsBtn = document.getElementById("loadoutsBtn");
+
+  function render() {
+    const save = getSave();
+    const hasSeason = !!(save && save.seasonInProgress);
+    seasonBtn.textContent = hasSeason ? "Continue Season" : "Start Season";
+    newSeasonBtn.style.display = hasSeason ? "block" : "none";
+  }
+
+  seasonBtn.addEventListener("click", () => {
+    setSave({ seasonInProgress: true });
+    window.location.href = "play.html";
   });
 
-  function renderGame(result) {
-    scoreboard.style.display = "flex";
-    scoreboard.innerHTML = `
-      <span>${result.teamA}: ${result.scoreA}</span>
-      <span>${result.teamB}: ${result.scoreB}</span>
-    `;
+  newSeasonBtn.addEventListener("click", () => {
+    const confirmed = confirm("Start a new season? This erases your current season's progress.");
+    if (!confirmed) return;
+    clearSave();
+    render();
+  });
 
-    playLog.innerHTML = result.innings.map(inn => `
-      <div class="inning-header">Top ${inn.inning} — ${result.teamA}</div>
-      ${inn.top.log.map(line => `<div class="play-line">${escapeHtml(line)}</div>`).join("")}
-      <div class="inning-header">Bottom ${inn.inning} — ${result.teamB}</div>
-      ${inn.bottom.log.map(line => `<div class="play-line">${escapeHtml(line)}</div>`).join("")}
-    `).join("");
+  loadoutsBtn.addEventListener("click", () => {
+    alert("Loadouts isn't built yet -- coming soon.");
+  });
 
-    playLog.innerHTML += `<div class="inning-header">Final: ${result.teamA} ${result.scoreA}, ${result.teamB} ${result.scoreB} — ${result.winner} wins</div>`;
-  }
-
-  function escapeHtml(str) {
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  loadTeams();
+  render();
 </script>
 </body>
 </html>
