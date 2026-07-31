@@ -7,12 +7,15 @@
   currently relevant are removed from the layout entirely (not disabled),
   so the remaining ones just reflow.
 
-  "Start Season" (no season saved yet) goes to team-select.html to pick a
-  team and generate the season's round-robin schedule (schedule.js).
-  "Continue Season" (a season already exists) currently just drops you into
-  play.html (the single-instant-game test screen) as a placeholder -- that
-  gets swapped for the real season loop (schedule, standings, playoff)
-  later without needing to touch this menu.
+  "Start Season" (no season saved yet) goes to league-select.html to pick
+  a league, then team-select.html to pick a team and generate the season.
+  "Continue Season" (a season already exists) goes to the season hub
+  (season.html): standings, game history, and playing out the schedule.
+
+  "New Season" wipes the current season save but keeps league-unlock
+  progress (the separate meta-save in season.js). "Fresh Start" wipes both
+  -- a full reset back to Rookie league only -- for whenever the player
+  wants to start completely over.
   -----------------------------------------------------------------------------
 -->
 <!doctype html>
@@ -89,26 +92,16 @@
   <div id="menuButtons">
     <button id="seasonBtn" type="button"></button>
     <button id="newSeasonBtn" type="button" class="secondary" style="display:none;">New Season</button>
+    <button id="freshStartBtn" type="button" class="secondary">Fresh Start</button>
     <button id="loadoutsBtn" type="button" class="secondary">Loadouts</button>
   </div>
 </main>
 
+<script src="season.js"></script>
 <script>
-  const SAVE_KEY = "rngbaseball_save";
-
-  function getSave() {
-    const raw = localStorage.getItem(SAVE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  }
-  function setSave(data) {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-  }
-  function clearSave() {
-    localStorage.removeItem(SAVE_KEY);
-  }
-
   const seasonBtn = document.getElementById("seasonBtn");
   const newSeasonBtn = document.getElementById("newSeasonBtn");
+  const freshStartBtn = document.getElementById("freshStartBtn");
   const loadoutsBtn = document.getElementById("loadoutsBtn");
 
   function render() {
@@ -121,16 +114,24 @@
   seasonBtn.addEventListener("click", () => {
     const save = getSave();
     if (save && save.seasonInProgress) {
-      window.location.href = "play.html";
+      window.location.href = "season.html";
     } else {
-      window.location.href = "team-select.html";
+      window.location.href = "league-select.html";
     }
   });
 
   newSeasonBtn.addEventListener("click", () => {
-    const confirmed = confirm("Start a new season? This erases your current season's progress.");
+    const confirmed = confirm("Start a new season? This erases your current season's progress. Your unlocked leagues stay unlocked.");
     if (!confirmed) return;
     clearSave();
+    render();
+  });
+
+  freshStartBtn.addEventListener("click", () => {
+    const confirmed = confirm("Fresh start? This erases your current season AND all league progress, resetting you back to Rookie league only.");
+    if (!confirmed) return;
+    clearSave();
+    clearMeta();
     render();
   });
 
