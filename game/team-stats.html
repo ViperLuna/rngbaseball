@@ -4,8 +4,12 @@
   Reached by clicking a team in the standings on season.html. Shows that
   team's roster with season-to-date cumulative stats per player (from the
   current season save's seasonStats -- see season.js's mergeGameStatsIntoSeason),
-  not just a single game's line. Which team to show comes from the ?team=
-  query string.
+  not just a single game's line, plus a read-only gear panel (season.js's
+  fullGearMap -- works for any team, since a given player's gear only ever
+  lives in one of opponentGear or equippedGear, never both). This doubles
+  as a scouting view for opponents; there's no equip action here, that's
+  loadouts.html and only ever applies to your own roster. Which team to
+  show comes from the ?team= query string.
   -----------------------------------------------------------------------------
 -->
 <!doctype html>
@@ -54,8 +58,15 @@
     margin-bottom: 1rem;
   }
   table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  th, td { text-align: left; padding: 0.25rem 0.4rem; }
+  th, td { text-align: left; padding: 0.25rem 0.4rem; vertical-align: top; }
   th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  .slot-empty { color: var(--muted); }
+  .rarity-Common { color: #71717a; }
+  .rarity-Uncommon { color: #16a34a; }
+  .rarity-Rare { color: #2563eb; }
+  .rarity-Epic { color: #9333ea; }
+  .rarity-Legendary { color: #d97706; }
+  .rarity-Mythical { color: #dc2626; }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #18181b;
@@ -71,6 +82,12 @@
 <main>
   <div class="back-row"><button type="button" class="back-btn" onclick="window.location.href='season.html'">&larr; Season</button></div>
   <h1 id="title"></h1>
+  <div class="panel">
+    <table>
+      <tr><th>Player</th><th>Pos</th><th>Slot 1</th><th>Slot 2</th></tr>
+      <tbody id="gearBody"></tbody>
+    </table>
+  </div>
   <div class="panel">
     <table>
       <tr><th>Player</th><th>Pos</th><th>AB</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>BB</th><th>K</th><th>R</th><th>AVG</th></tr>
@@ -103,6 +120,18 @@
     document.title = `rngbaseball — ${team.name}`;
     document.getElementById("title").textContent = `${team.name}${team.name === save.yourTeam ? " (Your Team)" : ""}`;
 
+    const gearMap = fullGearMap(save);
+    document.getElementById("gearBody").innerHTML = team.lineup.map(p => {
+      const slots = slotsForPosition(p.position);
+      const gear = gearMap[p.name] || {};
+      const cells = slots.map(slot => {
+        const item = gear[slot];
+        if (!item) return `<td class="slot-empty">${slot}: Empty</td>`;
+        return `<td>${slot}: ${escapeHtml(item.name)} (${escapeHtml(formatStats(item))}) <span class="rarity-${item.rarity}">${item.rarity}</span></td>`;
+      });
+      return `<tr><td>${escapeHtml(p.name)}</td><td>${p.position}</td>${cells.join("")}</tr>`;
+    }).join("");
+
     document.getElementById("battingBody").innerHTML = team.lineup.map(p => {
       const line = (save.seasonStats[p.name] || newStatLine()).batting;
       return `<tr>
@@ -118,6 +147,14 @@
       <td>${escapeHtml(pitcher.name)}</td><td>${(pline.outs / 3).toFixed(1)}</td>
       <td>${pline.H}</td><td>${pline.BB}</td><td>${pline.K}</td><td>${pline.R}</td><td>${era(pline).toFixed(2)}</td>
     </tr>`;
+  }
+
+  function slotsForPosition(position) {
+    return position === "P" ? ["Hat", "Glove"] : ["Bat", "Helmet"];
+  }
+
+  function formatStats(item) {
+    return item.stats.map(s => `${s.stat} ${s.value >= 0 ? "+" : ""}${s.value}`).join(", ");
   }
 
   function escapeHtml(str) {
