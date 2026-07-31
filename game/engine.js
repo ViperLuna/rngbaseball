@@ -383,7 +383,18 @@ function era(line) {
 // score this half-inning to take the lead." The instant they reach it, the
 // half-inning (and the game) ends immediately -- no need to finish the 3
 // outs. Only relevant for the home team batting in the 9th or later.
-function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, stats) {
+//
+// `plays` is a shared, flat, chronological array that every play across the
+// whole game gets pushed onto, each entry carrying a snapshot of the score
+// and stats *as of that play*. The game itself is still fully computed
+// instantly and deterministically here -- `plays` just gives the UI enough
+// per-play detail to animate a paced reveal afterward (play log, box score,
+// and stats pane all updating together) without needing to touch this
+// simulation logic at all.
+//
+// `errors` is a shared { A, B } counter of errors charged to each team's
+// fielders (not the batting team), for the box score's E column.
+function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, stats, plays, inning, half, scoreRef, fieldingTeamLetter, errors) {
   let outs = 0;
   let bases = emptyBases();
   let runs = 0;
@@ -397,10 +408,27 @@ function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, st
     bases = result.bases;
     log.push(result.text);
     recordPlateAppearance(stats, batter.name, pitcher.name, result);
+    if (result.type === "error") errors[fieldingTeamLetter]++;
     lineupState.index = (lineupState.index + 1) % battingTeam.lineup.length;
+
+    if (half === "top") scoreRef.A += result.runsScored;
+    else scoreRef.B += result.runsScored;
+
+    plays.push({
+      half, inning, text: result.text,
+      scoreA: scoreRef.A, scoreB: scoreRef.B,
+      stats: JSON.parse(JSON.stringify(stats)),
+      errors: { ...errors }
+    });
 
     if (walkOffTarget !== null && runs >= walkOffTarget) {
       log.push("Walk-off! The game ends here.");
+      plays.push({
+        half, inning, text: "Walk-off! The game ends here.",
+        scoreA: scoreRef.A, scoreB: scoreRef.B,
+        stats: JSON.parse(JSON.stringify(stats)),
+        errors: { ...errors }
+      });
       break;
     }
   }
@@ -422,31 +450,33 @@ function simulateGame(teamA, teamB) {
   teamB.lineup.forEach(p => ensurePlayer(stats, p.name));
 
   const innings = [];
-  let scoreA = 0;
-  let scoreB = 0;
+  const plays = [];
+  const errors = { A: 0, B: 0 };
+  const scoreRef = { A: 0, B: 0 };
   let inning = 1;
 
   while (true) {
-    const top = simulateHalfInning(teamA, pitcherB, lineupStateA, null, stats);
-    scoreA += top.runs;
+    const top = simulateHalfInning(teamA, pitcherB, lineupStateA, null, stats, plays, inning, "top", scoreRef, "B", errors);
 
     // From the 9th inning on, the home team doesn't bat at all if they're
     // already ahead after the top half -- the game's already decided.
-    const homeAlreadyWinning = inning >= 9 && scoreB > scoreA;
+    const homeAlreadyWinning = inning >= 9 && scoreRef.B > scoreRef.A;
     let bottom = { runs: 0, log: ["(not needed -- game already decided)"] };
     if (!homeAlreadyWinning) {
-      const walkOffTarget = inning >= 9 ? (scoreA - scoreB) + 1 : null;
-      bottom = simulateHalfInning(teamB, pitcherA, lineupStateB, walkOffTarget, stats);
-      scoreB += bottom.runs;
+      const walkOffTarget = inning >= 9 ? (scoreRef.A - scoreRef.B) + 1 : null;
+      bottom = simulateHalfInning(teamB, pitcherA, lineupStateB, walkOffTarget, stats, plays, inning, "bottom", scoreRef, "A", errors);
     }
 
     innings.push({ inning, top, bottom });
 
     // The game can't end in a tie -- keep playing extra innings until
     // someone's actually ahead once the 9th (or later) is complete.
-    if (inning >= 9 && scoreA !== scoreB) break;
+    if (inning >= 9 && scoreRef.A !== scoreRef.B) break;
     inning++;
   }
+
+  const scoreA = scoreRef.A;
+  const scoreB = scoreRef.B;
 
   return {
     teamA: teamA.name,
@@ -454,6 +484,8 @@ function simulateGame(teamA, teamB) {
     scoreA,
     scoreB,
     innings,
+    plays,
+    errors,
     winner: scoreA > scoreB ? teamA.name : teamB.name,
     stats
   };
