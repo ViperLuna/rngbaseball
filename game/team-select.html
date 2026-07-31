@@ -1,0 +1,201 @@
+<!--
+  team-select.html
+  -----------------------------------------------------------------------------
+  Reached via "Start Season" on the main menu (index.html). Pick which of the
+  30 teams you'll play as for the season. Clicking a team previews its full
+  roster; Submit generates the season's round-robin schedule (schedule.js),
+  saves it to localStorage, and returns to the main menu (which now shows
+  "Continue Season"). Back to Menu leaves without creating anything.
+  -----------------------------------------------------------------------------
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rngbaseball</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  main { width: 100%; max-width: 640px; }
+  h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+  p.hint { color: var(--muted); margin-top: 0; margin-bottom: 1rem; font-size: 0.9rem; }
+  #teamGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.5rem;
+    max-height: 30vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+  }
+  .team-card {
+    padding: 0.5rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-align: center;
+  }
+  .team-card:hover { filter: brightness(0.95); }
+  .team-card.selected {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  #rosterPane {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+    min-height: 3rem;
+  }
+  #rosterPane .empty { color: var(--muted); font-size: 0.9rem; }
+  table.roster-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  table.roster-table th, table.roster-table td {
+    text-align: left;
+    padding: 0.25rem 0.4rem;
+  }
+  table.roster-table th {
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  .action-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+  button {
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(0.95); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.secondary {
+    background: var(--panel);
+    color: var(--text);
+    border-color: var(--border);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --panel: #232326;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Select Your Team</h1>
+  <p class="hint">Pick the team you'll play as this season. You can preview any team's roster before submitting.</p>
+
+  <div id="teamGrid"></div>
+
+  <div id="rosterPane"><span class="empty">Select a team to preview its roster.</span></div>
+
+  <div class="action-row">
+    <button id="backBtn" type="button" class="secondary">Back to Menu</button>
+    <button id="submitBtn" type="button" disabled>Submit</button>
+  </div>
+</main>
+
+<script src="schedule.js"></script>
+<script>
+  const SAVE_KEY = "rngbaseball_save";
+  function setSave(data) {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  }
+
+  let teams = [];
+  let selectedIndex = null;
+
+  const teamGrid = document.getElementById("teamGrid");
+  const rosterPane = document.getElementById("rosterPane");
+  const backBtn = document.getElementById("backBtn");
+  const submitBtn = document.getElementById("submitBtn");
+
+  async function loadTeams() {
+    const res = await fetch("../data/teams.json");
+    const data = await res.json();
+    teams = data.teams;
+    teamGrid.innerHTML = teams.map((t, idx) =>
+      `<div class="team-card" data-index="${idx}">${escapeHtml(t.name)}</div>`
+    ).join("");
+    teamGrid.querySelectorAll(".team-card").forEach(card => {
+      card.addEventListener("click", () => selectTeam(Number(card.dataset.index)));
+    });
+  }
+
+  function selectTeam(idx) {
+    selectedIndex = idx;
+    teamGrid.querySelectorAll(".team-card").forEach(card => {
+      card.classList.toggle("selected", Number(card.dataset.index) === idx);
+    });
+    const team = teams[idx];
+    rosterPane.innerHTML = `
+      <table class="roster-table">
+        <tr><th>Player</th><th>Pos</th></tr>
+        ${team.lineup.map(p => `<tr><td>${escapeHtml(p.name)}</td><td>${escapeHtml(p.position)}</td></tr>`).join("")}
+      </table>
+    `;
+    submitBtn.disabled = false;
+  }
+
+  backBtn.addEventListener("click", () => {
+    window.location.href = "index.html";
+  });
+
+  submitBtn.addEventListener("click", () => {
+    if (selectedIndex === null) return;
+    const yourTeam = teams[selectedIndex].name;
+    const teamNames = teams.map(t => t.name);
+    const schedule = generateSeasonSchedule(teamNames);
+    setSave({ seasonInProgress: true, yourTeam, schedule, currentRound: 0 });
+    window.location.href = "index.html";
+  });
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  loadTeams();
+</script>
+</body>
+</html>

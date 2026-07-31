@@ -7,10 +7,12 @@
   currently relevant are removed from the layout entirely (not disabled),
   so the remaining ones just reflow.
 
-  "Start/Continue Season" currently just drops you into play.html (the
-  single-instant-game test screen) as a placeholder -- that gets swapped
-  for the real season loop (schedule, standings, playoff) later without
-  needing to touch this menu.
+  "Start Season" (no season saved yet) goes to team-select.html to pick a
+  team and generate the season's round-robin schedule (schedule.js).
+  "Continue Season" (a season already exists) currently just drops you into
+  play.html (the single-instant-game test screen) as a placeholder -- that
+  gets swapped for the real season loop (schedule, standings, playoff)
+  later without needing to touch this menu.
   -----------------------------------------------------------------------------
 -->
 <!doctype html>
@@ -117,8 +119,12 @@
   }
 
   seasonBtn.addEventListener("click", () => {
-    setSave({ seasonInProgress: true });
-    window.location.href = "play.html";
+    const save = getSave();
+    if (save && save.seasonInProgress) {
+      window.location.href = "play.html";
+    } else {
+      window.location.href = "team-select.html";
+    }
   });
 
   newSeasonBtn.addEventListener("click", () => {
