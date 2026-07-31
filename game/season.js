@@ -71,9 +71,11 @@ function initStandings(teamNames) {
 }
 
 // Builds a brand new season save: a fresh shuffled round-robin schedule,
-// empty standings/season stats/history, no playoff decided yet, and a
+// empty standings/season stats/history, no playoff decided yet, a
 // freshly-rolled opponentGear map (gear.js's generateOpponentGear) covering
-// every player except yourTeam's -- re-rolled every time a season starts.
+// every player except yourTeam's -- re-rolled every time a season starts --
+// and an empty equippedGear map for the player's own roster (see
+// loadouts.html), since nothing's equipped yet at season creation.
 // `teams` is teams.json's full team list (not just names), needed to know
 // each opponent player's position for gear.js's slot assignment; `items` is
 // items.json's items array.
@@ -89,7 +91,8 @@ function initializeSeason(league, yourTeam, teams, items) {
     seasonStats: {},
     gameHistory: [],
     playoff: null,
-    opponentGear: generateOpponentGear(teams, yourTeam, league, items)
+    opponentGear: generateOpponentGear(teams, yourTeam, league, items),
+    equippedGear: {}
   };
 }
 
@@ -129,6 +132,19 @@ function mergeGameStatsIntoSeason(seasonStats, gameStats) {
     mergeStatLineInto(ensurePlayer(seasonStats, name), gameStats[name]);
   }
 }
+
+// gear.js's buildGearedTeam() just needs one { playerName: gear } map --
+// opponentGear and equippedGear never overlap (the former explicitly skips
+// yourTeam, the latter only ever covers yourTeam), so merging them is safe
+// and lets every simulation call site stay agnostic about which side of the
+// roster a given player's gear came from.
+function fullGearMap(save) {
+  return { ...save.opponentGear, ...save.equippedGear };
+}
+
+// Chump change -- deliberately a bad trade next to what a crate costs, just
+// a way to clear out items you don't want to keep in your inventory.
+const SELL_PRICES = { Common: 5, Uncommon: 10, Rare: 20, Epic: 40, Legendary: 75, Mythical: 150 };
 
 // The full per-play stats snapshot on each play (used only to animate the
 // live reveal) would make season-long storage of every game far bigger than

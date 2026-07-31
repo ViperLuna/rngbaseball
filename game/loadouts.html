@@ -1,0 +1,374 @@
+<!--
+  loadouts.html
+  -----------------------------------------------------------------------------
+  Equip gear from your inventory onto your own team for the current season.
+  Reached from the main menu's "Loadouts" button or season.html's Loadouts
+  button. Requires an active season (equippedGear lives in the season save,
+  scoped to whichever roster you're playing this season -- see season.js).
+
+  Each player has exactly two applicable slots (Bat+Helmet for a batter,
+  Hat+Glove for the pitcher), one item per slot. Clicking an inventory item
+  selects it and shows every eligible player (batters for a Batter item,
+  just the pitcher for a Pitcher item) with a before/after comparison of
+  all four of their ratings, computed with the exact same
+  getBatterRatings()/getPitcherRatings() the engine uses for real games --
+  green if a stat improves, red if it drops, white if unchanged. Confirming
+  onto a player with something already in that slot asks first; the
+  replaced item (if any) goes back to inventory, never destroyed. Removing
+  an equipped item (the X) also just returns it to inventory, no
+  confirmation needed. Selling an inventory item removes it for good in
+  exchange for a small amount of Basebux (season.js's SELL_PRICES).
+  -----------------------------------------------------------------------------
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rngbaseball</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+    --good: #16a34a;
+    --bad: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  main { width: 100%; max-width: 720px; }
+  .back-row { margin-bottom: 1rem; }
+  .back-row a { color: var(--muted); font-size: 0.85rem; text-decoration: none; }
+  .back-row a:hover { text-decoration: underline; }
+  h1 { font-size: 1.4rem; margin: 0 0 0.1rem; }
+  .balance { color: var(--muted); margin-bottom: 1rem; font-size: 0.95rem; }
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+  }
+  h2.section { font-size: 1.05rem; margin: 0 0 0.5rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th, td { text-align: left; padding: 0.3rem 0.4rem; vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  .slot-empty { color: var(--muted); }
+  .slot-item { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+  .x-btn {
+    border: none;
+    background: none;
+    color: var(--bad);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 0 0.2rem;
+  }
+  #inventoryList { max-height: 30vh; overflow-y: auto; }
+  tr.inv-row { cursor: pointer; }
+  tr.inv-row:hover { background: var(--bg); }
+  tr.inv-row.selected { background: var(--bg); outline: 2px solid var(--accent); outline-offset: -2px; }
+  .rarity-Common { color: #71717a; }
+  .rarity-Uncommon { color: #16a34a; }
+  .rarity-Rare { color: #2563eb; }
+  .rarity-Epic { color: #9333ea; }
+  .rarity-Legendary { color: #d97706; }
+  .rarity-Mythical { color: #dc2626; }
+  button {
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(0.95); }
+  button.secondary { background: var(--panel); color: var(--text); border-color: var(--border); }
+  button.sell-btn { border-color: var(--bad); background: var(--bad); }
+  .equip-player-row {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .stat-lines { font-size: 0.8rem; }
+  .stat-line { padding: 0.05rem 0; }
+  .stat-up { color: var(--good); }
+  .stat-down { color: var(--bad); }
+  .stat-same { color: var(--muted); }
+  .equip-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --panel: #232326;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="back-row"><a href="season.html">&larr; Season</a></div>
+  <h1>Loadouts</h1>
+  <p class="balance" id="balance"></p>
+
+  <div class="panel">
+    <h2 class="section">Your Roster</h2>
+    <table>
+      <tr><th>Player</th><th>Pos</th><th>Slot 1</th><th>Slot 2</th></tr>
+      <tbody id="rosterBody"></tbody>
+    </table>
+  </div>
+
+  <div class="panel" id="equipPanel" style="display:none;"></div>
+
+  <div class="panel">
+    <h2 class="section">Inventory</h2>
+    <div id="inventoryList"></div>
+  </div>
+</main>
+
+<script src="engine.js"></script>
+<script src="season.js"></script>
+<script>
+  const save = getSave();
+  if (!save || !save.seasonInProgress) window.location.href = "index.html";
+
+  let yourTeam = null;
+  let selectedInstanceId = null;
+
+  async function load() {
+    const res = await fetch("../data/teams.json");
+    const data = await res.json();
+    yourTeam = data.teams.find(t => t.name === save.yourTeam);
+    ensureInstanceIds();
+    renderAll();
+  }
+
+  function ensureInstanceIds() {
+    const meta = getMeta();
+    let changed = false;
+    meta.inventory.forEach(item => {
+      if (!item._instanceId) { item._instanceId = makeInstanceId(); changed = true; }
+    });
+    if (changed) setMeta(meta);
+  }
+
+  function makeInstanceId() {
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+
+  function slotsForPosition(position) {
+    return position === "P" ? ["Hat", "Glove"] : ["Bat", "Helmet"];
+  }
+
+  function renderAll() {
+    renderBalance();
+    renderRoster();
+    renderInventory();
+    renderEquipPanel();
+  }
+
+  function renderBalance() {
+    document.getElementById("balance").textContent = `Basebux: ${getMeta().basebux}`;
+  }
+
+  function renderRoster() {
+    document.getElementById("rosterBody").innerHTML = yourTeam.lineup.map(p => {
+      const slots = slotsForPosition(p.position);
+      const gear = save.equippedGear[p.name] || {};
+      const slotCells = slots.map(slot => {
+        const item = gear[slot];
+        if (!item) return `<td class="slot-empty">${slot}: Empty</td>`;
+        return `<td><div class="slot-item">${slot}: ${escapeHtml(item.name)} (${escapeHtml(formatStats(item))})
+          <button class="x-btn" data-unequip-player="${escapeHtml(p.name)}" data-unequip-slot="${slot}" title="Remove">✕</button></div></td>`;
+      });
+      return `<tr><td>${escapeHtml(p.name)}</td><td>${p.position}</td>${slotCells.join("")}</tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-unequip-player]").forEach(btn => {
+      btn.addEventListener("click", () => unequip(btn.dataset.unequipPlayer, btn.dataset.unequipSlot));
+    });
+  }
+
+  function renderInventory() {
+    const meta = getMeta();
+    const inventoryList = document.getElementById("inventoryList");
+    if (meta.inventory.length === 0) {
+      inventoryList.innerHTML = `<p style="color:var(--muted); font-size:0.9rem;">No items yet -- visit the Store to pull some gear.</p>`;
+      return;
+    }
+    const rows = meta.inventory.slice().reverse();
+    inventoryList.innerHTML = `
+      <table>
+        <tr><th>Item</th><th>Type</th><th>Slot</th><th>Stat</th><th>Rarity</th><th></th></tr>
+        ${rows.map(item => `
+          <tr class="inv-row ${item._instanceId === selectedInstanceId ? "selected" : ""}" data-inv-id="${item._instanceId}">
+            <td>${escapeHtml(item.name)}</td>
+            <td>${escapeHtml(item.type)}</td>
+            <td>${escapeHtml(item.slot)}</td>
+            <td>${escapeHtml(formatStats(item))}</td>
+            <td class="rarity-${item.rarity}">${item.rarity}</td>
+            <td><button class="sell-btn" data-sell-id="${item._instanceId}">Sell (+${SELL_PRICES[item.rarity]})</button></td>
+          </tr>
+        `).join("")}
+      </table>
+    `;
+
+    inventoryList.querySelectorAll("tr.inv-row").forEach(row => {
+      row.addEventListener("click", (e) => {
+        if (e.target.closest("button")) return; // don't select when clicking Sell
+        const id = row.dataset.invId;
+        selectedInstanceId = selectedInstanceId === id ? null : id;
+        renderInventory();
+        renderEquipPanel();
+      });
+    });
+    inventoryList.querySelectorAll("[data-sell-id]").forEach(btn => {
+      btn.addEventListener("click", () => sellItem(btn.dataset.sellId));
+    });
+  }
+
+  function renderEquipPanel() {
+    const equipPanel = document.getElementById("equipPanel");
+    if (!selectedInstanceId) {
+      equipPanel.style.display = "none";
+      equipPanel.innerHTML = "";
+      return;
+    }
+    const meta = getMeta();
+    const item = meta.inventory.find(i => i._instanceId === selectedInstanceId);
+    if (!item) { selectedInstanceId = null; equipPanel.style.display = "none"; return; }
+
+    const eligible = item.type === "Pitcher"
+      ? yourTeam.lineup.filter(p => p.position === "P")
+      : yourTeam.lineup.filter(p => p.position !== "P");
+
+    equipPanel.style.display = "block";
+    equipPanel.innerHTML = `
+      <div class="equip-header">
+        <h2 class="section" style="margin:0;">Equip: ${escapeHtml(item.name)} (${escapeHtml(formatStats(item))}, <span class="rarity-${item.rarity}">${item.rarity}</span>)</h2>
+        <button class="secondary" id="cancelEquipBtn">Cancel</button>
+      </div>
+      ${eligible.map(p => renderEligiblePlayerRow(p, item)).join("")}
+    `;
+
+    document.getElementById("cancelEquipBtn").addEventListener("click", () => {
+      selectedInstanceId = null;
+      renderInventory();
+      renderEquipPanel();
+    });
+    equipPanel.querySelectorAll("[data-confirm-player]").forEach(btn => {
+      btn.addEventListener("click", () => confirmEquip(btn.dataset.confirmPlayer, item));
+    });
+  }
+
+  function renderEligiblePlayerRow(player, item) {
+    const isPitcher = player.position === "P";
+    const currentGear = save.equippedGear[player.name] || {};
+    const before = isPitcher ? getPitcherRatings({ gear: currentGear }) : getBatterRatings({ gear: currentGear });
+    const afterGear = { ...currentGear, [item.slot]: item };
+    const after = isPitcher ? getPitcherRatings({ gear: afterGear }) : getBatterRatings({ gear: afterGear });
+
+    const labels = isPitcher
+      ? [["stuff", "Stuff"], ["control", "Control"], ["contactSuppression", "Contact Suppression"], ["battedBallTendency", "Batted-Ball Tendency"]]
+      : [["contact", "Contact"], ["power", "Power"], ["discipline", "Discipline"], ["battedBallTendency", "Batted-Ball Tendency"]];
+
+    const statLines = labels.map(([key, label]) => {
+      const b = before[key], a = after[key];
+      const cls = a > b ? "stat-up" : a < b ? "stat-down" : "stat-same";
+      return `<div class="stat-line ${cls}">${label}: ${b} → ${a}</div>`;
+    }).join("");
+
+    return `
+      <div class="equip-player-row">
+        <div>
+          <div><strong>${escapeHtml(player.name)}</strong> (${player.position})</div>
+          <div class="stat-lines">${statLines}</div>
+        </div>
+        <button data-confirm-player="${escapeHtml(player.name)}">Confirm Equip</button>
+      </div>
+    `;
+  }
+
+  function confirmEquip(playerName, item) {
+    const currentGear = save.equippedGear[playerName] || {};
+    const existing = currentGear[item.slot];
+    if (existing) {
+      const ok = confirm(`Replace ${playerName}'s current ${item.slot} item (${existing.name}) with ${item.name}?`);
+      if (!ok) return;
+    }
+
+    const meta = getMeta();
+    const idx = meta.inventory.findIndex(i => i._instanceId === item._instanceId);
+    if (idx === -1) return;
+    meta.inventory.splice(idx, 1);
+    if (existing) meta.inventory.push(existing);
+    setMeta(meta);
+
+    if (!save.equippedGear[playerName]) save.equippedGear[playerName] = {};
+    save.equippedGear[playerName][item.slot] = item;
+    setSave(save);
+
+    selectedInstanceId = null;
+    renderAll();
+  }
+
+  function unequip(playerName, slot) {
+    const item = save.equippedGear[playerName][slot];
+    delete save.equippedGear[playerName][slot];
+    setSave(save);
+
+    const meta = getMeta();
+    meta.inventory.push(item);
+    setMeta(meta);
+
+    renderAll();
+  }
+
+  function sellItem(instanceId) {
+    const meta = getMeta();
+    const idx = meta.inventory.findIndex(i => i._instanceId === instanceId);
+    if (idx === -1) return;
+    const item = meta.inventory[idx];
+    meta.inventory.splice(idx, 1);
+    meta.basebux += SELL_PRICES[item.rarity];
+    setMeta(meta);
+
+    if (selectedInstanceId === instanceId) selectedInstanceId = null;
+    renderAll();
+  }
+
+  function formatStats(item) {
+    return item.stats.map(s => `${s.stat} ${s.value >= 0 ? "+" : ""}${s.value}`).join(", ");
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  load();
+</script>
+</body>
+</html>
