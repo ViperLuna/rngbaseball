@@ -225,13 +225,14 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
   const pitcherRatings = getPitcherRatings(pitcher);
 
   if (rollStrikeout(batterRatings, pitcherRatings)) {
-    return { type: "strikeout", bases, outsAdded: 1, runsScored: 0,
+    return { type: "strikeout", bases, outsAdded: 1, runsScored: 0, scorers: [],
       text: `${batter.name} strikes out.` };
   }
 
   if (rollWalk(batterRatings, pitcherRatings)) {
     const result = forceAdvance(bases, batter.name);
     return { type: "walk", bases: result.bases, outsAdded: 0, runsScored: result.runsScored,
+      scorers: result.scorers,
       text: `${batter.name} draws a walk.${scoringSuffix(result.scorers)}` };
   }
 
@@ -241,6 +242,7 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
     const result = advanceAllRunners(bases, batter.name, basesMap[hitType]);
     const labels = { single: "singles", double: "doubles", triple: "triples", home_run: "homers" };
     return { type: hitType, bases: result.bases, outsAdded: 0, runsScored: result.runsScored,
+      scorers: result.scorers,
       text: `${batter.name} ${labels[hitType]}.${scoringSuffix(result.scorers)}` };
   }
 
@@ -249,6 +251,7 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
   if (rollError()) {
     const result = forceAdvance(bases, batter.name);
     return { type: "error", bases: result.bases, outsAdded: 0, runsScored: result.runsScored,
+      scorers: result.scorers,
       text: `${batter.name} reaches on an error.${scoringSuffix(result.scorers)}` };
   }
 
@@ -258,12 +261,13 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
   if (shape === "flyout") {
     // Sac fly rule: runner on third, fewer than 2 outs, run scores automatically.
     if (bases[2] !== null && outs < 2) {
+      const scorer = bases[2];
       const newBases = [...bases];
       newBases[2] = null;
-      return { type: "sac_fly", bases: newBases, outsAdded: 1, runsScored: 1,
+      return { type: "sac_fly", bases: newBases, outsAdded: 1, runsScored: 1, scorers: [scorer],
         text: `${batter.name} hits a sac fly. The runner from third scores.` };
     }
-    return { type: "flyout", bases, outsAdded: 1, runsScored: 0,
+    return { type: "flyout", bases, outsAdded: 1, runsScored: 0, scorers: [],
       text: `${batter.name} flies out.` };
   }
 
@@ -288,6 +292,7 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
     const dpRuns = dpEndsInning ? 0 : forced.runsScored;
     const dpScorers = dpEndsInning ? [] : forced.scorers;
     return { type: "double_play", bases: dpBases, outsAdded: 2, runsScored: dpRuns,
+      scorers: dpScorers,
       text: `${batter.name} grounds into a double play${dpEndsInning ? " to end the inning." : "."}${scoringSuffix(dpScorers)}` };
   }
 
@@ -303,7 +308,73 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
     groundoutText = `${batter.name} grounds out, batter out at first.`;
   }
   return { type: "groundout", bases: forced.bases, outsAdded: 1, runsScored: groundoutRuns,
+    scorers: groundoutScorers,
     text: `${groundoutText}${scoringSuffix(groundoutScorers)}` };
+}
+
+// --- Per-player stat tracking ------------------------------------------------
+// Deliberately basic -- counting stats only, enough to derive AVG and ERA.
+// No earned-vs-unearned distinction (every run allowed counts against the
+// pitcher); that's a level of detail this game isn't trying to model.
+
+function newStatLine() {
+  return {
+    batting: { AB: 0, H: 0, doubles: 0, triples: 0, HR: 0, BB: 0, K: 0, R: 0 },
+    pitching: { outs: 0, H: 0, BB: 0, K: 0, R: 0 }
+  };
+}
+
+function ensurePlayer(stats, name) {
+  if (!stats[name]) stats[name] = newStatLine();
+  return stats[name];
+}
+
+const HIT_TYPES = { single: null, double: "doubles", triple: "triples", home_run: "HR" };
+
+// Updates the shared stats accumulator with the outcome of one plate
+// appearance. `battingCountsAsAtBat` follows official scoring: walks and
+// sac flies aren't at-bats, everything else (including reaching on an
+// error, which isn't a hit) is.
+function recordPlateAppearance(stats, batterName, pitcherName, result) {
+  const batting = ensurePlayer(stats, batterName).batting;
+  const pitching = ensurePlayer(stats, pitcherName).pitching;
+
+  pitching.outs += result.outsAdded;
+
+  if (result.type === "walk") {
+    batting.BB++;
+    pitching.BB++;
+  } else if (result.type === "strikeout") {
+    batting.AB++;
+    batting.K++;
+    pitching.K++;
+  } else if (result.type === "sac_fly") {
+    // not an at-bat, not a hit, just an out (and the run is handled below)
+  } else if (HIT_TYPES.hasOwnProperty(result.type)) {
+    batting.AB++;
+    batting.H++;
+    pitching.H++;
+    const extraBaseField = HIT_TYPES[result.type];
+    if (extraBaseField) batting[extraBaseField]++;
+  } else {
+    // error, groundout, flyout, double_play -- an at-bat, not a hit
+    batting.AB++;
+  }
+
+  if (result.scorers && result.scorers.length > 0) {
+    for (const name of result.scorers) {
+      ensurePlayer(stats, name).batting.R++;
+    }
+    pitching.R += result.scorers.length;
+  }
+}
+
+function battingAverage(line) {
+  return line.AB > 0 ? line.H / line.AB : 0;
+}
+function era(line) {
+  const ip = line.outs / 3;
+  return ip > 0 ? (line.R * 9) / ip : 0;
 }
 
 // --- Half-inning / full game simulation -------------------------------------
@@ -312,7 +383,7 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
 // score this half-inning to take the lead." The instant they reach it, the
 // half-inning (and the game) ends immediately -- no need to finish the 3
 // outs. Only relevant for the home team batting in the 9th or later.
-function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget) {
+function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, stats) {
   let outs = 0;
   let bases = emptyBases();
   let runs = 0;
@@ -325,6 +396,7 @@ function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget) {
     runs += result.runsScored;
     bases = result.bases;
     log.push(result.text);
+    recordPlateAppearance(stats, batter.name, pitcher.name, result);
     lineupState.index = (lineupState.index + 1) % battingTeam.lineup.length;
 
     if (walkOffTarget !== null && runs >= walkOffTarget) {
@@ -345,6 +417,9 @@ function simulateGame(teamA, teamB) {
   const lineupStateB = { index: 0 };
   const pitcherA = findPitcher(teamA);
   const pitcherB = findPitcher(teamB);
+  const stats = {};
+  teamA.lineup.forEach(p => ensurePlayer(stats, p.name));
+  teamB.lineup.forEach(p => ensurePlayer(stats, p.name));
 
   const innings = [];
   let scoreA = 0;
@@ -352,7 +427,7 @@ function simulateGame(teamA, teamB) {
   let inning = 1;
 
   while (true) {
-    const top = simulateHalfInning(teamA, pitcherB, lineupStateA, null);
+    const top = simulateHalfInning(teamA, pitcherB, lineupStateA, null, stats);
     scoreA += top.runs;
 
     // From the 9th inning on, the home team doesn't bat at all if they're
@@ -361,7 +436,7 @@ function simulateGame(teamA, teamB) {
     let bottom = { runs: 0, log: ["(not needed -- game already decided)"] };
     if (!homeAlreadyWinning) {
       const walkOffTarget = inning >= 9 ? (scoreA - scoreB) + 1 : null;
-      bottom = simulateHalfInning(teamB, pitcherA, lineupStateB, walkOffTarget);
+      bottom = simulateHalfInning(teamB, pitcherA, lineupStateB, walkOffTarget, stats);
       scoreB += bottom.runs;
     }
 
@@ -379,6 +454,7 @@ function simulateGame(teamA, teamB) {
     scoreA,
     scoreB,
     innings,
-    winner: scoreA > scoreB ? teamA.name : teamB.name
+    winner: scoreA > scoreB ? teamA.name : teamB.name,
+    stats
   };
 }
