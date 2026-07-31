@@ -106,6 +106,7 @@
   <div class="back-row"><a href="index.html">&larr; Main Menu</a></div>
   <h1 id="pageTitle">rngbaseball</h1>
   <p class="subhead" id="pageSubhead"></p>
+  <p class="subhead" id="basebuxLine"></p>
 
   <div id="banner"></div>
 
@@ -151,6 +152,7 @@
   function render() {
     document.getElementById("pageTitle").textContent = `${save.league} League`;
     document.getElementById("pageSubhead").textContent = `Playing as ${save.yourTeam}`;
+    document.getElementById("basebuxLine").textContent = `Basebux: ${getMeta().basebux}`;
 
     renderStandings();
     renderHistory();
