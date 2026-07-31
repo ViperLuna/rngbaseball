@@ -1,11 +1,12 @@
 <!--
   team-select.html
   -----------------------------------------------------------------------------
-  Reached via "Start Season" on the main menu (index.html). Pick which of the
-  30 teams you'll play as for the season. Clicking a team previews its full
-  roster; Submit generates the season's round-robin schedule (schedule.js),
-  saves it to localStorage, and returns to the main menu (which now shows
-  "Continue Season"). Back to Menu leaves without creating anything.
+  Reached via league-select.html, which stashes the chosen league in
+  sessionStorage before sending the player here. Pick which of the 30 teams
+  you'll play as for the season. Clicking a team previews its full roster;
+  Submit builds the full season save (schedule, standings, season stats,
+  history -- see season.js's initializeSeason) and goes straight to the
+  season hub (season.html). Back to Menu leaves without creating anything.
   -----------------------------------------------------------------------------
 -->
 <!doctype html>
@@ -135,10 +136,11 @@
 </main>
 
 <script src="schedule.js"></script>
+<script src="season.js"></script>
 <script>
-  const SAVE_KEY = "rngbaseball_save";
-  function setSave(data) {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  const pendingLeague = sessionStorage.getItem("rngbaseball_pending_league");
+  if (!pendingLeague) {
+    window.location.href = "league-select.html";
   }
 
   let teams = [];
@@ -184,9 +186,9 @@
     if (selectedIndex === null) return;
     const yourTeam = teams[selectedIndex].name;
     const teamNames = teams.map(t => t.name);
-    const schedule = generateSeasonSchedule(teamNames);
-    setSave({ seasonInProgress: true, yourTeam, schedule, currentRound: 0 });
-    window.location.href = "index.html";
+    setSave(initializeSeason(pendingLeague, yourTeam, teamNames));
+    sessionStorage.removeItem("rngbaseball_pending_league");
+    window.location.href = "season.html";
   });
 
   function escapeHtml(str) {

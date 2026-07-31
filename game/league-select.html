@@ -1,0 +1,135 @@
+<!--
+  league-select.html
+  -----------------------------------------------------------------------------
+  Reached via "Start Season" on the main menu. Lists the full league ladder
+  (Rookie -> A -> AA -> AAA -> Majors -> Elite). Unlocked leagues are
+  clickable and go on to team-select.html; locked ones show which league
+  needs to be won first. Which league was picked is stashed in
+  sessionStorage (not a persistent save -- it's just handed off to
+  team-select.html to build the season with) until Submit actually creates
+  the season there.
+  -----------------------------------------------------------------------------
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rngbaseball</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  main { width: 100%; max-width: 480px; }
+  h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+  p.hint { color: var(--muted); margin-top: 0; margin-bottom: 1rem; font-size: 0.9rem; }
+  #leagueList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .league-card {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    text-align: left;
+  }
+  .league-card.unlocked {
+    cursor: pointer;
+    border-color: var(--accent);
+  }
+  .league-card.unlocked:hover { filter: brightness(0.95); }
+  .league-card.locked { color: var(--muted); }
+  .league-name { font-weight: 700; font-size: 1.05rem; }
+  .league-status { font-size: 0.85rem; margin-top: 0.15rem; }
+  .league-card.locked .league-name { color: var(--muted); }
+  button {
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(0.95); }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --panel: #232326;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Select League</h1>
+  <p class="hint">Win a league's championship to unlock the next one up.</p>
+
+  <div id="leagueList"></div>
+
+  <button id="backBtn" type="button">Back to Menu</button>
+</main>
+
+<script src="season.js"></script>
+<script>
+  const leagueList = document.getElementById("leagueList");
+  const backBtn = document.getElementById("backBtn");
+  const meta = getMeta();
+
+  leagueList.innerHTML = LEAGUES.map((league, idx) => {
+    const unlocked = meta.unlockedLeagues.includes(league);
+    if (unlocked) {
+      return `
+        <div class="league-card unlocked" data-league="${escapeHtml(league)}">
+          <div class="league-name">${escapeHtml(league)}</div>
+          <div class="league-status">Unlocked</div>
+        </div>`;
+    }
+    const prev = LEAGUES[idx - 1];
+    return `
+      <div class="league-card locked">
+        <div class="league-name">${escapeHtml(league)}</div>
+        <div class="league-status">🔒 Locked — win ${escapeHtml(prev)} to unlock.</div>
+      </div>`;
+  }).join("");
+
+  leagueList.querySelectorAll(".league-card.unlocked").forEach(card => {
+    card.addEventListener("click", () => {
+      sessionStorage.setItem("rngbaseball_pending_league", card.dataset.league);
+      window.location.href = "team-select.html";
+    });
+  });
+
+  backBtn.addEventListener("click", () => {
+    window.location.href = "index.html";
+  });
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+</script>
+</body>
+</html>

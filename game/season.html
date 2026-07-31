@@ -1,0 +1,324 @@
+<!--
+  season.html
+  -----------------------------------------------------------------------------
+  The season hub -- reached via "Continue Season" on the main menu, or right
+  after creating a season in team-select.html. Shows the league, standings
+  (click a team to see its roster + season stats on team-stats.html), and
+  the full game history so far (click a game for its box score + full
+  play-by-play on box-score.html).
+
+  "Play Next Game" simulates an ENTIRE round (all 15 games) instantly and
+  records every result into standings/season stats/history right here --
+  the games are all fully decided the moment this runs. It then hands off
+  just the player's own game to season-game.html purely to animate a paced
+  reveal of a result that's already been recorded; season-game.html itself
+  never mutates the season save.
+
+  Once the regular season (all 29 rounds) is done, this page determines the
+  top two teams and either offers a championship game (if the player
+  qualified) or reports the season as complete. Winning the championship
+  unlocks the next league in the meta-save (season.js's getMeta/setMeta).
+  -----------------------------------------------------------------------------
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rngbaseball</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+    --good: #16a34a;
+    --bad: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  main { width: 100%; max-width: 720px; }
+  .back-row { margin-bottom: 1rem; }
+  .back-row a { color: var(--muted); font-size: 0.85rem; text-decoration: none; }
+  .back-row a:hover { text-decoration: underline; }
+  h1 { font-size: 1.4rem; margin: 0 0 0.1rem; }
+  p.subhead { color: var(--muted); margin: 0 0 1rem; font-size: 0.9rem; }
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+  }
+  .banner {
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .banner.win { background: var(--good); color: #fff; }
+  .banner.lose { background: var(--bad); color: #fff; }
+  .action-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  button {
+    padding: 0.65rem 1.1rem;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(0.95); }
+  button.secondary { background: var(--panel); color: var(--text); border-color: var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.3rem 0.5rem; }
+  th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  tr.your-team { font-weight: 700; }
+  td.clickable, tr.clickable td { cursor: pointer; }
+  tr.clickable:hover { background: var(--bg); }
+  .num { text-align: right; }
+  #historyList { max-height: 30vh; overflow-y: auto; }
+  h2 { font-size: 1.05rem; margin: 0 0 0.5rem; }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --panel: #232326;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="back-row"><a href="index.html">&larr; Main Menu</a></div>
+  <h1 id="pageTitle">rngbaseball</h1>
+  <p class="subhead" id="pageSubhead"></p>
+
+  <div id="banner"></div>
+
+  <div class="action-row" id="actionRow"></div>
+
+  <div class="panel">
+    <h2>Standings</h2>
+    <table>
+      <tr><th>Team</th><th class="num">W</th><th class="num">L</th><th class="num">Diff</th></tr>
+      <tbody id="standingsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Game History</h2>
+    <div id="historyList"></div>
+  </div>
+</main>
+
+<script src="engine.js"></script>
+<script src="season.js"></script>
+<script>
+  let save = getSave();
+  if (!save || !save.seasonInProgress) {
+    window.location.href = "index.html";
+  }
+
+  let teamsByName = {};
+
+  async function loadTeams() {
+    const res = await fetch("../data/teams.json");
+    const data = await res.json();
+    data.teams.forEach(t => teamsByName[t.name] = t);
+    render();
+  }
+
+  function sortedStandings() {
+    return Object.entries(save.standings)
+      .map(([name, rec]) => ({ name, ...rec, diff: rec.runsFor - rec.runsAgainst }))
+      .sort((a, b) => b.wins - a.wins || b.diff - a.diff || a.name.localeCompare(b.name));
+  }
+
+  function render() {
+    document.getElementById("pageTitle").textContent = `${save.league} League`;
+    document.getElementById("pageSubhead").textContent = `Playing as ${save.yourTeam}`;
+
+    renderStandings();
+    renderHistory();
+    renderActions();
+  }
+
+  function renderStandings() {
+    const rows = sortedStandings();
+    document.getElementById("standingsBody").innerHTML = rows.map(r => `
+      <tr class="clickable ${r.name === save.yourTeam ? "your-team" : ""}" data-team="${escapeHtml(r.name)}">
+        <td>${escapeHtml(r.name)}</td>
+        <td class="num">${r.wins}</td>
+        <td class="num">${r.losses}</td>
+        <td class="num">${r.diff > 0 ? "+" : ""}${r.diff}</td>
+      </tr>
+    `).join("");
+    document.querySelectorAll("#standingsBody tr").forEach(row => {
+      row.addEventListener("click", () => {
+        window.location.href = `team-stats.html?team=${encodeURIComponent(row.dataset.team)}`;
+      });
+    });
+  }
+
+  function renderHistory() {
+    const historyList = document.getElementById("historyList");
+    if (save.gameHistory.length === 0) {
+      historyList.innerHTML = `<p style="color:var(--muted); font-size:0.9rem;">No games played yet.</p>`;
+      return;
+    }
+    const rows = save.gameHistory.map((g, idx) => ({ g, idx })).reverse();
+    historyList.innerHTML = `
+      <table>
+        <tr><th>Round</th><th>Matchup</th><th class="num">Score</th></tr>
+        ${rows.map(({ g, idx }) => `
+          <tr class="clickable" data-idx="${idx}">
+            <td>${g.round === "Championship" ? "Championship" : g.round + 1}</td>
+            <td>${escapeHtml(g.away)} @ ${escapeHtml(g.home)}</td>
+            <td class="num">${g.scoreAway}-${g.scoreHome}</td>
+          </tr>
+        `).join("")}
+      </table>
+    `;
+    historyList.querySelectorAll("tr[data-idx]").forEach(row => {
+      row.addEventListener("click", () => {
+        window.location.href = `box-score.html?index=${row.dataset.idx}`;
+      });
+    });
+  }
+
+  function renderActions() {
+    const actionRow = document.getElementById("actionRow");
+    const banner = document.getElementById("banner");
+    banner.innerHTML = "";
+    actionRow.innerHTML = "";
+
+    const seasonDone = save.currentRound >= save.schedule.length;
+
+    if (!seasonDone) {
+      const nextRound = save.schedule[save.currentRound];
+      const yourGame = nextRound.find(g => g.home === save.yourTeam || g.away === save.yourTeam);
+      const isHome = yourGame.home === save.yourTeam;
+      const opponent = isHome ? yourGame.away : yourGame.home;
+      const label = `Play Next Game — ${isHome ? "vs" : "@"} ${opponent}`;
+      addButton(label, playNextGame);
+      addButton("Store", () => window.location.href = "store.html", true);
+      return;
+    }
+
+    // Regular season is over -- figure out the championship situation.
+    if (!save.playoff) {
+      const topTwo = determineTopTwo(save.standings);
+      const yourTeamQualified = topTwo.includes(save.yourTeam);
+      save.playoff = { topTwo, yourTeamQualified, completed: false, wonLeague: null };
+      setSave(save);
+    }
+
+    if (save.playoff.completed) {
+      if (save.playoff.wonLeague) {
+        const unlocked = nextLeague(save.league);
+        banner.innerHTML = `<div class="banner win">Champions! ${unlocked ? unlocked + " league unlocked." : "You've conquered every league!"}</div>`;
+      } else {
+        banner.innerHTML = `<div class="banner lose">Season complete. Lost the championship.</div>`;
+      }
+    } else if (save.playoff.yourTeamQualified) {
+      const opponent = save.playoff.topTwo.find(t => t !== save.yourTeam);
+      addButton(`Play Championship — vs ${opponent}`, playChampionship);
+    } else {
+      banner.innerHTML = `<div class="banner lose">Season complete. Didn't qualify for the championship (top two: ${escapeHtml(save.playoff.topTwo.join(", "))}).</div>`;
+    }
+    addButton("Store", () => window.location.href = "store.html", true);
+  }
+
+  function addButton(label, onClick, secondary) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = label;
+    if (secondary) btn.className = "secondary";
+    btn.addEventListener("click", onClick);
+    document.getElementById("actionRow").appendChild(btn);
+  }
+
+  function playNextGame() {
+    const results = simulateRound(save.schedule, save.currentRound, teamsByName);
+    let yourGameEntry = null, yourAwayName = null, yourHomeName = null;
+
+    results.forEach(({ historyEntry, rawResult, away, home }) => {
+      applyGameToStandings(save.standings, historyEntry);
+      mergeGameStatsIntoSeason(save.seasonStats, rawResult.stats);
+      save.gameHistory.push(historyEntry);
+      if (home === save.yourTeam || away === save.yourTeam) {
+        yourGameEntry = historyEntry;
+        yourAwayName = away;
+        yourHomeName = home;
+      }
+    });
+
+    save.currentRound++;
+    setSave(save);
+
+    sessionStorage.setItem("rngbaseball_reveal_game", JSON.stringify({
+      historyEntry: yourGameEntry, teamA: yourAwayName, teamB: yourHomeName
+    }));
+    window.location.href = "season-game.html";
+  }
+
+  function playChampionship() {
+    const [seed1, seed2] = save.playoff.topTwo;
+    // Home field goes to whichever of the two had the better regular-season record.
+    const homeName = save.standings[seed1].wins >= save.standings[seed2].wins ? seed1 : seed2;
+    const awayName = homeName === seed1 ? seed2 : seed1;
+    const homeTeam = teamsByName[homeName];
+    const awayTeam = teamsByName[awayName];
+
+    const rawResult = simulateGame(awayTeam, homeTeam);
+    const historyEntry = buildGameHistoryEntry("Championship", rawResult, awayTeam, homeTeam);
+    save.gameHistory.push(historyEntry);
+    mergeGameStatsIntoSeason(save.seasonStats, rawResult.stats);
+
+    const wonLeague = historyEntry.winner === save.yourTeam;
+    save.playoff.completed = true;
+    save.playoff.wonLeague = wonLeague;
+    setSave(save);
+
+    let bannerText;
+    if (wonLeague) {
+      const meta = getMeta();
+      const next = nextLeague(save.league);
+      if (next && !meta.unlockedLeagues.includes(next)) meta.unlockedLeagues.push(next);
+      if (next) meta.currentLeague = next;
+      setMeta(meta);
+      bannerText = `Champions! ${next ? next + " league unlocked!" : "You've conquered every league!"}`;
+    } else {
+      bannerText = `Championship lost. ${historyEntry.winner} takes the title.`;
+    }
+
+    sessionStorage.setItem("rngbaseball_reveal_game", JSON.stringify({
+      historyEntry, teamA: awayName, teamB: homeName, bannerText
+    }));
+    window.location.href = "season-game.html";
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  loadTeams();
+</script>
+</body>
+</html>

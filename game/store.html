@@ -1,0 +1,68 @@
+<!--
+  store.html
+  -----------------------------------------------------------------------------
+  Placeholder for the gacha/item store. Reached from the "Store" button on
+  season.html. Just a stub for now -- the currency economy and crate odds
+  haven't been built yet.
+  -----------------------------------------------------------------------------
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rngbaseball</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+  main { width: 100%; max-width: 360px; }
+  h1 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+  p { color: var(--muted); margin-bottom: 1.5rem; }
+  a {
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    text-decoration: none;
+  }
+  a:hover { filter: brightness(0.95); }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --panel: #232326;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Store</h1>
+  <p>Coming soon.</p>
+  <a href="season.html">&larr; Back to Season</a>
+</main>
+</body>
+</html>

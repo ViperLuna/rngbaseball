@@ -1,0 +1,218 @@
+<!--
+  box-score.html
+  -----------------------------------------------------------------------------
+  Reached by clicking a game in the history list on season.html. Shows one
+  completed game in full: the line score (R/H/E), both pitchers' stats for
+  that game, and the entire play-by-play, all rendered instantly (this is
+  reviewing an already-decided game, not watching a new one, so there's no
+  paced reveal here -- see season-game.html for that). Which game to show
+  comes from the ?index= query string, an index into the current season
+  save's gameHistory array.
+  -----------------------------------------------------------------------------
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rngbaseball</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  main { width: 100%; max-width: 640px; }
+  .back-row { margin-bottom: 1rem; }
+  .back-row a { color: var(--muted); font-size: 0.85rem; text-decoration: none; }
+  .back-row a:hover { text-decoration: underline; }
+  h1 { font-size: 1.4rem; margin-bottom: 1rem; }
+  #boxScore {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+  }
+  table.box-score-table { border-collapse: collapse; font-size: 0.85rem; white-space: nowrap; }
+  table.box-score-table th, table.box-score-table td { text-align: center; padding: 0.2rem 0.5rem; }
+  table.box-score-table td:first-child, table.box-score-table th:first-child { text-align: left; }
+  table.box-score-table th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  table.box-score-table td.totals { font-weight: 700; border-left: 1px solid var(--border); }
+  #statsPane { border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; background: var(--panel); margin-bottom: 1rem; }
+  .stats-team-header { font-weight: 700; margin-top: 0.9rem; color: var(--accent); }
+  .stats-team-header:first-child { margin-top: 0; }
+  table.stats-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.3rem; }
+  table.stats-table th, table.stats-table td { text-align: left; padding: 0.2rem 0.4rem; }
+  table.stats-table th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  #playLog {
+    height: 40vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+  }
+  .inning-header { font-weight: 700; margin-top: 0.9rem; color: var(--accent); }
+  .inning-header:first-child { margin-top: 0; }
+  .play-line { font-size: 0.9rem; padding: 0.15rem 0; color: var(--text); }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --panel: #232326;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="back-row"><a href="season.html">&larr; Season</a></div>
+  <h1 id="title"></h1>
+  <div id="boxScore"></div>
+  <div id="statsPane"></div>
+  <div id="playLog"></div>
+</main>
+
+<script src="engine.js"></script>
+<script src="season.js"></script>
+<script>
+  const save = getSave();
+  if (!save || !save.seasonInProgress) window.location.href = "index.html";
+
+  const params = new URLSearchParams(window.location.search);
+  const idx = Number(params.get("index"));
+  const historyEntry = save.gameHistory[idx];
+  if (!historyEntry) window.location.href = "season.html";
+
+  const awayName = historyEntry.away, homeName = historyEntry.home;
+  const maxInning = Math.max(...historyEntry.plays.map(p => p.inning));
+
+  async function load() {
+    const res = await fetch("../data/teams.json");
+    const data = await res.json();
+    const awayTeam = data.teams.find(t => t.name === awayName);
+    const homeTeam = data.teams.find(t => t.name === homeName);
+
+    document.title = `rngbaseball — ${awayName} @ ${homeName}`;
+    document.getElementById("title").textContent =
+      (historyEntry.round === "Championship" ? "Championship: " : `Round ${historyEntry.round + 1}: `) +
+      `${awayName} @ ${homeName}`;
+
+    renderBoxScore(awayTeam, homeTeam);
+    renderStats(awayTeam, homeTeam);
+    renderPlays();
+  }
+
+  function inningRunsFromPlays() {
+    const inningRuns = {};
+    let halfStartA = 0, halfStartB = 0, prevScoreA = 0, prevScoreB = 0;
+    let lastHalf = null, lastInning = null;
+    historyEntry.plays.forEach(play => {
+      if (play.half !== lastHalf || play.inning !== lastInning) {
+        halfStartA = prevScoreA;
+        halfStartB = prevScoreB;
+        lastHalf = play.half;
+        lastInning = play.inning;
+      }
+      const key = `${play.half}-${play.inning}`;
+      inningRuns[key] = play.half === "top" ? play.scoreA - halfStartA : play.scoreB - halfStartB;
+      prevScoreA = play.scoreA;
+      prevScoreB = play.scoreB;
+    });
+    return inningRuns;
+  }
+
+  function renderBoxScore(awayTeam, homeTeam) {
+    const inningRuns = inningRunsFromPlays();
+    const cell = (half, inning) => {
+      const value = inningRuns[`${half}-${inning}`];
+      return value !== undefined ? value : "-";
+    };
+    const awayHits = awayTeam.lineup.reduce((sum, p) => sum + historyEntry.stats[p.name].batting.H, 0);
+    const homeHits = homeTeam.lineup.reduce((sum, p) => sum + historyEntry.stats[p.name].batting.H, 0);
+    document.getElementById("boxScore").innerHTML = `
+      <table class="box-score-table">
+        <tr><th>Team</th>${range(1, maxInning).map(i => `<th>${i}</th>`).join("")}<th class="totals">R</th><th class="totals">H</th><th class="totals">E</th></tr>
+        <tr><td>${escapeHtml(awayName)}</td>${range(1, maxInning).map(i => `<td>${cell("top", i)}</td>`).join("")}<td class="totals">${historyEntry.scoreAway}</td><td class="totals">${awayHits}</td><td class="totals">${historyEntry.errors.away}</td></tr>
+        <tr><td>${escapeHtml(homeName)}</td>${range(1, maxInning).map(i => `<td>${cell("bottom", i)}</td>`).join("")}<td class="totals">${historyEntry.scoreHome}</td><td class="totals">${homeHits}</td><td class="totals">${historyEntry.errors.home}</td></tr>
+      </table>
+    `;
+  }
+
+  function renderStats(awayTeam, homeTeam) {
+    document.getElementById("statsPane").innerHTML = [awayTeam, homeTeam].map(team => `
+      <div class="stats-team-header">${escapeHtml(team.name)}</div>
+      <table class="stats-table">
+        <tr><th>Player</th><th>Pos</th><th>AB</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>BB</th><th>K</th><th>R</th><th>AVG</th></tr>
+        ${team.lineup.map(p => {
+          const line = historyEntry.stats[p.name].batting;
+          return `<tr>
+            <td>${escapeHtml(p.name)}</td><td>${p.position}</td>
+            <td>${line.AB}</td><td>${line.H}</td><td>${line.doubles}</td><td>${line.triples}</td><td>${line.HR}</td>
+            <td>${line.BB}</td><td>${line.K}</td><td>${line.R}</td><td>${battingAverage(line).toFixed(3)}</td>
+          </tr>`;
+        }).join("")}
+      </table>
+      <table class="stats-table">
+        <tr><th>Pitcher</th><th>IP</th><th>H</th><th>BB</th><th>K</th><th>R</th><th>ERA</th></tr>
+        ${(() => {
+          const p = findPitcher(team);
+          const line = historyEntry.stats[p.name].pitching;
+          return `<tr>
+            <td>${escapeHtml(p.name)}</td><td>${(line.outs / 3).toFixed(1)}</td>
+            <td>${line.H}</td><td>${line.BB}</td><td>${line.K}</td><td>${line.R}</td><td>${era(line).toFixed(2)}</td>
+          </tr>`;
+        })()}
+      </table>
+    `).join("");
+  }
+
+  function renderPlays() {
+    let lastHalf = null, lastInning = null;
+    let html = "";
+    historyEntry.plays.forEach(play => {
+      if (play.half !== lastHalf || play.inning !== lastInning) {
+        lastHalf = play.half;
+        lastInning = play.inning;
+        const label = `${play.half === "top" ? "Top" : "Bottom"} ${play.inning} — ${play.half === "top" ? awayName : homeName}`;
+        html += `<div class="inning-header">${escapeHtml(label)}</div>`;
+      }
+      html += `<div class="play-line">${escapeHtml(play.text)}</div>`;
+    });
+    html += `<div class="inning-header">Final: ${escapeHtml(awayName)} ${historyEntry.scoreAway}, ${escapeHtml(homeName)} ${historyEntry.scoreHome} — ${escapeHtml(historyEntry.winner)} wins</div>`;
+    document.getElementById("playLog").innerHTML = html;
+  }
+
+  function range(start, end) {
+    const out = [];
+    for (let i = start; i <= end; i++) out.push(i);
+    return out;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  load();
+</script>
+</body>
+</html>

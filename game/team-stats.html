@@ -1,0 +1,124 @@
+<!--
+  team-stats.html
+  -----------------------------------------------------------------------------
+  Reached by clicking a team in the standings on season.html. Shows that
+  team's roster with season-to-date cumulative stats per player (from the
+  current season save's seasonStats -- see season.js's mergeGameStatsIntoSeason),
+  not just a single game's line. Which team to show comes from the ?team=
+  query string.
+  -----------------------------------------------------------------------------
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rngbaseball</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  main { width: 100%; max-width: 640px; }
+  .back-row { margin-bottom: 1rem; }
+  .back-row a { color: var(--muted); font-size: 0.85rem; text-decoration: none; }
+  .back-row a:hover { text-decoration: underline; }
+  h1 { font-size: 1.4rem; margin-bottom: 1rem; }
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th, td { text-align: left; padding: 0.25rem 0.4rem; }
+  th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --panel: #232326;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="back-row"><a href="season.html">&larr; Season</a></div>
+  <h1 id="title"></h1>
+  <div class="panel">
+    <table>
+      <tr><th>Player</th><th>Pos</th><th>AB</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>BB</th><th>K</th><th>R</th><th>AVG</th></tr>
+      <tbody id="battingBody"></tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <table>
+      <tr><th>Pitcher</th><th>IP</th><th>H</th><th>BB</th><th>K</th><th>R</th><th>ERA</th></tr>
+      <tbody id="pitchingBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<script src="engine.js"></script>
+<script src="season.js"></script>
+<script>
+  const save = getSave();
+  if (!save || !save.seasonInProgress) window.location.href = "index.html";
+
+  const params = new URLSearchParams(window.location.search);
+  const teamName = params.get("team");
+
+  async function load() {
+    const res = await fetch("../data/teams.json");
+    const data = await res.json();
+    const team = data.teams.find(t => t.name === teamName);
+    if (!team) { window.location.href = "season.html"; return; }
+
+    document.title = `rngbaseball — ${team.name}`;
+    document.getElementById("title").textContent = `${team.name}${team.name === save.yourTeam ? " (Your Team)" : ""}`;
+
+    document.getElementById("battingBody").innerHTML = team.lineup.map(p => {
+      const line = (save.seasonStats[p.name] || newStatLine()).batting;
+      return `<tr>
+        <td>${escapeHtml(p.name)}</td><td>${p.position}</td>
+        <td>${line.AB}</td><td>${line.H}</td><td>${line.doubles}</td><td>${line.triples}</td><td>${line.HR}</td>
+        <td>${line.BB}</td><td>${line.K}</td><td>${line.R}</td><td>${battingAverage(line).toFixed(3)}</td>
+      </tr>`;
+    }).join("");
+
+    const pitcher = findPitcher(team);
+    const pline = (save.seasonStats[pitcher.name] || newStatLine()).pitching;
+    document.getElementById("pitchingBody").innerHTML = `<tr>
+      <td>${escapeHtml(pitcher.name)}</td><td>${(pline.outs / 3).toFixed(1)}</td>
+      <td>${pline.H}</td><td>${pline.BB}</td><td>${pline.K}</td><td>${pline.R}</td><td>${era(pline).toFixed(2)}</td>
+    </tr>`;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  load();
+</script>
+</body>
+</html>
