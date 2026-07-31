@@ -1,0 +1,231 @@
+<!--
+  leaders.html
+  -----------------------------------------------------------------------------
+  League-wide batting and pitching leaders for the current season, built
+  from the season save's seasonStats (cumulative across every team, not
+  just yours -- same source team-stats.html reads). Batting includes every
+  player in every lineup (pitchers included, since there's no DH here and
+  they really do bat); Pitching is just the one designated pitcher per team.
+
+  Every column header is clickable to sort by it; clicking the currently-
+  active header again reverses direction. Defaults to AVG (descending) for
+  batting and ERA (ascending -- lower is better) for pitching, matching
+  real box-score conventions. Every other numeric column defaults to
+  descending on first click; name/team/pos default to A-Z. Rows for the
+  player's own team are bolded and colored to stand out from the rest of
+  the league.
+  -----------------------------------------------------------------------------
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rngbaseball</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f4f5;
+    --panel: #ffffff;
+    --border: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+    --your-team: #d97706;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  main { width: 100%; max-width: 720px; }
+  .back-row { margin-bottom: 1rem; }
+  .back-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .back-btn:hover { filter: brightness(0.95); }
+  h1 { font-size: 1.4rem; margin-bottom: 1rem; }
+  h2.section { font-size: 1.05rem; margin: 0 0 0.5rem; }
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+  }
+  .table-scroll { max-height: 55vh; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; white-space: nowrap; }
+  th, td { text-align: left; padding: 0.3rem 0.5rem; }
+  th {
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    position: sticky;
+    top: 0;
+    background: var(--panel);
+    user-select: none;
+  }
+  th:hover { color: var(--text); }
+  th.active-sort { color: var(--accent); }
+  tr.your-team td { font-weight: 700; color: var(--your-team); }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --panel: #232326;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --your-team: #fbbf24;
+    }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="back-row"><button type="button" class="back-btn" onclick="window.location.href='season.html'">&larr; Season</button></div>
+  <h1>League Leaders</h1>
+
+  <div class="panel">
+    <h2 class="section">Batting</h2>
+    <div class="table-scroll"><table id="battingTable"></table></div>
+  </div>
+
+  <div class="panel">
+    <h2 class="section">Pitching</h2>
+    <div class="table-scroll"><table id="pitchingTable"></table></div>
+  </div>
+</main>
+
+<script src="engine.js"></script>
+<script src="season.js"></script>
+<script>
+  const save = getSave();
+  if (!save || !save.seasonInProgress) window.location.href = "index.html";
+
+  const STRING_KEYS = new Set(["name", "team", "pos"]);
+
+  const BATTING_COLUMNS = [
+    { key: "name", label: "Player" },
+    { key: "team", label: "Team" },
+    { key: "pos", label: "Pos" },
+    { key: "AB", label: "AB" },
+    { key: "H", label: "H" },
+    { key: "doubles", label: "2B" },
+    { key: "triples", label: "3B" },
+    { key: "HR", label: "HR" },
+    { key: "BB", label: "BB" },
+    { key: "K", label: "K" },
+    { key: "R", label: "R" },
+    { key: "AVG", label: "AVG" }
+  ];
+  const PITCHING_COLUMNS = [
+    { key: "name", label: "Pitcher" },
+    { key: "team", label: "Team" },
+    { key: "IP", label: "IP" },
+    { key: "H", label: "H" },
+    { key: "BB", label: "BB" },
+    { key: "K", label: "K" },
+    { key: "R", label: "R" },
+    { key: "ERA", label: "ERA" }
+  ];
+
+  let battingRows = [], pitchingRows = [];
+  const battingState = { key: "AVG", dir: "desc" };
+  const pitchingState = { key: "ERA", dir: "asc" };
+
+  async function load() {
+    const res = await fetch("../data/teams.json");
+    const data = await res.json();
+
+    data.teams.forEach(team => {
+      team.lineup.forEach(p => {
+        const line = (save.seasonStats[p.name] || newStatLine()).batting;
+        battingRows.push({
+          name: p.name, team: team.name, pos: p.position,
+          AB: line.AB, H: line.H, doubles: line.doubles, triples: line.triples,
+          HR: line.HR, BB: line.BB, K: line.K, R: line.R, AVG: battingAverage(line)
+        });
+      });
+      const pitcher = findPitcher(team);
+      const pline = (save.seasonStats[pitcher.name] || newStatLine()).pitching;
+      pitchingRows.push({
+        name: pitcher.name, team: team.name,
+        IP: pline.outs / 3, H: pline.H, BB: pline.BB, K: pline.K, R: pline.R, ERA: era(pline)
+      });
+    });
+
+    renderTable("battingTable", BATTING_COLUMNS, battingRows, battingState, { AVG: v => v.toFixed(3) });
+    renderTable("pitchingTable", PITCHING_COLUMNS, pitchingRows, pitchingState, { IP: v => v.toFixed(1), ERA: v => v.toFixed(2) });
+  }
+
+  function defaultDirectionFor(key) {
+    if (STRING_KEYS.has(key)) return "asc";
+    if (key === "ERA") return "asc";
+    return "desc";
+  }
+
+  function sortedRows(rows, state) {
+    const isString = STRING_KEYS.has(state.key);
+    const mult = state.dir === "asc" ? 1 : -1;
+    return rows.slice().sort((a, b) => {
+      if (isString) return mult * String(a[state.key]).localeCompare(String(b[state.key]));
+      return mult * (a[state.key] - b[state.key]);
+    });
+  }
+
+  function renderTable(tableId, columns, rows, state, formatters) {
+    const table = document.getElementById(tableId);
+    const sorted = sortedRows(rows, state);
+
+    const headerHtml = `<tr>${columns.map(col => {
+      const active = col.key === state.key;
+      const arrow = active ? (state.dir === "asc" ? " ▲" : " ▼") : "";
+      return `<th class="${active ? "active-sort" : ""}" data-key="${col.key}">${col.label}${arrow}</th>`;
+    }).join("")}</tr>`;
+
+    const bodyHtml = sorted.map(row => {
+      const cells = columns.map(col => {
+        const raw = row[col.key];
+        const value = formatters && formatters[col.key] ? formatters[col.key](raw) : raw;
+        return `<td>${escapeHtml(String(value))}</td>`;
+      }).join("");
+      return `<tr class="${row.team === save.yourTeam ? "your-team" : ""}">${cells}</tr>`;
+    }).join("");
+
+    table.innerHTML = headerHtml + bodyHtml;
+
+    table.querySelectorAll("th").forEach(th => {
+      th.addEventListener("click", () => {
+        const key = th.dataset.key;
+        if (state.key === key) {
+          state.dir = state.dir === "asc" ? "desc" : "asc";
+        } else {
+          state.key = key;
+          state.dir = defaultDirectionFor(key);
+        }
+        renderTable(tableId, columns, rows, state, formatters);
+      });
+    });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  load();
+</script>
+</body>
+</html>
