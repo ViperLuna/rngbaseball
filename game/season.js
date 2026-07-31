@@ -71,8 +71,14 @@ function initStandings(teamNames) {
 }
 
 // Builds a brand new season save: a fresh shuffled round-robin schedule,
-// empty standings/season stats/history, no playoff decided yet.
-function initializeSeason(league, yourTeam, teamNames) {
+// empty standings/season stats/history, no playoff decided yet, and a
+// freshly-rolled opponentGear map (gear.js's generateOpponentGear) covering
+// every player except yourTeam's -- re-rolled every time a season starts.
+// `teams` is teams.json's full team list (not just names), needed to know
+// each opponent player's position for gear.js's slot assignment; `items` is
+// items.json's items array.
+function initializeSeason(league, yourTeam, teams, items) {
+  const teamNames = teams.map(t => t.name);
   return {
     seasonInProgress: true,
     league,
@@ -82,7 +88,8 @@ function initializeSeason(league, yourTeam, teamNames) {
     standings: initStandings(teamNames),
     seasonStats: {},
     gameHistory: [],
-    playoff: null
+    playoff: null,
+    opponentGear: generateOpponentGear(teams, yourTeam, league, items)
   };
 }
 
@@ -147,13 +154,16 @@ function buildGameHistoryEntry(round, rawResult, awayTeam, homeTeam) {
 }
 
 // Simulates every game in one round. `teamsByName` is a { name: teamObject }
-// lookup built from teams.json. Returns one entry per game with the raw
-// engine result (needed for the live-reveal UI on your own game) alongside
-// the already-trimmed history entry (ready to push into gameHistory).
-function simulateRound(schedule, roundIndex, teamsByName) {
+// lookup built from teams.json; `opponentGear` is the season save's gear
+// map, merged onto each team's lineup (gear.js's buildGearedTeam) before
+// simulating so opponent gear actually affects the game. Returns one entry
+// per game with the raw engine result (needed for the live-reveal UI on
+// your own game) alongside the already-trimmed history entry (ready to
+// push into gameHistory).
+function simulateRound(schedule, roundIndex, teamsByName, opponentGear) {
   return schedule[roundIndex].map(({ home, away }) => {
-    const awayTeam = teamsByName[away];
-    const homeTeam = teamsByName[home];
+    const awayTeam = buildGearedTeam(teamsByName[away], opponentGear);
+    const homeTeam = buildGearedTeam(teamsByName[home], opponentGear);
     const rawResult = simulateGame(awayTeam, homeTeam);
     return {
       home, away, awayTeam, homeTeam, rawResult,

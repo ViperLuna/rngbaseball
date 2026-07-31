@@ -9,10 +9,12 @@
 
   "Play Next Game" simulates an ENTIRE round (all 15 games) instantly and
   records every result into standings/season stats/history right here --
-  the games are all fully decided the moment this runs. It then hands off
-  just the player's own game to season-game.html purely to animate a paced
-  reveal of a result that's already been recorded; season-game.html itself
-  never mutates the season save.
+  the games are all fully decided the moment this runs. Every opponent
+  plays with whatever gear they were rolled at season creation (the save's
+  opponentGear map, gear.js's buildGearedTeam applied before simulating).
+  It then hands off just the player's own game to season-game.html purely
+  to animate a paced reveal of a result that's already been recorded;
+  season-game.html itself never mutates the season save.
 
   Once the regular season (all 29 rounds) is done, this page determines the
   top two teams and either offers a championship game (if the player
@@ -127,6 +129,7 @@
 </main>
 
 <script src="engine.js"></script>
+<script src="gear.js"></script>
 <script src="season.js"></script>
 <script>
   let save = getSave();
@@ -255,7 +258,7 @@
   }
 
   function playNextGame() {
-    const results = simulateRound(save.schedule, save.currentRound, teamsByName);
+    const results = simulateRound(save.schedule, save.currentRound, teamsByName, save.opponentGear);
     let yourGameEntry = null, yourAwayName = null, yourHomeName = null;
 
     results.forEach(({ historyEntry, rawResult, away, home }) => {
@@ -283,8 +286,8 @@
     // Home field goes to whichever of the two had the better regular-season record.
     const homeName = save.standings[seed1].wins >= save.standings[seed2].wins ? seed1 : seed2;
     const awayName = homeName === seed1 ? seed2 : seed1;
-    const homeTeam = teamsByName[homeName];
-    const awayTeam = teamsByName[awayName];
+    const homeTeam = buildGearedTeam(teamsByName[homeName], save.opponentGear);
+    const awayTeam = buildGearedTeam(teamsByName[awayName], save.opponentGear);
 
     const rawResult = simulateGame(awayTeam, homeTeam);
     const historyEntry = buildGameHistoryEntry("Championship", rawResult, awayTeam, homeTeam);
