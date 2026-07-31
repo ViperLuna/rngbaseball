@@ -265,7 +265,7 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
       const newBases = [...bases];
       newBases[2] = null;
       return { type: "sac_fly", bases: newBases, outsAdded: 1, runsScored: 1, scorers: [scorer],
-        text: `${batter.name} hits a sac fly. The runner from third scores.` };
+        text: `${batter.name} hits a sac fly. ${scorer} scores!` };
     }
     return { type: "flyout", bases, outsAdded: 1, runsScored: 0, scorers: [],
       text: `${batter.name} flies out.` };
