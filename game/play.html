@@ -100,6 +100,35 @@
     padding: 0.15rem 0;
     color: var(--text);
   }
+  #boxScore {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+  }
+  table.box-score-table {
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  table.box-score-table th, table.box-score-table td {
+    text-align: center;
+    padding: 0.2rem 0.5rem;
+  }
+  table.box-score-table td:first-child, table.box-score-table th:first-child {
+    text-align: left;
+  }
+  table.box-score-table th {
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  table.box-score-table td.totals {
+    font-weight: 700;
+    border-left: 1px solid var(--border);
+  }
   #statsPane {
     height: 35vh;
     overflow-y: auto;
@@ -150,9 +179,11 @@
     <span>vs</span>
     <select id="teamBSelect"></select>
     <button id="playBtn" disabled>Play Game</button>
+    <button id="skipBtn" style="display:none;">Skip to End</button>
   </div>
 
   <div class="scoreboard" id="scoreboard" style="display:none;"></div>
+  <div id="boxScore" style="display:none;"></div>
 
   <div id="playLog"></div>
   <div id="statsPane"></div>
@@ -180,39 +211,133 @@
   }
 
   const statsPane = document.getElementById("statsPane");
+  const boxScore = document.getElementById("boxScore");
+  const skipBtn = document.getElementById("skipBtn");
+
+  let revealToken = 0; // bumped to cancel an in-progress reveal (e.g. Skip pressed)
 
   playBtn.addEventListener("click", () => {
     const teamA = teams[teamASelect.value];
     const teamB = teams[teamBSelect.value];
     const result = simulateGame(teamA, teamB);
-    renderGame(result);
-    renderStats(result, teamA, teamB);
+    revealGame(result, teamA, teamB);
   });
 
-  function renderGame(result) {
+  skipBtn.addEventListener("click", () => {
+    revealToken++; // cancels any pending timers from the in-progress reveal
+    skipBtn.style.display = "none";
+    if (skipBtn._result) renderFinal(skipBtn._result, skipBtn._teamA, skipBtn._teamB);
+  });
+
+  async function revealGame(result, teamA, teamB) {
+    const myToken = ++revealToken;
+    playLog.innerHTML = "";
     scoreboard.style.display = "flex";
-    scoreboard.innerHTML = `
-      <span>${result.teamA}: ${result.scoreA}</span>
-      <span>${result.teamB}: ${result.scoreB}</span>
-    `;
+    boxScore.style.display = "block";
+    skipBtn.style.display = "inline-block";
+    skipBtn._result = result;
+    skipBtn._teamA = teamA;
+    skipBtn._teamB = teamB;
 
-    playLog.innerHTML = result.innings.map(inn => `
-      <div class="inning-header">Top ${inn.inning} — ${result.teamA}</div>
-      ${inn.top.log.map(line => `<div class="play-line">${escapeHtml(line)}</div>`).join("")}
-      <div class="inning-header">Bottom ${inn.inning} — ${result.teamB}</div>
-      ${inn.bottom.log.map(line => `<div class="play-line">${escapeHtml(line)}</div>`).join("")}
-    `).join("");
+    let lastHalf = null, lastInning = null;
+    const inningRuns = {}; // "top-3" -> runs, filled in/updated as plays happen
+    let halfStartA = 0, halfStartB = 0; // cumulative score at the moment this half-inning began
+    let prevScoreA = 0, prevScoreB = 0; // cumulative score as of the previous play in this loop
 
-    playLog.innerHTML += `<div class="inning-header">Final: ${result.teamA} ${result.scoreA}, ${result.teamB} ${result.scoreB} — ${result.winner} wins</div>`;
+    for (const play of result.plays) {
+      if (myToken !== revealToken) return; // Skip to End was pressed
+
+      if (play.half !== lastHalf || play.inning !== lastInning) {
+        // A new half-inning is starting: the baseline is wherever the score
+        // stood after the *previous* play (not this one), since this play
+        // hasn't been credited yet.
+        halfStartA = prevScoreA;
+        halfStartB = prevScoreB;
+        lastHalf = play.half;
+        lastInning = play.inning;
+        const label = `${play.half === "top" ? "Top" : "Bottom"} ${play.inning} — ${play.half === "top" ? teamA.name : teamB.name}`;
+        playLog.insertAdjacentHTML("beforeend", `<div class="inning-header">${escapeHtml(label)}</div>`);
+      }
+
+      playLog.insertAdjacentHTML("beforeend", `<div class="play-line">${escapeHtml(play.text)}</div>`);
+      playLog.scrollTop = playLog.scrollHeight;
+
+      scoreboard.innerHTML = `<span>${teamA.name}: ${play.scoreA}</span><span>${teamB.name}: ${play.scoreB}</span>`;
+
+      const key = `${play.half}-${play.inning}`;
+      inningRuns[key] = play.half === "top" ? play.scoreA - halfStartA : play.scoreB - halfStartB;
+      prevScoreA = play.scoreA;
+      prevScoreB = play.scoreB;
+
+      renderBoxScoreLive(result, teamA, teamB, inningRuns, play);
+      renderStats(play.stats, teamA, teamB);
+
+      await new Promise(r => setTimeout(r, 100 + Math.random() * 200));
+    }
+
+    playLog.insertAdjacentHTML("beforeend",
+      `<div class="inning-header">Final: ${teamA.name} ${result.scoreA}, ${teamB.name} ${result.scoreB} — ${result.winner} wins</div>`);
+    skipBtn.style.display = "none";
   }
 
-  function renderStats(result, teamA, teamB) {
+  function renderFinal(result, teamA, teamB) {
+    scoreboard.style.display = "flex";
+    scoreboard.innerHTML = `<span>${teamA.name}: ${result.scoreA}</span><span>${teamB.name}: ${result.scoreB}</span>`;
+
+    playLog.innerHTML = result.innings.map(inn => `
+      <div class="inning-header">Top ${inn.inning} — ${teamA.name}</div>
+      ${inn.top.log.map(line => `<div class="play-line">${escapeHtml(line)}</div>`).join("")}
+      <div class="inning-header">Bottom ${inn.inning} — ${teamB.name}</div>
+      ${inn.bottom.log.map(line => `<div class="play-line">${escapeHtml(line)}</div>`).join("")}
+    `).join("");
+    playLog.innerHTML += `<div class="inning-header">Final: ${teamA.name} ${result.scoreA}, ${teamB.name} ${result.scoreB} — ${result.winner} wins</div>`;
+
+    boxScore.style.display = "block";
+    renderBoxScoreFinal(result, teamA, teamB);
+    renderStats(result.stats, teamA, teamB);
+  }
+
+  function renderBoxScoreFinal(result, teamA, teamB) {
+    const totalInnings = result.innings.length;
+    const teamAHits = sumTeamHits(result.stats, teamA);
+    const teamBHits = sumTeamHits(result.stats, teamB);
+    boxScore.innerHTML = `
+      <table class="box-score-table">
+        <tr><th>Team</th>${result.innings.map(i => `<th>${i.inning}</th>`).join("")}<th class="totals">R</th><th class="totals">H</th><th class="totals">E</th></tr>
+        <tr><td>${escapeHtml(teamA.name)}</td>${result.innings.map(i => `<td>${i.top.log[0] === "(not needed -- game already decided)" ? "-" : i.top.runs}</td>`).join("")}<td class="totals">${result.scoreA}</td><td class="totals">${teamAHits}</td><td class="totals">${result.errors.A}</td></tr>
+        <tr><td>${escapeHtml(teamB.name)}</td>${result.innings.map(i => `<td>${i.bottom.log[0] === "(not needed -- game already decided)" ? "-" : i.bottom.runs}</td>`).join("")}<td class="totals">${result.scoreB}</td><td class="totals">${teamBHits}</td><td class="totals">${result.errors.B}</td></tr>
+      </table>
+    `;
+  }
+
+  function renderBoxScoreLive(result, teamA, teamB, inningRuns, currentPlay) {
+    const totalInnings = result.innings.length;
+    const teamAHits = sumTeamHits(currentPlay.stats, teamA);
+    const teamBHits = sumTeamHits(currentPlay.stats, teamB);
+    const cell = (half, inning) => {
+      const value = inningRuns[`${half}-${inning}`];
+      return value !== undefined ? value : "";
+    };
+    boxScore.innerHTML = `
+      <table class="box-score-table">
+        <tr><th>Team</th>${result.innings.map(i => `<th>${i.inning}</th>`).join("")}<th class="totals">R</th><th class="totals">H</th><th class="totals">E</th></tr>
+        <tr><td>${escapeHtml(teamA.name)}</td>${result.innings.map(i => `<td>${cell("top", i.inning)}</td>`).join("")}<td class="totals">${currentPlay.scoreA}</td><td class="totals">${teamAHits}</td><td class="totals">${currentPlay.errors.A}</td></tr>
+        <tr><td>${escapeHtml(teamB.name)}</td>${result.innings.map(i => `<td>${cell("bottom", i.inning)}</td>`).join("")}<td class="totals">${currentPlay.scoreB}</td><td class="totals">${teamBHits}</td><td class="totals">${currentPlay.errors.B}</td></tr>
+      </table>
+    `;
+  }
+
+  function sumTeamHits(stats, team) {
+    return team.lineup.reduce((sum, p) => sum + (stats[p.name] ? stats[p.name].batting.H : 0), 0);
+  }
+
+  function renderStats(stats, teamA, teamB) {
     statsPane.innerHTML = [teamA, teamB].map(team => `
       <div class="stats-team-header">${escapeHtml(team.name)}</div>
       <table class="stats-table">
         <tr><th>Player</th><th>Pos</th><th>AB</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>BB</th><th>K</th><th>R</th><th>AVG</th></tr>
         ${team.lineup.map(p => {
-          const line = result.stats[p.name].batting;
+          const line = stats[p.name].batting;
           return `<tr>
             <td>${escapeHtml(p.name)}</td><td>${p.position}</td>
             <td>${line.AB}</td><td>${line.H}</td><td>${line.doubles}</td><td>${line.triples}</td><td>${line.HR}</td>
@@ -224,7 +349,7 @@
         <tr><th>Pitcher</th><th>IP</th><th>H</th><th>BB</th><th>K</th><th>R</th><th>ERA</th></tr>
         ${(() => {
           const p = findPitcher(team);
-          const line = result.stats[p.name].pitching;
+          const line = stats[p.name].pitching;
           return `<tr>
             <td>${escapeHtml(p.name)}</td><td>${(line.outs / 3).toFixed(1)}</td>
             <td>${line.H}</td><td>${line.BB}</td><td>${line.K}</td><td>${line.R}</td><td>${era(line).toFixed(2)}</td>
