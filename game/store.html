@@ -200,7 +200,7 @@
 
     document.getElementById("pullResult").style.display = "block";
     document.getElementById("pullResult").innerHTML = `
-      <div class="pull-result rarity-${rarity}">${escapeHtml(crate.label)} → ${rarity}: ${escapeHtml(item.name)}</div>
+      <div class="pull-result rarity-${rarity}">${escapeHtml(crate.label)} → ${rarity}: ${escapeHtml(item.name)} ${escapeHtml(item.slot)}</div>
       <div style="text-align:center; color:var(--muted); font-size:0.85rem;">${escapeHtml(item.type)} · ${escapeHtml(item.slot)} · ${escapeHtml(formatStats(item))}</div>
     `;
 
