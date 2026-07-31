@@ -12,9 +12,11 @@
 //   - simulateGame(): plays a full 9-inning game between two teams and
 //     returns the play-by-play log plus the final boxscore
 //
-// Everyone's stats are flat baseline (rating 50 on every stat) for now, since
-// the items/gear system isn't wired in yet -- see getBatterRatings() and
-// getPitcherRatings() below, that's the one spot to change later.
+// Ratings are always 50 (flat baseline) unless a player has a `gear` object
+// attached -- see getBatterRatings()/getPitcherRatings() below and gear.js,
+// which builds opponents' gear for the season. The player's own team's
+// equip system (from store-pulled inventory) isn't built yet, so your own
+// lineup still plays at flat baseline for now.
 // -----------------------------------------------------------------------------
 
 const LEAGUE = (() => {
@@ -67,14 +69,40 @@ function log5(batterRate, pitcherRate, leagueAvg) {
   return num / denom;
 }
 
-// Placeholder rating providers -- everyone is flat baseline until the
-// items/gear system gets wired in. Swap these out later to apply a player's
-// equipped item modifiers on top of a base rating.
+// A player's equipped gear (if any -- see gear.js) lives on `player.gear`,
+// an optional { slotName: item } object built onto a plain teams.json
+// lineup entry before a game is simulated. Each item carries exactly one
+// { stat, value } entry; gearBonus() sums up whichever equipped item(s)
+// happen to match the stat being asked about (usually just one, since a
+// player only ever wears one item per applicable slot). A player with no
+// `gear` field at all -- the common case for anyone without a loadout --
+// gets a bonus of 0, i.e. flat baseline.
+function gearBonus(player, statName) {
+  if (!player.gear) return 0;
+  let bonus = 0;
+  for (const slot in player.gear) {
+    const item = player.gear[slot];
+    if (!item) continue;
+    item.stats.forEach(s => { if (s.stat === statName) bonus += s.value; });
+  }
+  return bonus;
+}
+
 function getBatterRatings(player) {
-  return { contact: 50, power: 50, discipline: 50, battedBallTendency: 50 };
+  return {
+    contact: 50 + gearBonus(player, "Contact"),
+    power: 50 + gearBonus(player, "Power"),
+    discipline: 50 + gearBonus(player, "Discipline"),
+    battedBallTendency: 50 + gearBonus(player, "Batted-Ball Tendency")
+  };
 }
 function getPitcherRatings(player) {
-  return { stuff: 50, control: 50, contactSuppression: 50, battedBallTendency: 50 };
+  return {
+    stuff: 50 + gearBonus(player, "Stuff"),
+    control: 50 + gearBonus(player, "Control"),
+    contactSuppression: 50 + gearBonus(player, "Contact Suppression"),
+    battedBallTendency: 50 + gearBonus(player, "Batted-Ball Tendency")
+  };
 }
 
 function rollStrikeout(batterRatings, pitcherRatings) {

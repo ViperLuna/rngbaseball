@@ -5,8 +5,9 @@
   sessionStorage before sending the player here. Pick which of the 30 teams
   you'll play as for the season. Clicking a team previews its full roster;
   Submit builds the full season save (schedule, standings, season stats,
-  history -- see season.js's initializeSeason) and goes straight to the
-  season hub (season.html). Back to Menu leaves without creating anything.
+  history, and a freshly-rolled opponent gear map -- see season.js's
+  initializeSeason and gear.js) and goes straight to the season hub
+  (season.html). Back to Menu leaves without creating anything.
   -----------------------------------------------------------------------------
 -->
 <!doctype html>
@@ -136,6 +137,7 @@
 </main>
 
 <script src="schedule.js"></script>
+<script src="gear.js"></script>
 <script src="season.js"></script>
 <script>
   const pendingLeague = sessionStorage.getItem("rngbaseball_pending_league");
@@ -182,11 +184,13 @@
     window.location.href = "index.html";
   });
 
-  submitBtn.addEventListener("click", () => {
+  submitBtn.addEventListener("click", async () => {
     if (selectedIndex === null) return;
+    submitBtn.disabled = true;
     const yourTeam = teams[selectedIndex].name;
-    const teamNames = teams.map(t => t.name);
-    setSave(initializeSeason(pendingLeague, yourTeam, teamNames));
+    const itemsRes = await fetch("../data/items.json");
+    const itemsData = await itemsRes.json();
+    setSave(initializeSeason(pendingLeague, yourTeam, teams, itemsData.items));
     sessionStorage.removeItem("rngbaseball_pending_league");
     window.location.href = "season.html";
   });
