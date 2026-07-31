@@ -130,6 +130,18 @@
   newSeasonBtn.addEventListener("click", () => {
     const confirmed = confirm("Start a new season? This erases your current season's progress. Your unlocked leagues stay unlocked.");
     if (!confirmed) return;
+
+    // Anything currently equipped belongs to a roster this season won't
+    // control anymore -- return it to inventory rather than losing it.
+    const oldSave = getSave();
+    if (oldSave && oldSave.equippedGear) {
+      const meta = getMeta();
+      Object.values(oldSave.equippedGear).forEach(slots => {
+        Object.values(slots).forEach(item => { if (item) meta.inventory.push(item); });
+      });
+      setMeta(meta);
+    }
+
     clearSave();
     render();
   });
@@ -143,7 +155,12 @@
   });
 
   loadoutsBtn.addEventListener("click", () => {
-    alert("Loadouts isn't built yet -- coming soon.");
+    const save = getSave();
+    if (save && save.seasonInProgress) {
+      window.location.href = "loadouts.html";
+    } else {
+      alert("Start a season first -- loadouts are equipped onto your season roster.");
+    }
   });
 
   render();

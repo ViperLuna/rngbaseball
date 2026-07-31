@@ -220,6 +220,7 @@
       const opponent = isHome ? yourGame.away : yourGame.home;
       const label = `Play Next Game — ${isHome ? "vs" : "@"} ${opponent}`;
       addButton(label, playNextGame);
+      addButton("Loadouts", () => window.location.href = "loadouts.html", true);
       addButton("Store", () => window.location.href = "store.html", true);
       return;
     }
@@ -245,6 +246,7 @@
     } else {
       banner.innerHTML = `<div class="banner lose">Season complete. Didn't qualify for the championship (top two: ${escapeHtml(save.playoff.topTwo.join(", "))}).</div>`;
     }
+    addButton("Loadouts", () => window.location.href = "loadouts.html", true);
     addButton("Store", () => window.location.href = "store.html", true);
   }
 
@@ -258,7 +260,7 @@
   }
 
   function playNextGame() {
-    const results = simulateRound(save.schedule, save.currentRound, teamsByName, save.opponentGear);
+    const results = simulateRound(save.schedule, save.currentRound, teamsByName, fullGearMap(save));
     let yourGameEntry = null, yourAwayName = null, yourHomeName = null;
 
     results.forEach(({ historyEntry, rawResult, away, home }) => {
@@ -286,8 +288,9 @@
     // Home field goes to whichever of the two had the better regular-season record.
     const homeName = save.standings[seed1].wins >= save.standings[seed2].wins ? seed1 : seed2;
     const awayName = homeName === seed1 ? seed2 : seed1;
-    const homeTeam = buildGearedTeam(teamsByName[homeName], save.opponentGear);
-    const awayTeam = buildGearedTeam(teamsByName[awayName], save.opponentGear);
+    const gearMap = fullGearMap(save);
+    const homeTeam = buildGearedTeam(teamsByName[homeName], gearMap);
+    const awayTeam = buildGearedTeam(teamsByName[awayName], gearMap);
 
     const rawResult = simulateGame(awayTeam, homeTeam);
     const historyEntry = buildGameHistoryEntry("Championship", rawResult, awayTeam, homeTeam);

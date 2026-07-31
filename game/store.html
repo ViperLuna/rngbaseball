@@ -124,9 +124,29 @@
     const res = await fetch("../data/items.json");
     const data = await res.json();
     items = data.items;
+    ensureInstanceIds();
     renderBalance();
     renderCrates();
     renderInventory();
+  }
+
+  // Retrofits an _instanceId onto any inventory item that predates this
+  // change (from before crate pulls started tagging one at pull time).
+  function ensureInstanceIds() {
+    const meta = getMeta();
+    let changed = false;
+    meta.inventory.forEach(item => {
+      if (!item._instanceId) { item._instanceId = makeInstanceId(); changed = true; }
+    });
+    if (changed) setMeta(meta);
+  }
+
+  function makeInstanceId() {
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+
+  function formatStats(item) {
+    return item.stats.map(s => `${s.stat} ${s.value >= 0 ? "+" : ""}${s.value}`).join(", ");
   }
 
   function renderBalance() {
@@ -161,14 +181,19 @@
     meta.basebux -= crate.price;
     const rarity = rollRarity(crateKey);
     const candidates = items.filter(i => i.rarity === rarity);
-    const item = candidates[Math.floor(Math.random() * candidates.length)];
+    const template = candidates[Math.floor(Math.random() * candidates.length)];
+    // Clone (not the shared items.json template object) and tag with a
+    // stable per-copy id -- loadouts.html needs a handle that survives
+    // reordering when other items get equipped/sold, since two pulls of
+    // the exact same item would otherwise be indistinguishable.
+    const item = { ...template, _instanceId: makeInstanceId() };
     meta.inventory.push(item);
     setMeta(meta);
 
     document.getElementById("pullResult").style.display = "block";
     document.getElementById("pullResult").innerHTML = `
       <div class="pull-result rarity-${rarity}">${escapeHtml(crate.label)} → ${rarity}: ${escapeHtml(item.name)}</div>
-      <div style="text-align:center; color:var(--muted); font-size:0.85rem;">${escapeHtml(item.type)} · ${escapeHtml(item.slot)} · ${escapeHtml(item.stats[0].stat)} ${item.stats[0].value >= 0 ? "+" : ""}${item.stats[0].value}</div>
+      <div style="text-align:center; color:var(--muted); font-size:0.85rem;">${escapeHtml(item.type)} · ${escapeHtml(item.slot)} · ${escapeHtml(formatStats(item))}</div>
     `;
 
     renderBalance();
@@ -192,7 +217,7 @@
             <td>${escapeHtml(item.name)}</td>
             <td>${escapeHtml(item.type)}</td>
             <td>${escapeHtml(item.slot)}</td>
-            <td>${escapeHtml(item.stats[0].stat)} ${item.stats[0].value >= 0 ? "+" : ""}${item.stats[0].value}</td>
+            <td>${escapeHtml(formatStats(item))}</td>
             <td class="rarity-${item.rarity}">${item.rarity}</td>
           </tr>
         `).join("")}
