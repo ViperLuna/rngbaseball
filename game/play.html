@@ -38,12 +38,16 @@
   main { width: 100%; max-width: 640px; }
   h1 { font-size: 1.4rem; margin-bottom: 1rem; }
   .back-row { margin-bottom: 1rem; }
-  .back-row a {
-    color: var(--muted);
+  .back-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
     font-size: 0.85rem;
-    text-decoration: none;
+    cursor: pointer;
   }
-  .back-row a:hover { text-decoration: underline; }
+  .back-btn:hover { filter: brightness(0.95); }
   .setup-row {
     display: flex;
     gap: 0.5rem;
@@ -171,7 +175,7 @@
 </head>
 <body>
 <main>
-  <div class="back-row"><a href="index.html">&larr; Main Menu</a></div>
+  <div class="back-row"><button type="button" class="back-btn" onclick="window.location.href='index.html'">&larr; Main Menu</button></div>
   <h1>rngbaseball</h1>
 
   <div class="setup-row">

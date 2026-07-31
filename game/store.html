@@ -40,8 +40,16 @@
   }
   main { width: 100%; max-width: 640px; }
   .back-row { margin-bottom: 1rem; }
-  .back-row a { color: var(--muted); font-size: 0.85rem; text-decoration: none; }
-  .back-row a:hover { text-decoration: underline; }
+  .back-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .back-btn:hover { filter: brightness(0.95); }
   h1 { font-size: 1.4rem; margin: 0 0 0.1rem; }
   .balance { font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; }
   .crates { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
@@ -102,7 +110,7 @@
 </head>
 <body>
 <main>
-  <div class="back-row"><a href="season.html">&larr; Season</a></div>
+  <div class="back-row"><button type="button" class="back-btn" onclick="window.location.href='season.html'">&larr; Season</button></div>
   <h1>Store</h1>
   <div class="balance" id="balance"></div>
 
