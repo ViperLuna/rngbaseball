@@ -1,9 +1,16 @@
 <!--
   store.html
   -----------------------------------------------------------------------------
-  Placeholder for the gacha/item store. Reached from the "Store" button on
-  season.html. Just a stub for now -- the currency economy and crate odds
-  haven't been built yet.
+  The gacha store. Reached from the "Store" button on season.html. Spends
+  Basebux (season.js's meta-save) on one of two crate types (season.js's
+  CRATES: Basic and Advanced -- same six rarities in both, Advanced just
+  skews the odds hard toward the top end). Opening a crate rolls a rarity
+  via season.js's rollRarity(), then picks a uniformly random item of that
+  rarity from items.json and adds it to the meta-save's inventory.
+
+  Pulled items aren't equippable yet -- getBatterRatings()/getPitcherRatings()
+  in engine.js are still flat baseline until the gear system gets wired into
+  actual gameplay. This page is just the earn-and-collect side of that loop.
   -----------------------------------------------------------------------------
 -->
 <!doctype html>
@@ -29,24 +36,59 @@
     color: var(--text);
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 100vh;
     padding: 2rem 1rem;
-    text-align: center;
   }
-  main { width: 100%; max-width: 360px; }
-  h1 { font-size: 1.4rem; margin-bottom: 0.5rem; }
-  p { color: var(--muted); margin-bottom: 1.5rem; }
-  a {
-    display: inline-block;
+  main { width: 100%; max-width: 640px; }
+  .back-row { margin-bottom: 1rem; }
+  .back-row a { color: var(--muted); font-size: 0.85rem; text-decoration: none; }
+  .back-row a:hover { text-decoration: underline; }
+  h1 { font-size: 1.4rem; margin: 0 0 0.1rem; }
+  .balance { font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; }
+  .crates { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .crate-card {
+    flex: 1;
+    min-width: 220px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    background: var(--panel);
+  }
+  .crate-card h2 { font-size: 1.1rem; margin: 0 0 0.25rem; }
+  .crate-price { color: var(--muted); margin-bottom: 0.6rem; }
+  table.odds-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 0.75rem; }
+  table.odds-table td { padding: 0.15rem 0; }
+  table.odds-table td:last-child { text-align: right; color: var(--muted); }
+  button {
     padding: 0.6rem 1rem;
     border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--panel);
-    color: var(--text);
-    text-decoration: none;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: pointer;
+    width: 100%;
   }
-  a:hover { filter: brightness(0.95); }
+  button:hover { filter: brightness(0.95); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+  }
+  .pull-result { font-weight: 700; font-size: 1.1rem; text-align: center; padding: 0.5rem 0; }
+  .rarity-Common { color: #71717a; }
+  .rarity-Uncommon { color: #16a34a; }
+  .rarity-Rare { color: #2563eb; }
+  .rarity-Epic { color: #9333ea; }
+  .rarity-Legendary { color: #d97706; }
+  .rarity-Mythical { color: #dc2626; }
+  #inventoryList { max-height: 30vh; overflow-y: auto; }
+  table.inventory-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  table.inventory-table th, table.inventory-table td { text-align: left; padding: 0.25rem 0.4rem; }
+  table.inventory-table th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  h2.section { font-size: 1.05rem; margin: 0 0 0.5rem; }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #18181b;
@@ -60,9 +102,111 @@
 </head>
 <body>
 <main>
+  <div class="back-row"><a href="season.html">&larr; Season</a></div>
   <h1>Store</h1>
-  <p>Coming soon.</p>
-  <a href="season.html">&larr; Back to Season</a>
+  <div class="balance" id="balance"></div>
+
+  <div class="crates" id="crates"></div>
+
+  <div class="panel" id="pullResult" style="display:none;"></div>
+
+  <div class="panel">
+    <h2 class="section">Inventory</h2>
+    <div id="inventoryList"></div>
+  </div>
 </main>
+
+<script src="season.js"></script>
+<script>
+  let items = [];
+
+  async function load() {
+    const res = await fetch("../data/items.json");
+    const data = await res.json();
+    items = data.items;
+    renderBalance();
+    renderCrates();
+    renderInventory();
+  }
+
+  function renderBalance() {
+    const meta = getMeta();
+    document.getElementById("balance").textContent = `Basebux: ${meta.basebux}`;
+  }
+
+  function renderCrates() {
+    const meta = getMeta();
+    document.getElementById("crates").innerHTML = Object.entries(CRATES).map(([key, crate]) => `
+      <div class="crate-card">
+        <h2>${escapeHtml(crate.label)}</h2>
+        <div class="crate-price">${crate.price} Basebux</div>
+        <table class="odds-table">
+          ${Object.entries(crate.odds).map(([rarity, pct]) => `
+            <tr><td class="rarity-${rarity}">${rarity}</td><td>${(pct * 100).toFixed(1)}%</td></tr>
+          `).join("")}
+        </table>
+        <button data-crate="${key}" ${meta.basebux < crate.price ? "disabled" : ""}>Buy</button>
+      </div>
+    `).join("");
+    document.querySelectorAll("#crates button").forEach(btn => {
+      btn.addEventListener("click", () => buyCrate(btn.dataset.crate));
+    });
+  }
+
+  function buyCrate(crateKey) {
+    const crate = CRATES[crateKey];
+    const meta = getMeta();
+    if (meta.basebux < crate.price) return;
+
+    meta.basebux -= crate.price;
+    const rarity = rollRarity(crateKey);
+    const candidates = items.filter(i => i.rarity === rarity);
+    const item = candidates[Math.floor(Math.random() * candidates.length)];
+    meta.inventory.push(item);
+    setMeta(meta);
+
+    document.getElementById("pullResult").style.display = "block";
+    document.getElementById("pullResult").innerHTML = `
+      <div class="pull-result rarity-${rarity}">${escapeHtml(crate.label)} → ${rarity}: ${escapeHtml(item.name)}</div>
+      <div style="text-align:center; color:var(--muted); font-size:0.85rem;">${escapeHtml(item.type)} · ${escapeHtml(item.slot)} · ${escapeHtml(item.stats[0].stat)} ${item.stats[0].value >= 0 ? "+" : ""}${item.stats[0].value}</div>
+    `;
+
+    renderBalance();
+    renderCrates();
+    renderInventory();
+  }
+
+  function renderInventory() {
+    const meta = getMeta();
+    const inventoryList = document.getElementById("inventoryList");
+    if (meta.inventory.length === 0) {
+      inventoryList.innerHTML = `<p style="color:var(--muted); font-size:0.9rem;">No items yet -- open a crate to start collecting gear.</p>`;
+      return;
+    }
+    const rows = meta.inventory.map((item, idx) => ({ item, idx })).reverse();
+    inventoryList.innerHTML = `
+      <table class="inventory-table">
+        <tr><th>Item</th><th>Type</th><th>Slot</th><th>Stat</th><th>Rarity</th></tr>
+        ${rows.map(({ item }) => `
+          <tr>
+            <td>${escapeHtml(item.name)}</td>
+            <td>${escapeHtml(item.type)}</td>
+            <td>${escapeHtml(item.slot)}</td>
+            <td>${escapeHtml(item.stats[0].stat)} ${item.stats[0].value >= 0 ? "+" : ""}${item.stats[0].value}</td>
+            <td class="rarity-${item.rarity}">${item.rarity}</td>
+          </tr>
+        `).join("")}
+      </table>
+    `;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  load();
+</script>
 </body>
 </html>

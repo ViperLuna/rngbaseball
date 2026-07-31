@@ -37,7 +37,7 @@ const META_KEY = "rngbaseball_meta";
 
 function getMeta() {
   const raw = localStorage.getItem(META_KEY);
-  if (!raw) return { unlockedLeagues: ["Rookie"], currentLeague: "Rookie" };
+  if (!raw) return { unlockedLeagues: ["Rookie"], currentLeague: "Rookie", basebux: 0, inventory: [] };
   return JSON.parse(raw);
 }
 function setMeta(meta) {
@@ -160,6 +160,88 @@ function simulateRound(schedule, roundIndex, teamsByName) {
       historyEntry: buildGameHistoryEntry(roundIndex, rawResult, awayTeam, homeTeam)
     };
   });
+}
+
+// --- Economy: Basebux, accolades, and loot crates -----------------------------
+// Basebux and the pulled-item inventory live in the meta-save, not the
+// season save -- they're player-level progress that survives "New Season"
+// the same way league unlocks do; only "Fresh Start" wipes them.
+
+const BASE_PAYOUTS = { win: 100, loss: 40 };
+
+// Flat bonuses, paid once per occurrence (a 2-HR game pays the home run
+// bonus twice), only for the player's own team, and only if the game was
+// actually watched rather than skipped -- that's the whole point of them.
+const ACCOLADE_PAYOUTS = { homeRun: 10, shutout: 50, noHitter: 150, cycle: 100 };
+
+// Same six rarities in both crates -- Advanced just shifts the odds hard
+// toward the top end. Nothing is ever literally impossible from either one.
+const CRATES = {
+  basic: {
+    label: "Basic Crate",
+    price: 75,
+    odds: { Common: 0.50, Uncommon: 0.30, Rare: 0.13, Epic: 0.05, Legendary: 0.017, Mythical: 0.003 }
+  },
+  advanced: {
+    label: "Advanced Crate",
+    price: 450,
+    odds: { Common: 0.10, Uncommon: 0.20, Rare: 0.30, Epic: 0.25, Legendary: 0.12, Mythical: 0.03 }
+  }
+};
+
+// Detects the player's own accolades from one completed game's history
+// entry. `yourLineupNames` is the player's own team's list of player names
+// (from teams.json), needed since historyEntry.stats is keyed by player
+// name across both teams with no per-player team tag.
+function detectAccolades(historyEntry, yourTeam, yourLineupNames) {
+  const isHome = historyEntry.home === yourTeam;
+  const yourPitcherName = isHome ? historyEntry.pitchers.home : historyEntry.pitchers.away;
+  const pitcherLine = historyEntry.stats[yourPitcherName].pitching;
+
+  const accolades = [];
+  if (pitcherLine.R === 0) accolades.push({ type: "shutout", label: "Shutout", count: 1, bonus: ACCOLADE_PAYOUTS.shutout });
+  if (pitcherLine.H === 0) accolades.push({ type: "noHitter", label: "No-Hitter", count: 1, bonus: ACCOLADE_PAYOUTS.noHitter });
+
+  let homeRuns = 0;
+  yourLineupNames.forEach(name => {
+    const line = historyEntry.stats[name].batting;
+    homeRuns += line.HR;
+    const singles = line.H - line.doubles - line.triples - line.HR;
+    if (singles >= 1 && line.doubles >= 1 && line.triples >= 1 && line.HR >= 1) {
+      accolades.push({ type: "cycle", label: `Cycle (${name})`, count: 1, bonus: ACCOLADE_PAYOUTS.cycle });
+    }
+  });
+  if (homeRuns > 0) {
+    accolades.push({ type: "homeRun", label: "Home Run", count: homeRuns, bonus: ACCOLADE_PAYOUTS.homeRun * homeRuns });
+  }
+
+  return accolades;
+}
+
+// The win/loss base always pays out. Accolades only pay out if `watched` is
+// true; otherwise they're returned separately as `forfeited`, so the UI can
+// show what was earned alongside what was left on the table by skipping.
+function computeGamePayout(historyEntry, yourTeam, yourLineupNames, watched) {
+  const won = historyEntry.winner === yourTeam;
+  const base = won ? BASE_PAYOUTS.win : BASE_PAYOUTS.loss;
+  const accolades = detectAccolades(historyEntry, yourTeam, yourLineupNames);
+  const accoladeTotal = accolades.reduce((sum, a) => sum + a.bonus, 0);
+
+  if (watched) {
+    return { base, accolades, total: base + accoladeTotal, forfeited: [] };
+  }
+  return { base, accolades: [], total: base, forfeited: accolades };
+}
+
+function rollRarity(crateType) {
+  const odds = CRATES[crateType].odds;
+  const roll = Math.random();
+  let cumulative = 0;
+  for (const rarity of Object.keys(odds)) {
+    cumulative += odds[rarity];
+    if (roll < cumulative) return rarity;
+  }
+  return "Common"; // floating-point fallback, odds sum to ~1
 }
 
 // Ranks by wins, then run differential, then a random tiebreak for true

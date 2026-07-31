@@ -52,7 +52,12 @@
   }
   h1 {
     font-size: 1.8rem;
-    margin-bottom: 2rem;
+    margin-bottom: 0.25rem;
+  }
+  p.basebux {
+    color: var(--muted);
+    margin: 0 0 1.5rem;
+    font-size: 0.95rem;
   }
   #menuButtons {
     display: flex;
@@ -89,6 +94,7 @@
 <body>
 <main>
   <h1>rngbaseball</h1>
+  <p class="basebux" id="basebuxLine"></p>
   <div id="menuButtons">
     <button id="seasonBtn" type="button"></button>
     <button id="newSeasonBtn" type="button" class="secondary" style="display:none;">New Season</button>
@@ -109,6 +115,7 @@
     const hasSeason = !!(save && save.seasonInProgress);
     seasonBtn.textContent = hasSeason ? "Continue Season" : "Start Season";
     newSeasonBtn.style.display = hasSeason ? "block" : "none";
+    document.getElementById("basebuxLine").textContent = `Basebux: ${getMeta().basebux}`;
   }
 
   seasonBtn.addEventListener("click", () => {

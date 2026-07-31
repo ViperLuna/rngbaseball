@@ -15,6 +15,13 @@
   season's worth of games. So the box score's R column updates live as
   innings complete, but H and E only fill in once the reveal finishes and
   the game's final stats are available.
+
+  This page also pays out Basebux once the game is done: the win/loss base
+  always pays, but accolade bonuses (home run, shutout, no-hitter, cycle --
+  see season.js's ACCOLADE_PAYOUTS/detectAccolades) only pay out if the
+  reveal actually played out. Hitting Skip to End still finishes the game
+  instantly, but forfeits any accolades that happened -- the payout box
+  shows what you got either way, and what you'd have gotten by watching.
   -----------------------------------------------------------------------------
 -->
 <!doctype html>
@@ -91,6 +98,17 @@
   table.box-score-table th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
   table.box-score-table td.totals { font-weight: 700; border-left: 1px solid var(--border); }
   #statsPane { height: 35vh; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; background: var(--panel); margin-bottom: 1rem; }
+  #payoutBox {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+  .payout-line { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.3rem; }
+  .payout-sub { color: var(--muted); padding: 0.1rem 0; }
+  .payout-forfeited { color: #d97706; margin-top: 0.4rem; }
   .stats-team-header { font-weight: 700; margin-top: 0.9rem; color: var(--accent); }
   .stats-team-header:first-child { margin-top: 0; }
   table.stats-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.3rem; }
@@ -125,6 +143,7 @@
   <div id="banner"></div>
   <div class="scoreboard" id="scoreboard"></div>
   <div id="boxScore"></div>
+  <div id="payoutBox" style="display:none;"></div>
   <div id="playLog"></div>
   <div id="statsPane"></div>
   <div class="action-row">
@@ -134,6 +153,7 @@
 </main>
 
 <script src="engine.js"></script>
+<script src="season.js"></script>
 <script>
   const payloadRaw = sessionStorage.getItem("rngbaseball_reveal_game");
   if (!payloadRaw) window.location.href = "season.html";
@@ -141,10 +161,12 @@
   const { historyEntry, teamA: awayName, teamB: homeName, bannerText } = payload;
 
   let awayTeam = null, homeTeam = null;
+  let watched = true; // flips to false the instant Skip to End is clicked
 
   const playLog = document.getElementById("playLog");
   const scoreboard = document.getElementById("scoreboard");
   const boxScore = document.getElementById("boxScore");
+  const payoutBox = document.getElementById("payoutBox");
   const statsPane = document.getElementById("statsPane");
   const skipBtn = document.getElementById("skipBtn");
   const continueBtn = document.getElementById("continueBtn");
@@ -162,6 +184,7 @@
 
     skipBtn.addEventListener("click", () => {
       revealToken++;
+      watched = false;
       skipBtn.style.display = "none";
       renderFinal();
     });
@@ -223,8 +246,34 @@
     skipBtn.style.display = "none";
     renderBoxScoreFinal();
     renderStats();
+    renderPayout();
     if (bannerText) document.getElementById("banner").innerHTML = `<div class="banner">${escapeHtml(bannerText)}</div>`;
     continueBtn.style.display = "inline-block";
+  }
+
+  function renderPayout() {
+    const save = getSave();
+    const yourTeamObj = save.yourTeam === awayName ? awayTeam : homeTeam;
+    const yourLineupNames = yourTeamObj.lineup.map(p => p.name);
+    const payout = computeGamePayout(historyEntry, save.yourTeam, yourLineupNames, watched);
+
+    const meta = getMeta();
+    meta.basebux += payout.total;
+    setMeta(meta);
+
+    const won = historyEntry.winner === save.yourTeam;
+    let html = `<div class="payout-line">Basebux earned: +${payout.total} (balance: ${meta.basebux})</div>`;
+    html += `<div class="payout-sub">Base (${won ? "win" : "loss"}): +${payout.base}</div>`;
+    payout.accolades.forEach(a => {
+      html += `<div class="payout-sub">${escapeHtml(a.label)}${a.count > 1 ? ` x${a.count}` : ""}: +${a.bonus}</div>`;
+    });
+    if (payout.forfeited.length > 0) {
+      const forfeitedTotal = payout.forfeited.reduce((sum, a) => sum + a.bonus, 0);
+      const list = payout.forfeited.map(a => `${a.label}${a.count > 1 ? ` x${a.count}` : ""} (+${a.bonus})`).join(", ");
+      html += `<div class="payout-forfeited">Skipped the reveal, so this didn't pay out: ${escapeHtml(list)} — ${forfeitedTotal} Basebux left on the table.</div>`;
+    }
+    payoutBox.style.display = "block";
+    payoutBox.innerHTML = html;
   }
 
   function renderFinal() {
