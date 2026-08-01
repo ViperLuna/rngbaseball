@@ -201,7 +201,12 @@ const BASE_PAYOUTS = { win: 100, loss: 40 };
 // Flat bonuses, paid once per occurrence (a 2-HR game pays the home run
 // bonus twice), only for the player's own team, and only if the game was
 // actually watched rather than skipped -- that's the whole point of them.
-const ACCOLADE_PAYOUTS = { homeRun: 10, shutout: 50, noHitter: 150, cycle: 100 };
+const ACCOLADE_PAYOUTS = { homeRun: 10, shutout: 50, noHitter: 150, cycle: 100, blowout: 25 };
+
+// A win by this many runs or more counts as a blowout -- happens in
+// roughly 1 in 10 games, so it's priced between the common home run
+// bonus and the rarer shutout one.
+const BLOWOUT_MARGIN = 7;
 
 // Same six rarities in both crates -- Advanced just shifts the odds hard
 // toward the top end. Nothing is ever literally impossible from either one.
@@ -242,6 +247,11 @@ function detectAccolades(historyEntry, yourTeam, yourLineupNames) {
   });
   if (homeRuns > 0) {
     accolades.push({ type: "homeRun", label: "Home Run", count: homeRuns, bonus: ACCOLADE_PAYOUTS.homeRun * homeRuns });
+  }
+
+  const margin = Math.abs(historyEntry.scoreAway - historyEntry.scoreHome);
+  if (historyEntry.winner === yourTeam && margin >= BLOWOUT_MARGIN) {
+    accolades.push({ type: "blowout", label: "Blowout Win", count: 1, bonus: ACCOLADE_PAYOUTS.blowout });
   }
 
   return accolades;
