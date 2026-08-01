@@ -131,6 +131,16 @@
   }
   button:hover { filter: brightness(0.95); }
   button.secondary { background: var(--panel); color: var(--text); border-color: var(--border); }
+  .speed-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .speed-row input[type="range"] { flex: 1; }
+  .speed-row span { white-space: nowrap; }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #18181b;
@@ -147,6 +157,11 @@
   <h1 id="title"></h1>
   <div id="banner"></div>
   <div class="scoreboard" id="scoreboard"></div>
+  <div class="speed-row">
+    <label for="speedSlider">Speed</label>
+    <input type="range" id="speedSlider" min="1" max="8" step="1" value="1">
+    <span id="speedLabel"></span>
+  </div>
   <div id="boxScore"></div>
   <div id="payoutBox" style="display:none;"></div>
   <div id="playLog"></div>
@@ -183,7 +198,43 @@
 
   let revealToken = 0;
 
+  // Speed 1 = current/fastest pace (100-300ms/play, unchanged). Speed 8 =
+  // slowest, randomized 3-5s/play so it still varies play to play like a
+  // real at-bat would (some are one swing, some run long with foul balls),
+  // just stretched out. Everything in between linearly interpolates both
+  // ends of that range. Persisted so it's remembered across games.
+  const SPEED_KEY = "rngbaseball_reveal_speed";
+  let speedStep = Number(localStorage.getItem(SPEED_KEY)) || 1;
+
+  function delayRangeForSpeed(step) {
+    const t = (step - 1) / 7;
+    const min = 100 + t * (3000 - 100);
+    const max = 300 + t * (5000 - 300);
+    return { min, max };
+  }
+
+  function speedLabelText(step) {
+    const { min, max } = delayRangeForSpeed(step);
+    const range = `${(min / 1000).toFixed(1)}-${(max / 1000).toFixed(1)}s/play`;
+    if (step === 1) return `Fastest (${range})`;
+    if (step === 8) return `Slowest (${range})`;
+    return range;
+  }
+
+  function initSpeedControl() {
+    const slider = document.getElementById("speedSlider");
+    slider.value = speedStep;
+    document.getElementById("speedLabel").textContent = speedLabelText(speedStep);
+    slider.addEventListener("input", () => {
+      speedStep = Number(slider.value);
+      localStorage.setItem(SPEED_KEY, String(speedStep));
+      document.getElementById("speedLabel").textContent = speedLabelText(speedStep);
+    });
+  }
+
   async function loadTeamsAndStart() {
+    initSpeedControl();
+
     const res = await fetch("../data/teams.json");
     const data = await res.json();
     awayTeam = data.teams.find(t => t.name === awayName);
@@ -244,7 +295,8 @@
 
       renderBoxScoreLive(inningRuns, play);
 
-      await new Promise(r => setTimeout(r, 100 + Math.random() * 200));
+      const { min, max } = delayRangeForSpeed(speedStep);
+      await new Promise(r => setTimeout(r, min + Math.random() * (max - min)));
     }
 
     finishReveal();
