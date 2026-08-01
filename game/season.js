@@ -149,9 +149,12 @@ const SELL_PRICES = { Common: 5, Uncommon: 10, Rare: 20, Epic: 40, Legendary: 75
 // The full per-play stats snapshot on each play (used only to animate the
 // live reveal) would make season-long storage of every game far bigger than
 // it needs to be -- history playback just needs the running score and text,
-// so this strips the snapshot back down before a game gets saved.
+// so this strips the snapshot back down before a game gets saved. `bases`
+// is kept (it's tiny, just 3 slots) since season-game.html's live reveal
+// uses it to show the bases-occupied diamond; box-score.html's after-the-
+// fact review never builds that UI at all, so it's simply unused there.
 function trimPlaysForHistory(plays) {
-  return plays.map(p => ({ half: p.half, inning: p.inning, text: p.text, scoreA: p.scoreA, scoreB: p.scoreB }));
+  return plays.map(p => ({ half: p.half, inning: p.inning, text: p.text, scoreA: p.scoreA, scoreB: p.scoreB, bases: p.bases }));
 }
 
 function buildGameHistoryEntry(round, rawResult, awayTeam, homeTeam) {

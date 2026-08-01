@@ -94,6 +94,30 @@
   }
   .speed-row input[type="range"] { flex: 1; }
   .speed-row span { white-space: nowrap; }
+  #basesPanel {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  #basesPanel h3 { font-size: 0.8rem; color: var(--muted); font-weight: 600; margin: 0 0 0.6rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .bases-diamond { position: relative; width: 84px; height: 84px; margin: 0 auto; }
+  .base {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: transparent;
+    border: 2px solid var(--muted);
+    transform: rotate(45deg);
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .base.occupied { background: #d97706; border-color: #d97706; }
+  .base-2b { top: 0; left: 50%; margin-left: -9px; }
+  .base-3b { top: 50%; left: 4px; margin-top: -9px; }
+  .base-1b { top: 50%; right: 4px; margin-top: -9px; }
+  .base-home { position: absolute; bottom: -2px; left: 50%; width: 12px; height: 12px; margin-left: -6px; border: 2px solid var(--muted); transform: rotate(45deg); }
   #playLog {
     height: 40vh;
     overflow-y: auto;
@@ -180,6 +204,7 @@
       --text: #f4f4f5;
       --muted: #a1a1aa;
     }
+    .base.occupied { background: #fbbf24; border-color: #fbbf24; }
   }
 </style>
 </head>
@@ -205,6 +230,15 @@
   <div id="boxScore" style="display:none;"></div>
 
   <div id="playLog"></div>
+  <div id="basesPanel" style="display:none;">
+    <h3>Bases</h3>
+    <div class="bases-diamond">
+      <div class="base base-2b" id="base2B"></div>
+      <div class="base base-3b" id="base3B"></div>
+      <div class="base base-1b" id="base1B"></div>
+      <div class="base-home"></div>
+    </div>
+  </div>
   <div id="statsPane"></div>
 </main>
 
@@ -231,6 +265,7 @@
 
   const statsPane = document.getElementById("statsPane");
   const boxScore = document.getElementById("boxScore");
+  const basesPanel = document.getElementById("basesPanel");
   const skipBtn = document.getElementById("skipBtn");
 
   let revealToken = 0; // bumped to cancel an in-progress reveal (e.g. Skip pressed)
@@ -285,6 +320,7 @@
     playLog.innerHTML = "";
     scoreboard.style.display = "flex";
     boxScore.style.display = "block";
+    basesPanel.style.display = "block";
     skipBtn.style.display = "inline-block";
     skipBtn._result = result;
     skipBtn._teamA = teamA;
@@ -322,6 +358,7 @@
 
       renderBoxScoreLive(result, teamA, teamB, inningRuns, play);
       renderStats(play.stats, teamA, teamB);
+      updateBasesDiamond(play.bases);
 
       const { min, max } = delayRangeForSpeed(speedStep);
       await new Promise(r => setTimeout(r, min + Math.random() * (max - min)));
@@ -330,6 +367,13 @@
     playLog.insertAdjacentHTML("beforeend",
       `<div class="inning-header">Final: ${teamA.name} ${result.scoreA}, ${teamB.name} ${result.scoreB} — ${result.winner} wins</div>`);
     skipBtn.style.display = "none";
+    basesPanel.style.display = "none";
+  }
+
+  function updateBasesDiamond(bases) {
+    document.getElementById("base1B").classList.toggle("occupied", !!bases[0]);
+    document.getElementById("base2B").classList.toggle("occupied", !!bases[1]);
+    document.getElementById("base3B").classList.toggle("occupied", !!bases[2]);
   }
 
   function renderFinal(result, teamA, teamB) {
@@ -345,6 +389,7 @@
     playLog.innerHTML += `<div class="inning-header">Final: ${teamA.name} ${result.scoreA}, ${teamB.name} ${result.scoreB} — ${result.winner} wins</div>`;
 
     boxScore.style.display = "block";
+    basesPanel.style.display = "none";
     renderBoxScoreFinal(result, teamA, teamB);
     renderStats(result.stats, teamA, teamB);
   }
