@@ -244,19 +244,21 @@ function detectAccolades(historyEntry, yourTeam, yourLineupNames) {
   return accolades;
 }
 
-// The win/loss base always pays out. Accolades only pay out if `watched` is
-// true; otherwise they're returned separately as `forfeited`, so the UI can
-// show what was earned alongside what was left on the table by skipping.
-function computeGamePayout(historyEntry, yourTeam, yourLineupNames, watched) {
-  const won = historyEntry.winner === yourTeam;
-  const base = won ? BASE_PAYOUTS.win : BASE_PAYOUTS.loss;
-  const accolades = detectAccolades(historyEntry, yourTeam, yourLineupNames);
-  const accoladeTotal = accolades.reduce((sum, a) => sum + a.bonus, 0);
+// The win/loss base is credited the instant a game is recorded (season.html,
+// same moment as standings/history/currentRound) -- it doesn't depend on the
+// reveal ever being opened, let alone finished, so there's nothing to lose
+// by navigating away early.
+function computeBasePayout(historyEntry, yourTeam) {
+  return historyEntry.winner === yourTeam ? BASE_PAYOUTS.win : BASE_PAYOUTS.loss;
+}
 
-  if (watched) {
-    return { base, accolades, total: base + accoladeTotal, forfeited: [] };
-  }
-  return { base, accolades: [], total: base, forfeited: accolades };
+// Accolades only pay out if `watched` is true; otherwise they're returned
+// separately as `forfeited`, so the UI can show what was earned alongside
+// what was left on the table by skipping.
+function computeAccoladePayout(historyEntry, yourTeam, yourLineupNames, watched) {
+  const accolades = detectAccolades(historyEntry, yourTeam, yourLineupNames);
+  if (watched) return { accolades, forfeited: [] };
+  return { accolades: [], forfeited: accolades };
 }
 
 function rollRarity(crateType) {

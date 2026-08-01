@@ -16,12 +16,17 @@
   innings complete, but H and E only fill in once the reveal finishes and
   the game's final stats are available.
 
-  This page also pays out Basebux once the game is done: the win/loss base
-  always pays, but accolade bonuses (home run, shutout, no-hitter, cycle --
-  see season.js's ACCOLADE_PAYOUTS/detectAccolades) only pay out if the
-  reveal actually played out. Hitting Skip to End still finishes the game
-  instantly, but forfeits any accolades that happened -- the payout box
-  shows what you got either way, and what you'd have gotten by watching.
+  The win/loss base payout was already credited back on season.html the
+  instant this game got recorded -- it doesn't depend on this page ever
+  being opened, let alone finished. What happens here is just the accolade
+  bonuses (home run, shutout, no-hitter, cycle -- see season.js's
+  ACCOLADE_PAYOUTS/detectAccolades): they only pay out if the reveal
+  actually played through. Hitting Skip to End still finishes the game
+  instantly, but forfeits any accolades that happened. Either way, the
+  payout only ever gets credited once per game -- a `payload.accoladesPaid`
+  flag gets persisted back to sessionStorage the first time, so refreshing
+  or replaying the same reveal (say, after it already finished once, before
+  Continue was clicked) can't pay the accolades out twice.
   -----------------------------------------------------------------------------
 -->
 <!doctype html>
@@ -159,6 +164,11 @@
   if (!payloadRaw) window.location.href = "season.html";
   const payload = JSON.parse(payloadRaw);
   const { historyEntry, teamA: awayName, teamB: homeName, bannerText } = payload;
+  // The base payout was already credited back on season.html the instant this
+  // game got recorded. Accolades only pay out once for this specific reveal --
+  // `payload.accoladesPaid` is persisted back to sessionStorage the first time
+  // they're credited, so refreshing or replaying the same reveal (e.g. after
+  // it already finished, before clicking Continue) can't credit them twice.
 
   let awayTeam = null, homeTeam = null;
   let watched = true; // flips to false the instant Skip to End is clicked
@@ -255,21 +265,33 @@
     const save = getSave();
     const yourTeamObj = save.yourTeam === awayName ? awayTeam : homeTeam;
     const yourLineupNames = yourTeamObj.lineup.map(p => p.name);
-    const payout = computeGamePayout(historyEntry, save.yourTeam, yourLineupNames, watched);
+    const base = computeBasePayout(historyEntry, save.yourTeam);
+    const accoladeResult = computeAccoladePayout(historyEntry, save.yourTeam, yourLineupNames, watched);
+    const accoladeTotal = accoladeResult.accolades.reduce((sum, a) => sum + a.bonus, 0);
 
-    const meta = getMeta();
-    meta.basebux += payout.total;
-    setMeta(meta);
+    // Base was already credited on season.html. Accolades only get credited
+    // the first time this specific reveal finishes -- guarded by a flag
+    // persisted back to sessionStorage, so refreshing or replaying it (e.g.
+    // after it already finished once, before Continue was clicked) can't
+    // pay them out again.
+    let meta = getMeta();
+    if (!payload.accoladesPaid) {
+      meta.basebux += accoladeTotal;
+      setMeta(meta);
+      payload.accoladesPaid = true;
+      sessionStorage.setItem("rngbaseball_reveal_game", JSON.stringify(payload));
+    }
+    meta = getMeta();
 
     const won = historyEntry.winner === save.yourTeam;
-    let html = `<div class="payout-line">Basebux earned: +${payout.total} (balance: ${meta.basebux})</div>`;
-    html += `<div class="payout-sub">Base (${won ? "win" : "loss"}): +${payout.base}</div>`;
-    payout.accolades.forEach(a => {
+    let html = `<div class="payout-line">Basebux earned this game: +${base + accoladeTotal} (balance: ${meta.basebux})</div>`;
+    html += `<div class="payout-sub">Base (${won ? "win" : "loss"}): +${base} (already credited)</div>`;
+    accoladeResult.accolades.forEach(a => {
       html += `<div class="payout-sub">${escapeHtml(a.label)}${a.count > 1 ? ` x${a.count}` : ""}: +${a.bonus}</div>`;
     });
-    if (payout.forfeited.length > 0) {
-      const forfeitedTotal = payout.forfeited.reduce((sum, a) => sum + a.bonus, 0);
-      const list = payout.forfeited.map(a => `${a.label}${a.count > 1 ? ` x${a.count}` : ""} (+${a.bonus})`).join(", ");
+    if (accoladeResult.forfeited.length > 0) {
+      const forfeitedTotal = accoladeResult.forfeited.reduce((sum, a) => sum + a.bonus, 0);
+      const list = accoladeResult.forfeited.map(a => `${a.label}${a.count > 1 ? ` x${a.count}` : ""} (+${a.bonus})`).join(", ");
       html += `<div class="payout-forfeited">Skipped the reveal, so this didn't pay out: ${escapeHtml(list)} — ${forfeitedTotal} Basebux left on the table.</div>`;
     }
     payoutBox.style.display = "block";

@@ -287,8 +287,16 @@
     save.currentRound++;
     setSave(save);
 
+    // The base win/loss payout is credited right here, the same moment the
+    // game gets recorded -- it doesn't depend on the reveal ever being
+    // opened, let alone finished, so there's nothing to lose by navigating
+    // away before watching it.
+    const meta = getMeta();
+    meta.basebux += computeBasePayout(yourGameEntry, save.yourTeam);
+    setMeta(meta);
+
     sessionStorage.setItem("rngbaseball_reveal_game", JSON.stringify({
-      historyEntry: yourGameEntry, teamA: yourAwayName, teamB: yourHomeName
+      historyEntry: yourGameEntry, teamA: yourAwayName, teamB: yourHomeName, accoladesPaid: false
     }));
     window.location.href = "season-game.html";
   }
@@ -312,20 +320,24 @@
     save.playoff.wonLeague = wonLeague;
     setSave(save);
 
+    // Same immediate-base-payout treatment as a regular round, plus the
+    // league unlock -- both credited the moment the result is recorded,
+    // not gated behind the reveal.
+    const meta = getMeta();
+    meta.basebux += computeBasePayout(historyEntry, save.yourTeam);
     let bannerText;
     if (wonLeague) {
-      const meta = getMeta();
       const next = nextLeague(save.league);
       if (next && !meta.unlockedLeagues.includes(next)) meta.unlockedLeagues.push(next);
       if (next) meta.currentLeague = next;
-      setMeta(meta);
       bannerText = `Champions! ${next ? next + " league unlocked!" : "You've conquered every league!"}`;
     } else {
       bannerText = `Championship lost. ${historyEntry.winner} takes the title.`;
     }
+    setMeta(meta);
 
     sessionStorage.setItem("rngbaseball_reveal_game", JSON.stringify({
-      historyEntry, teamA: awayName, teamB: homeName, bannerText
+      historyEntry, teamA: awayName, teamB: homeName, bannerText, accoladesPaid: false
     }));
     window.location.href = "season-game.html";
   }
