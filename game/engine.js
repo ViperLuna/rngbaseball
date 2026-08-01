@@ -471,7 +471,8 @@ function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, st
       half, inning, text: result.text,
       scoreA: scoreRef.A, scoreB: scoreRef.B,
       stats: JSON.parse(JSON.stringify(stats)),
-      errors: { ...errors }
+      errors: { ...errors },
+      bases: [...bases]
     });
 
     if (walkOffTarget !== null && runs >= walkOffTarget) {
@@ -480,7 +481,8 @@ function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, st
         half, inning, text: "Walk-off! The game ends here.",
         scoreA: scoreRef.A, scoreB: scoreRef.B,
         stats: JSON.parse(JSON.stringify(stats)),
-        errors: { ...errors }
+        errors: { ...errors },
+        bases: [...bases]
       });
       break;
     }
