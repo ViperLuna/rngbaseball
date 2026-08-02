@@ -222,7 +222,7 @@
     document.getElementById("crates").innerHTML = Object.entries(CRATES).map(([key, crate]) => `
       <div class="crate-card">
         <h2>${escapeHtml(crate.label)}</h2>
-        <div class="crate-price">${crate.price} Basebux</div>
+        <div class="crate-price">${crate.price} Basebux &middot; ${ITEMS_PER_CRATE} items per crate</div>
         <table class="odds-table">
           ${Object.entries(crate.odds).map(([rarity, pct]) => `
             <tr><td class="rarity-${rarity}">${rarity}</td><td>${(pct * 100).toFixed(1)}%</td></tr>
@@ -242,21 +242,28 @@
     if (meta.basebux < crate.price) return;
 
     meta.basebux -= crate.price;
-    const rarity = rollRarity(crateKey);
-    const candidates = items.filter(i => i.rarity === rarity);
-    const template = candidates[Math.floor(Math.random() * candidates.length)];
-    // Clone (not the shared items.json template object) and tag with a
-    // stable per-copy id -- loadouts.html needs a handle that survives
-    // reordering when other items get equipped/sold, since two pulls of
-    // the exact same item would otherwise be indistinguishable.
-    const item = { ...template, _instanceId: makeInstanceId() };
-    meta.inventory.push(item);
+    const pulled = [];
+    for (let i = 0; i < ITEMS_PER_CRATE; i++) {
+      const rarity = rollRarity(crateKey);
+      const candidates = items.filter(i => i.rarity === rarity);
+      const template = candidates[Math.floor(Math.random() * candidates.length)];
+      // Clone (not the shared items.json template object) and tag with a
+      // stable per-copy id -- loadouts.html needs a handle that survives
+      // reordering when other items get equipped/sold, since two pulls of
+      // the exact same item would otherwise be indistinguishable.
+      const item = { ...template, _instanceId: makeInstanceId() };
+      meta.inventory.push(item);
+      pulled.push({ rarity, item });
+    }
     setMeta(meta);
 
     document.getElementById("pullResult").style.display = "block";
     document.getElementById("pullResult").innerHTML = `
-      <div class="pull-result rarity-${rarity}">${escapeHtml(crate.label)} → ${rarity}: ${escapeHtml(item.name)} ${escapeHtml(item.slot)}</div>
-      <div style="text-align:center; color:var(--muted); font-size:0.85rem;">${escapeHtml(item.type)} · ${escapeHtml(item.slot)} · ${escapeHtml(formatStats(item))}</div>
+      <div style="text-align:center; font-weight:600; margin-bottom:0.4rem;">${escapeHtml(crate.label)} → ${pulled.length} items</div>
+      ${pulled.map(({ rarity, item }) => `
+        <div class="pull-result rarity-${rarity}">${rarity}: ${escapeHtml(item.name)} ${escapeHtml(item.slot)}</div>
+        <div style="text-align:center; color:var(--muted); font-size:0.85rem; margin-bottom:0.5rem;">${escapeHtml(item.type)} · ${escapeHtml(item.slot)} · ${escapeHtml(formatStats(item))}</div>
+      `).join("")}
     `;
 
     renderBalance();
