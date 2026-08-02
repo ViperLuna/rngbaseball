@@ -240,7 +240,7 @@
   }
 
   function slotsForPosition(position) {
-    return position === "P" ? ["Hat", "Glove"] : ["Bat", "Helmet"];
+    return position === "P" ? ["Hat", "Glove", "Shoes"] : ["Bat", "Helmet", "Shoes"];
   }
 
   function renderAll() {
@@ -355,8 +355,8 @@
     const after = isPitcher ? getPitcherRatings({ gear: afterGear }) : getBatterRatings({ gear: afterGear });
 
     const labels = isPitcher
-      ? [["stuff", "Stuff"], ["control", "Control"], ["contactSuppression", "Contact Suppression"], ["battedBallTendency", "Batted-Ball Tendency"]]
-      : [["contact", "Contact"], ["power", "Power"], ["discipline", "Discipline"], ["battedBallTendency", "Batted-Ball Tendency"]];
+      ? [["stuff", "Stuff"], ["control", "Control"], ["contactSuppression", "Contact Suppression"], ["battedBallTendency", "Batted-Ball Tendency"], ["arm", "Arm"], ["reaction", "Reaction"]]
+      : [["contact", "Contact"], ["power", "Power"], ["discipline", "Discipline"], ["battedBallTendency", "Batted-Ball Tendency"], ["speed", "Speed"], ["instincts", "Instincts"]];
 
     const statLines = labels.map(([key, label]) => {
       const b = before[key], a = after[key];

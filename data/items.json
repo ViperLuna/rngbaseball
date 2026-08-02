@@ -1,5 +1,5 @@
 {
-  "nextId": 344,
+  "nextId": 512,
   "items": [
     {
       "name": "Wood",
@@ -54,6 +54,32 @@
       "id": 11
     },
     {
+      "name": "Wood",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 344
+    },
+    {
+      "name": "Wood",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 345
+    },
+    {
       "name": "Plastic",
       "type": "Pitcher",
       "slot": "Hat",
@@ -104,6 +130,32 @@
       ],
       "rarity": "Common",
       "id": 15
+    },
+    {
+      "name": "Plastic",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 346
+    },
+    {
+      "name": "Plastic",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 347
     },
     {
       "name": "Tin",
@@ -158,6 +210,32 @@
       "id": 19
     },
     {
+      "name": "Tin",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 348
+    },
+    {
+      "name": "Tin",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 349
+    },
+    {
       "name": "Scrap",
       "type": "Pitcher",
       "slot": "Hat",
@@ -208,6 +286,32 @@
       ],
       "rarity": "Common",
       "id": 23
+    },
+    {
+      "name": "Scrap",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 350
+    },
+    {
+      "name": "Scrap",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 351
     },
     {
       "name": "Dusty",
@@ -278,6 +382,40 @@
       "id": 27
     },
     {
+      "name": "Dusty",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 1
+        },
+        {
+          "stat": "Reaction",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 352
+    },
+    {
+      "name": "Dusty",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 1
+        },
+        {
+          "stat": "Instincts",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 353
+    },
+    {
       "name": "Clay",
       "type": "Pitcher",
       "slot": "Hat",
@@ -344,6 +482,40 @@
       ],
       "rarity": "Common",
       "id": 31
+    },
+    {
+      "name": "Clay",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 1.5
+        },
+        {
+          "stat": "Reaction",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 354
+    },
+    {
+      "name": "Clay",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 1.5
+        },
+        {
+          "stat": "Instincts",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 355
     },
     {
       "name": "Rust",
@@ -414,6 +586,40 @@
       "id": 35
     },
     {
+      "name": "Rust",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 3
+        }
+      ],
+      "rarity": "Common",
+      "id": 356
+    },
+    {
+      "name": "Rust",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 3
+        }
+      ],
+      "rarity": "Common",
+      "id": 357
+    },
+    {
       "name": "Faded",
       "type": "Pitcher",
       "slot": "Hat",
@@ -480,6 +686,40 @@
       ],
       "rarity": "Common",
       "id": 39
+    },
+    {
+      "name": "Faded",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 3
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Common",
+      "id": 358
+    },
+    {
+      "name": "Faded",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 3
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Common",
+      "id": 359
     },
     {
       "name": "Iron",
@@ -550,6 +790,40 @@
       "id": 43
     },
     {
+      "name": "Iron",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 3
+        },
+        {
+          "stat": "Reaction",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 360
+    },
+    {
+      "name": "Iron",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 3
+        },
+        {
+          "stat": "Instincts",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 361
+    },
+    {
       "name": "Junk",
       "type": "Pitcher",
       "slot": "Hat",
@@ -616,6 +890,40 @@
       ],
       "rarity": "Common",
       "id": 47
+    },
+    {
+      "name": "Junk",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 1
+        },
+        {
+          "stat": "Reaction",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 362
+    },
+    {
+      "name": "Junk",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 1
+        },
+        {
+          "stat": "Instincts",
+          "value": -1
+        }
+      ],
+      "rarity": "Common",
+      "id": 363
     },
     {
       "name": "Chipped",
@@ -686,6 +994,40 @@
       "id": 51
     },
     {
+      "name": "Chipped",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -1
+        },
+        {
+          "stat": "Reaction",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 364
+    },
+    {
+      "name": "Chipped",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -1
+        },
+        {
+          "stat": "Instincts",
+          "value": 1
+        }
+      ],
+      "rarity": "Common",
+      "id": 365
+    },
+    {
       "name": "Cracked",
       "type": "Pitcher",
       "slot": "Hat",
@@ -752,6 +1094,40 @@
       ],
       "rarity": "Common",
       "id": 55
+    },
+    {
+      "name": "Cracked",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -3
+        },
+        {
+          "stat": "Reaction",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 366
+    },
+    {
+      "name": "Cracked",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -3
+        },
+        {
+          "stat": "Instincts",
+          "value": 2
+        }
+      ],
+      "rarity": "Common",
+      "id": 367
     },
     {
       "name": "Bent",
@@ -822,6 +1198,40 @@
       "id": 59
     },
     {
+      "name": "Bent",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 2
+        },
+        {
+          "stat": "Reaction",
+          "value": -3
+        }
+      ],
+      "rarity": "Common",
+      "id": 368
+    },
+    {
+      "name": "Bent",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 2
+        },
+        {
+          "stat": "Instincts",
+          "value": -3
+        }
+      ],
+      "rarity": "Common",
+      "id": 369
+    },
+    {
       "name": "Worn",
       "type": "Pitcher",
       "slot": "Hat",
@@ -890,6 +1300,40 @@
       "id": 63
     },
     {
+      "name": "Worn",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 0.5
+        },
+        {
+          "stat": "Reaction",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 370
+    },
+    {
+      "name": "Worn",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 0.5
+        },
+        {
+          "stat": "Instincts",
+          "value": 0.5
+        }
+      ],
+      "rarity": "Common",
+      "id": 371
+    },
+    {
       "name": "Prototype",
       "type": "Pitcher",
       "slot": "Hat",
@@ -942,6 +1386,32 @@
       "id": 67
     },
     {
+      "name": "Prototype",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 372
+    },
+    {
+      "name": "Prototype",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 373
+    },
+    {
       "name": "Carbon",
       "type": "Pitcher",
       "slot": "Hat",
@@ -992,6 +1462,32 @@
       ],
       "rarity": "Uncommon",
       "id": 71
+    },
+    {
+      "name": "Carbon",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 374
+    },
+    {
+      "name": "Carbon",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 375
     },
     {
       "name": "Hazard",
@@ -1062,6 +1558,40 @@
       "id": 75
     },
     {
+      "name": "Hazard",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 6
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 376
+    },
+    {
+      "name": "Hazard",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 6
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 377
+    },
+    {
       "name": "Stealth",
       "type": "Pitcher",
       "slot": "Hat",
@@ -1130,6 +1660,40 @@
       "id": 79
     },
     {
+      "name": "Stealth",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 378
+    },
+    {
+      "name": "Stealth",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 379
+    },
+    {
       "name": "Reinforced",
       "type": "Pitcher",
       "slot": "Hat",
@@ -1182,6 +1746,32 @@
       "id": 83
     },
     {
+      "name": "Reinforced",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 380
+    },
+    {
+      "name": "Reinforced",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 381
+    },
+    {
       "name": "Alloy",
       "type": "Pitcher",
       "slot": "Hat",
@@ -1232,6 +1822,32 @@
       ],
       "rarity": "Uncommon",
       "id": 87
+    },
+    {
+      "name": "Alloy",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 382
+    },
+    {
+      "name": "Alloy",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 5
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 383
     },
     {
       "name": "Tactical",
@@ -1302,6 +1918,40 @@
       "id": 91
     },
     {
+      "name": "Tactical",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 3
+        },
+        {
+          "stat": "Reaction",
+          "value": 3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 384
+    },
+    {
+      "name": "Tactical",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 3
+        },
+        {
+          "stat": "Instincts",
+          "value": 3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 385
+    },
+    {
       "name": "Nitro",
       "type": "Pitcher",
       "slot": "Hat",
@@ -1368,6 +2018,40 @@
       ],
       "rarity": "Uncommon",
       "id": 95
+    },
+    {
+      "name": "Nitro",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 7
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 386
+    },
+    {
+      "name": "Nitro",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 7
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 387
     },
     {
       "name": "Turbo",
@@ -1438,6 +2122,40 @@
       "id": 99
     },
     {
+      "name": "Turbo",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 7
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 388
+    },
+    {
+      "name": "Turbo",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 7
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 389
+    },
+    {
       "name": "Vintage",
       "type": "Pitcher",
       "slot": "Hat",
@@ -1504,6 +2222,40 @@
       ],
       "rarity": "Uncommon",
       "id": 103
+    },
+    {
+      "name": "Vintage",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 2
+        },
+        {
+          "stat": "Reaction",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 390
+    },
+    {
+      "name": "Vintage",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 2
+        },
+        {
+          "stat": "Instincts",
+          "value": 4
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 391
     },
     {
       "name": "Cobalt",
@@ -1574,6 +2326,40 @@
       "id": 107
     },
     {
+      "name": "Cobalt",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 4
+        },
+        {
+          "stat": "Reaction",
+          "value": 2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 392
+    },
+    {
+      "name": "Cobalt",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 4
+        },
+        {
+          "stat": "Instincts",
+          "value": 2
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 393
+    },
+    {
       "name": "Riot",
       "type": "Pitcher",
       "slot": "Hat",
@@ -1640,6 +2426,40 @@
       ],
       "rarity": "Uncommon",
       "id": 111
+    },
+    {
+      "name": "Riot",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 8
+        },
+        {
+          "stat": "Reaction",
+          "value": -3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 394
+    },
+    {
+      "name": "Riot",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 8
+        },
+        {
+          "stat": "Instincts",
+          "value": -3
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 395
     },
     {
       "name": "Static",
@@ -1710,6 +2530,40 @@
       "id": 115
     },
     {
+      "name": "Static",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -3
+        },
+        {
+          "stat": "Reaction",
+          "value": 8
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 396
+    },
+    {
+      "name": "Static",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -3
+        },
+        {
+          "stat": "Instincts",
+          "value": 8
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 397
+    },
+    {
       "name": "Signal",
       "type": "Pitcher",
       "slot": "Hat",
@@ -1760,6 +2614,32 @@
       ],
       "rarity": "Uncommon",
       "id": 119
+    },
+    {
+      "name": "Signal",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 398
+    },
+    {
+      "name": "Signal",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 6
+        }
+      ],
+      "rarity": "Uncommon",
+      "id": 399
     },
     {
       "name": "Inferno",
@@ -1814,6 +2694,32 @@
       "id": 123
     },
     {
+      "name": "Inferno",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 400
+    },
+    {
+      "name": "Inferno",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 401
+    },
+    {
       "name": "Frostbite",
       "type": "Pitcher",
       "slot": "Hat",
@@ -1864,6 +2770,32 @@
       ],
       "rarity": "Rare",
       "id": 127
+    },
+    {
+      "name": "Frostbite",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 402
+    },
+    {
+      "name": "Frostbite",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 7
+        }
+      ],
+      "rarity": "Rare",
+      "id": 403
     },
     {
       "name": "Overclocked",
@@ -1934,6 +2866,40 @@
       "id": 131
     },
     {
+      "name": "Overclocked",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 9
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 404
+    },
+    {
+      "name": "Overclocked",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 9
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 405
+    },
+    {
       "name": "Venom",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2002,6 +2968,40 @@
       "id": 135
     },
     {
+      "name": "Venom",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 406
+    },
+    {
+      "name": "Venom",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 407
+    },
+    {
       "name": "Blaze",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2054,6 +3054,32 @@
       "id": 139
     },
     {
+      "name": "Blaze",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 408
+    },
+    {
+      "name": "Blaze",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 409
+    },
+    {
       "name": "Cyclone",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2104,6 +3130,32 @@
       ],
       "rarity": "Rare",
       "id": 143
+    },
+    {
+      "name": "Cyclone",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 410
+    },
+    {
+      "name": "Cyclone",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 8
+        }
+      ],
+      "rarity": "Rare",
+      "id": 411
     },
     {
       "name": "Rogue",
@@ -2174,6 +3226,40 @@
       "id": 147
     },
     {
+      "name": "Rogue",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 5
+        },
+        {
+          "stat": "Reaction",
+          "value": 4
+        }
+      ],
+      "rarity": "Rare",
+      "id": 412
+    },
+    {
+      "name": "Rogue",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 5
+        },
+        {
+          "stat": "Instincts",
+          "value": 4
+        }
+      ],
+      "rarity": "Rare",
+      "id": 413
+    },
+    {
       "name": "Widow",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2240,6 +3326,40 @@
       ],
       "rarity": "Rare",
       "id": 151
+    },
+    {
+      "name": "Widow",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 4
+        },
+        {
+          "stat": "Reaction",
+          "value": 5
+        }
+      ],
+      "rarity": "Rare",
+      "id": 414
+    },
+    {
+      "name": "Widow",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 4
+        },
+        {
+          "stat": "Instincts",
+          "value": 5
+        }
+      ],
+      "rarity": "Rare",
+      "id": 415
     },
     {
       "name": "Volt",
@@ -2310,6 +3430,40 @@
       "id": 155
     },
     {
+      "name": "Volt",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 10
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 416
+    },
+    {
+      "name": "Volt",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 10
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Rare",
+      "id": 417
+    },
+    {
       "name": "Shrapnel",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2378,6 +3532,40 @@
       "id": 159
     },
     {
+      "name": "Shrapnel",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 10
+        }
+      ],
+      "rarity": "Rare",
+      "id": 418
+    },
+    {
+      "name": "Shrapnel",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 10
+        }
+      ],
+      "rarity": "Rare",
+      "id": 419
+    },
+    {
       "name": "Corrosive",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2430,6 +3618,32 @@
       "id": 163
     },
     {
+      "name": "Corrosive",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 420
+    },
+    {
+      "name": "Corrosive",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 421
+    },
+    {
       "name": "Tempest",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2480,6 +3694,32 @@
       ],
       "rarity": "Rare",
       "id": 167
+    },
+    {
+      "name": "Tempest",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 422
+    },
+    {
+      "name": "Tempest",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 9
+        }
+      ],
+      "rarity": "Rare",
+      "id": 423
     },
     {
       "name": "Wildfire",
@@ -2550,6 +3790,40 @@
       "id": 171
     },
     {
+      "name": "Wildfire",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 11
+        },
+        {
+          "stat": "Reaction",
+          "value": -3
+        }
+      ],
+      "rarity": "Rare",
+      "id": 424
+    },
+    {
+      "name": "Wildfire",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 11
+        },
+        {
+          "stat": "Instincts",
+          "value": -3
+        }
+      ],
+      "rarity": "Rare",
+      "id": 425
+    },
+    {
       "name": "Serpent",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2618,6 +3892,40 @@
       "id": 175
     },
     {
+      "name": "Serpent",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -3
+        },
+        {
+          "stat": "Reaction",
+          "value": 11
+        }
+      ],
+      "rarity": "Rare",
+      "id": 426
+    },
+    {
+      "name": "Serpent",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -3
+        },
+        {
+          "stat": "Instincts",
+          "value": 11
+        }
+      ],
+      "rarity": "Rare",
+      "id": 427
+    },
+    {
       "name": "Supernova",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2670,6 +3978,32 @@
       "id": 179
     },
     {
+      "name": "Supernova",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 428
+    },
+    {
+      "name": "Supernova",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 429
+    },
+    {
       "name": "Diamond",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2720,6 +4054,32 @@
       ],
       "rarity": "Epic",
       "id": 183
+    },
+    {
+      "name": "Diamond",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 430
+    },
+    {
+      "name": "Diamond",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 10
+        }
+      ],
+      "rarity": "Epic",
+      "id": 431
     },
     {
       "name": "Tectonic",
@@ -2790,6 +4150,40 @@
       "id": 187
     },
     {
+      "name": "Tectonic",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 12
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 432
+    },
+    {
+      "name": "Tectonic",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 12
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 433
+    },
+    {
       "name": "Glitch",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2858,6 +4252,40 @@
       "id": 191
     },
     {
+      "name": "Glitch",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 434
+    },
+    {
+      "name": "Glitch",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 435
+    },
+    {
       "name": "Eclipse",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2910,6 +4338,32 @@
       "id": 195
     },
     {
+      "name": "Eclipse",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 436
+    },
+    {
+      "name": "Eclipse",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 437
+    },
+    {
       "name": "Platinum",
       "type": "Pitcher",
       "slot": "Hat",
@@ -2960,6 +4414,32 @@
       ],
       "rarity": "Epic",
       "id": 199
+    },
+    {
+      "name": "Platinum",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 438
+    },
+    {
+      "name": "Platinum",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 11
+        }
+      ],
+      "rarity": "Epic",
+      "id": 439
     },
     {
       "name": "Seismic",
@@ -3030,6 +4510,40 @@
       "id": 203
     },
     {
+      "name": "Seismic",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 6
+        },
+        {
+          "stat": "Reaction",
+          "value": 5
+        }
+      ],
+      "rarity": "Epic",
+      "id": 440
+    },
+    {
+      "name": "Seismic",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 6
+        },
+        {
+          "stat": "Instincts",
+          "value": 5
+        }
+      ],
+      "rarity": "Epic",
+      "id": 441
+    },
+    {
       "name": "Vortex",
       "type": "Pitcher",
       "slot": "Hat",
@@ -3096,6 +4610,40 @@
       ],
       "rarity": "Epic",
       "id": 207
+    },
+    {
+      "name": "Vortex",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 5
+        },
+        {
+          "stat": "Reaction",
+          "value": 6
+        }
+      ],
+      "rarity": "Epic",
+      "id": 442
+    },
+    {
+      "name": "Vortex",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 5
+        },
+        {
+          "stat": "Instincts",
+          "value": 6
+        }
+      ],
+      "rarity": "Epic",
+      "id": 443
     },
     {
       "name": "Radiant",
@@ -3166,6 +4714,40 @@
       "id": 211
     },
     {
+      "name": "Radiant",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 13
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 444
+    },
+    {
+      "name": "Radiant",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 13
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 445
+    },
+    {
       "name": "Cipher",
       "type": "Pitcher",
       "slot": "Hat",
@@ -3234,6 +4816,40 @@
       "id": 215
     },
     {
+      "name": "Cipher",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 13
+        }
+      ],
+      "rarity": "Epic",
+      "id": 446
+    },
+    {
+      "name": "Cipher",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 13
+        }
+      ],
+      "rarity": "Epic",
+      "id": 447
+    },
+    {
       "name": "Meteor",
       "type": "Pitcher",
       "slot": "Hat",
@@ -3286,6 +4902,32 @@
       "id": 219
     },
     {
+      "name": "Meteor",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 448
+    },
+    {
+      "name": "Meteor",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 449
+    },
+    {
       "name": "Prism",
       "type": "Pitcher",
       "slot": "Hat",
@@ -3336,6 +4978,32 @@
       ],
       "rarity": "Epic",
       "id": 223
+    },
+    {
+      "name": "Prism",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 450
+    },
+    {
+      "name": "Prism",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 12
+        }
+      ],
+      "rarity": "Epic",
+      "id": 451
     },
     {
       "name": "Fracture",
@@ -3406,6 +5074,40 @@
       "id": 227
     },
     {
+      "name": "Fracture",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 14
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 452
+    },
+    {
+      "name": "Fracture",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 14
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Epic",
+      "id": 453
+    },
+    {
       "name": "Singularity",
       "type": "Pitcher",
       "slot": "Hat",
@@ -3474,6 +5176,40 @@
       "id": 231
     },
     {
+      "name": "Singularity",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 14
+        }
+      ],
+      "rarity": "Epic",
+      "id": 454
+    },
+    {
+      "name": "Singularity",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 14
+        }
+      ],
+      "rarity": "Epic",
+      "id": 455
+    },
+    {
       "name": "Dragon",
       "type": "Pitcher",
       "slot": "Hat",
@@ -3526,6 +5262,32 @@
       "id": 235
     },
     {
+      "name": "Dragon",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 456
+    },
+    {
+      "name": "Dragon",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 457
+    },
+    {
       "name": "Gilded",
       "type": "Pitcher",
       "slot": "Hat",
@@ -3576,6 +5338,32 @@
       ],
       "rarity": "Legendary",
       "id": 239
+    },
+    {
+      "name": "Gilded",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 458
+    },
+    {
+      "name": "Gilded",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 13
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 459
     },
     {
       "name": "Void",
@@ -3646,6 +5434,40 @@
       "id": 243
     },
     {
+      "name": "Void",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 15
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 460
+    },
+    {
+      "name": "Void",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 15
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 461
+    },
+    {
       "name": "Thunder",
       "type": "Pitcher",
       "slot": "Hat",
@@ -3714,6 +5536,40 @@
       "id": 247
     },
     {
+      "name": "Thunder",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 462
+    },
+    {
+      "name": "Thunder",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 463
+    },
+    {
       "name": "Phoenix",
       "type": "Pitcher",
       "slot": "Hat",
@@ -3766,6 +5622,32 @@
       "id": 251
     },
     {
+      "name": "Phoenix",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 464
+    },
+    {
+      "name": "Phoenix",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 465
+    },
+    {
       "name": "Kraken",
       "type": "Pitcher",
       "slot": "Hat",
@@ -3816,6 +5698,32 @@
       ],
       "rarity": "Legendary",
       "id": 255
+    },
+    {
+      "name": "Kraken",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 466
+    },
+    {
+      "name": "Kraken",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 14
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 467
     },
     {
       "name": "Sovereign",
@@ -3886,6 +5794,40 @@
       "id": 259
     },
     {
+      "name": "Sovereign",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 8
+        },
+        {
+          "stat": "Reaction",
+          "value": 6
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 468
+    },
+    {
+      "name": "Sovereign",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 8
+        },
+        {
+          "stat": "Instincts",
+          "value": 6
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 469
+    },
+    {
       "name": "Titan",
       "type": "Pitcher",
       "slot": "Hat",
@@ -3954,6 +5896,40 @@
       "id": 263
     },
     {
+      "name": "Titan",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 6
+        },
+        {
+          "stat": "Reaction",
+          "value": 8
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 470
+    },
+    {
+      "name": "Titan",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 6
+        },
+        {
+          "stat": "Instincts",
+          "value": 8
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 471
+    },
+    {
       "name": "Griffin",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4006,6 +5982,32 @@
       "id": 267
     },
     {
+      "name": "Griffin",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 472
+    },
+    {
+      "name": "Griffin",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 473
+    },
+    {
       "name": "Behemoth",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4056,6 +6058,32 @@
       ],
       "rarity": "Legendary",
       "id": 271
+    },
+    {
+      "name": "Behemoth",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 474
+    },
+    {
+      "name": "Behemoth",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 15
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 475
     },
     {
       "name": "Colossus",
@@ -4126,6 +6154,40 @@
       "id": 275
     },
     {
+      "name": "Colossus",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 17
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 476
+    },
+    {
+      "name": "Colossus",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 17
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 477
+    },
+    {
       "name": "Valkyrie",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4194,6 +6256,40 @@
       "id": 279
     },
     {
+      "name": "Valkyrie",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 17
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 478
+    },
+    {
+      "name": "Valkyrie",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 17
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 479
+    },
+    {
       "name": "Leviathan",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4244,6 +6340,32 @@
       ],
       "rarity": "Legendary",
       "id": 283
+    },
+    {
+      "name": "Leviathan",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 480
+    },
+    {
+      "name": "Leviathan",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 481
     },
     {
       "name": "Warlord",
@@ -4298,6 +6420,32 @@
       "id": 287
     },
     {
+      "name": "Warlord",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 482
+    },
+    {
+      "name": "Warlord",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 16
+        }
+      ],
+      "rarity": "Legendary",
+      "id": 483
+    },
+    {
       "name": "Rune",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4350,6 +6498,32 @@
       "id": 291
     },
     {
+      "name": "Rune",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 484
+    },
+    {
+      "name": "Rune",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 485
+    },
+    {
       "name": "Celestial",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4400,6 +6574,32 @@
       ],
       "rarity": "Mythical",
       "id": 295
+    },
+    {
+      "name": "Celestial",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 486
+    },
+    {
+      "name": "Celestial",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 17
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 487
     },
     {
       "name": "Phantom",
@@ -4470,6 +6670,40 @@
       "id": 299
     },
     {
+      "name": "Phantom",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 19
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 488
+    },
+    {
+      "name": "Phantom",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 19
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 489
+    },
+    {
       "name": "Quantum",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4538,6 +6772,40 @@
       "id": 303
     },
     {
+      "name": "Quantum",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 19
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 490
+    },
+    {
+      "name": "Quantum",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 19
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 491
+    },
+    {
       "name": "Ethereal",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4590,6 +6858,32 @@
       "id": 307
     },
     {
+      "name": "Ethereal",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 492
+    },
+    {
+      "name": "Ethereal",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 493
+    },
+    {
       "name": "Nebula",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4640,6 +6934,32 @@
       ],
       "rarity": "Mythical",
       "id": 311
+    },
+    {
+      "name": "Nebula",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 494
+    },
+    {
+      "name": "Nebula",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 18
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 495
     },
     {
       "name": "Paradox",
@@ -4710,6 +7030,40 @@
       "id": 315
     },
     {
+      "name": "Paradox",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 10
+        },
+        {
+          "stat": "Reaction",
+          "value": 8
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 496
+    },
+    {
+      "name": "Paradox",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 10
+        },
+        {
+          "stat": "Instincts",
+          "value": 8
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 497
+    },
+    {
       "name": "Genesis",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4778,6 +7132,40 @@
       "id": 319
     },
     {
+      "name": "Genesis",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 8
+        },
+        {
+          "stat": "Reaction",
+          "value": 10
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 498
+    },
+    {
+      "name": "Genesis",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 8
+        },
+        {
+          "stat": "Instincts",
+          "value": 10
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 499
+    },
+    {
       "name": "Oblivion",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4830,6 +7218,32 @@
       "id": 323
     },
     {
+      "name": "Oblivion",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 500
+    },
+    {
+      "name": "Oblivion",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 501
+    },
+    {
       "name": "Zenith",
       "type": "Pitcher",
       "slot": "Hat",
@@ -4880,6 +7294,32 @@
       ],
       "rarity": "Mythical",
       "id": 327
+    },
+    {
+      "name": "Zenith",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 502
+    },
+    {
+      "name": "Zenith",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 20
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 503
     },
     {
       "name": "Infinity",
@@ -4950,6 +7390,40 @@
       "id": 331
     },
     {
+      "name": "Infinity",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 22
+        },
+        {
+          "stat": "Reaction",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 504
+    },
+    {
+      "name": "Infinity",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 22
+        },
+        {
+          "stat": "Instincts",
+          "value": -2
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 505
+    },
+    {
       "name": "Chrono",
       "type": "Pitcher",
       "slot": "Hat",
@@ -5018,6 +7492,40 @@
       "id": 335
     },
     {
+      "name": "Chrono",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": -2
+        },
+        {
+          "stat": "Reaction",
+          "value": 22
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 506
+    },
+    {
+      "name": "Chrono",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": -2
+        },
+        {
+          "stat": "Instincts",
+          "value": 22
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 507
+    },
+    {
       "name": "Elysian",
       "type": "Pitcher",
       "slot": "Hat",
@@ -5070,6 +7578,32 @@
       "id": 339
     },
     {
+      "name": "Elysian",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 508
+    },
+    {
+      "name": "Elysian",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 509
+    },
+    {
       "name": "Astral",
       "type": "Pitcher",
       "slot": "Hat",
@@ -5120,6 +7654,32 @@
       ],
       "rarity": "Mythical",
       "id": 343
+    },
+    {
+      "name": "Astral",
+      "type": "Pitcher",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Arm",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 510
+    },
+    {
+      "name": "Astral",
+      "type": "Batter",
+      "slot": "Shoes",
+      "stats": [
+        {
+          "stat": "Speed",
+          "value": 24
+        }
+      ],
+      "rarity": "Mythical",
+      "id": 511
     }
   ]
 }

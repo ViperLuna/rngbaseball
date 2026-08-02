@@ -44,6 +44,15 @@ const LEAGUE = (() => {
 const DP_CHANCE = 0.12;   // conditional chance of turning a double play when eligible (runner on 1st, <2 outs)
 const STAT_CAP = 25;      // matches the item builder's per-item cap
 
+// Extra-base attempt: when a hit (not a home run) leaves a runner on third
+// who was already on base before the play (not the batter), they get a shot
+// at scoring instead of just stopping there. Two authored baseline rates,
+// same pattern as DP_CHANCE -- not derived from a real external stat, just
+// tuned to feel right: most runners in this spot try for it, and most of
+// those attempts succeed, but a real miscalculation can cost the inning.
+const EXTRA_BASE_ATTEMPT_RATE = 65;   // league-average % chance the runner even goes for it
+const EXTRA_BASE_SUCCESS_RATE = 70;   // league-average % chance the attempt actually succeeds
+
 function clamp(v, lo, hi) {
   return Math.max(lo, Math.min(hi, v));
 }
@@ -93,7 +102,9 @@ function getBatterRatings(player) {
     contact: 50 + gearBonus(player, "Contact"),
     power: 50 + gearBonus(player, "Power"),
     discipline: 50 + gearBonus(player, "Discipline"),
-    battedBallTendency: 50 + gearBonus(player, "Batted-Ball Tendency")
+    battedBallTendency: 50 + gearBonus(player, "Batted-Ball Tendency"),
+    speed: 50 + gearBonus(player, "Speed"),
+    instincts: 50 + gearBonus(player, "Instincts")
   };
 }
 function getPitcherRatings(player) {
@@ -101,7 +112,9 @@ function getPitcherRatings(player) {
     stuff: 50 + gearBonus(player, "Stuff"),
     control: 50 + gearBonus(player, "Control"),
     contactSuppression: 50 + gearBonus(player, "Contact Suppression"),
-    battedBallTendency: 50 + gearBonus(player, "Batted-Ball Tendency")
+    battedBallTendency: 50 + gearBonus(player, "Batted-Ball Tendency"),
+    arm: 50 + gearBonus(player, "Arm"),
+    reaction: 50 + gearBonus(player, "Reaction")
   };
 }
 
@@ -156,6 +169,21 @@ function rollGroundballOrFlyball(batterRatings, pitcherRatings) {
   const batterRate = ratingToRate(batterRatings.battedBallTendency, league, 0.25, false) / 100;
   const pitcherRate = ratingToRate(pitcherRatings.battedBallTendency, league, 0.25, false) / 100;
   return Math.random() < log5(batterRate, pitcherRate, league / 100) ? "groundout" : "flyout";
+}
+
+// Two-stage extra-base attempt (see EXTRA_BASE_ATTEMPT_RATE/SUCCESS_RATE
+// above). `runnerRatings` are the actual baserunner's own ratings -- not
+// the current batter's -- since it's their speed and instincts on the
+// line, not whoever just got the hit.
+function rollExtraBaseAttempt(runnerRatings, pitcherRatings) {
+  const runnerRate = ratingToRate(runnerRatings.instincts, EXTRA_BASE_ATTEMPT_RATE, 0.30, false) / 100;
+  const pitcherRate = ratingToRate(pitcherRatings.reaction, EXTRA_BASE_ATTEMPT_RATE, 0.30, true) / 100;
+  return Math.random() < log5(runnerRate, pitcherRate, EXTRA_BASE_ATTEMPT_RATE / 100);
+}
+function rollExtraBaseSuccess(runnerRatings, pitcherRatings) {
+  const runnerRate = ratingToRate(runnerRatings.speed, EXTRA_BASE_SUCCESS_RATE, 0.30, false) / 100;
+  const pitcherRate = ratingToRate(pitcherRatings.arm, EXTRA_BASE_SUCCESS_RATE, 0.30, true) / 100;
+  return Math.random() < log5(runnerRate, pitcherRate, EXTRA_BASE_SUCCESS_RATE / 100);
 }
 
 // --- Baserunner state -------------------------------------------------------
@@ -248,7 +276,7 @@ function scoringSuffix(scorers) {
 
 // --- Plate appearance resolution --------------------------------------------
 
-function resolvePlateAppearance(batter, pitcher, bases, outs) {
+function resolvePlateAppearance(batter, pitcher, bases, outs, battingTeamLineup) {
   const batterRatings = getBatterRatings(batter);
   const pitcherRatings = getPitcherRatings(pitcher);
 
@@ -269,9 +297,35 @@ function resolvePlateAppearance(batter, pitcher, bases, outs) {
     const basesMap = { single: 1, double: 2, triple: 3, home_run: 4 };
     const result = advanceAllRunners(bases, batter.name, basesMap[hitType]);
     const labels = { single: "singles", double: "doubles", triple: "triples", home_run: "homers" };
-    return { type: hitType, bases: result.bases, outsAdded: 0, runsScored: result.runsScored,
-      scorers: result.scorers,
-      text: `${batter.name} ${labels[hitType]}.${scoringSuffix(result.scorers)}` };
+    let finalBases = result.bases;
+    let finalRuns = result.runsScored;
+    let finalScorers = result.scorers;
+    let extraOuts = 0;
+    let text = `${batter.name} ${labels[hitType]}.${scoringSuffix(result.scorers)}`;
+
+    // A pre-existing runner who ends up on third (not the batter, and never on
+    // a triple/homer where the situation can't arise) gets a shot at scoring
+    // on the same play instead of just holding.
+    const runnerOnThird = finalBases[2];
+    if (hitType !== "home_run" && runnerOnThird !== null && runnerOnThird !== batter.name) {
+      const runnerPlayer = battingTeamLineup.find(p => p.name === runnerOnThird);
+      const runnerRatings = getBatterRatings(runnerPlayer);
+      if (rollExtraBaseAttempt(runnerRatings, pitcherRatings)) {
+        finalBases = [...finalBases];
+        finalBases[2] = null;
+        if (rollExtraBaseSuccess(runnerRatings, pitcherRatings)) {
+          finalRuns += 1;
+          finalScorers = [...finalScorers, runnerOnThird];
+          text += ` ${runnerOnThird} tries for home and scores!`;
+        } else {
+          extraOuts = 1;
+          text += ` ${runnerOnThird} tries for home and is thrown out!`;
+        }
+      }
+    }
+
+    return { type: hitType, bases: finalBases, outsAdded: extraOuts, runsScored: finalRuns,
+      scorers: finalScorers, text };
   }
 
   // What would otherwise be an out has a small flat chance of being an error
@@ -454,7 +508,7 @@ function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, st
 
   while (outs < 3) {
     const batter = battingTeam.lineup[lineupState.index];
-    const result = applyWalkOffCap(resolvePlateAppearance(batter, pitcher, bases, outs), runs, walkOffTarget);
+    const result = applyWalkOffCap(resolvePlateAppearance(batter, pitcher, bases, outs, battingTeam.lineup), runs, walkOffTarget);
 
     outs += result.outsAdded;
     runs += result.runsScored;
