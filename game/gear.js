@@ -45,22 +45,26 @@ function rollOpponentRarity(odds) {
 // so "positive" has to mean every stat on the item, not just the first one
 // -- otherwise a mixed item could sneak a hidden downside into a guaranteed
 // opponent rarity tier.
-function pickPositiveItem(items, rarity, slot) {
-  const pool = items.filter(i => i.rarity === rarity && i.slot === slot && i.stats.every(s => s.value > 0));
+function pickPositiveItem(items, rarity, slot, type) {
+  const pool = items.filter(i => i.rarity === rarity && i.slot === slot && i.type === type && i.stats.every(s => s.value > 0));
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
 // Returns null (ungeared) or a { slot: item } object covering the player's
-// two applicable slots for their role.
+// three applicable slots for their role. "Shoes" is shared as a slot name
+// between both roles (Arm/Reaction for pitchers, Speed/Instincts for
+// batters), so pickPositiveItem also filters by item.type to keep the two
+// apart.
 function rollOpponentGearForPlayer(position, league, items) {
   const tier = OPPONENT_GEAR_RAMP[league];
   if (Math.random() >= tier.coverage) return null;
 
   const rarity = rollOpponentRarity(tier.odds);
-  const slots = position === "P" ? ["Hat", "Glove"] : ["Bat", "Helmet"];
+  const type = position === "P" ? "Pitcher" : "Batter";
+  const slots = position === "P" ? ["Hat", "Glove", "Shoes"] : ["Bat", "Helmet", "Shoes"];
   const gear = {};
   slots.forEach(slot => {
-    const item = pickPositiveItem(items, rarity, slot);
+    const item = pickPositiveItem(items, rarity, slot, type);
     if (item) gear[slot] = item;
   });
   return gear;
