@@ -208,6 +208,11 @@ const ACCOLADE_PAYOUTS = { homeRun: 10, shutout: 50, noHitter: 150, cycle: 100, 
 // bonus and the rarer shutout one.
 const BLOWOUT_MARGIN = 7;
 
+// Every crate opening rolls this many items, each an independent pull
+// against the crate's odds table below (so two Commons, two Mythicals, or
+// anything in between are all possible from the same crate).
+const ITEMS_PER_CRATE = 2;
+
 // Same six rarities in both crates -- Advanced just shifts the odds hard
 // toward the top end. Nothing is ever literally impossible from either one.
 const CRATES = {
