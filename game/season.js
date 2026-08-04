@@ -157,7 +157,35 @@ function trimPlaysForHistory(plays) {
   return plays.map(p => ({ half: p.half, inning: p.inning, text: p.text, scoreA: p.scoreA, scoreB: p.scoreB, bases: p.bases }));
 }
 
-function buildGameHistoryEntry(round, rawResult, awayTeam, homeTeam) {
+// A tiny per-half-inning runs summary (box-score.html's inning-by-inning R
+// grid), derived from the full play log -- cheap enough to keep for every
+// game forever, unlike the play-by-play text itself. Keyed "top-3"/"bottom-7".
+function computeInningRuns(plays) {
+  const inningRuns = {};
+  let halfStartA = 0, halfStartB = 0, prevScoreA = 0, prevScoreB = 0;
+  let lastHalf = null, lastInning = null;
+  plays.forEach(play => {
+    if (play.half !== lastHalf || play.inning !== lastInning) {
+      halfStartA = prevScoreA;
+      halfStartB = prevScoreB;
+      lastHalf = play.half;
+      lastInning = play.inning;
+    }
+    const key = `${play.half}-${play.inning}`;
+    inningRuns[key] = play.half === "top" ? play.scoreA - halfStartA : play.scoreB - halfStartB;
+    prevScoreA = play.scoreA;
+    prevScoreB = play.scoreB;
+  });
+  return inningRuns;
+}
+
+// `keepFullPlays` controls whether the (comparatively large) play-by-play
+// text log is stored at all -- a full season's worth of every league game
+// (not just the ones you played) was blowing past localStorage's quota, so
+// only your own games keep it. Every game still gets the tiny inningRuns/
+// maxInning summary, which is all box-score.html's line-score grid needs.
+function buildGameHistoryEntry(round, rawResult, awayTeam, homeTeam, keepFullPlays) {
+  const trimmedPlays = trimPlaysForHistory(rawResult.plays);
   return {
     round,
     away: awayTeam.name,
@@ -166,27 +194,49 @@ function buildGameHistoryEntry(round, rawResult, awayTeam, homeTeam) {
     scoreHome: rawResult.scoreB,
     winner: rawResult.winner,
     errors: { away: rawResult.errors.A, home: rawResult.errors.B },
-    plays: trimPlaysForHistory(rawResult.plays),
+    inningRuns: computeInningRuns(rawResult.plays),
+    maxInning: Math.max(...rawResult.plays.map(p => p.inning)),
+    plays: keepFullPlays ? trimmedPlays : undefined,
     stats: rawResult.stats,
     pitchers: { away: findPitcher(awayTeam).name, home: findPitcher(homeTeam).name }
   };
 }
 
+// One-time (and self-repairing) migration: strips the play-by-play log back
+// out of any already-saved game that isn't yours, for saves created before
+// that trimming existed. Returns true if it actually changed anything, so
+// callers know whether the save needs writing back out.
+function compactGameHistory(save) {
+  let changed = false;
+  save.gameHistory.forEach(g => {
+    const isYourGame = g.away === save.yourTeam || g.home === save.yourTeam;
+    if (!isYourGame && g.plays) {
+      if (!g.inningRuns) g.inningRuns = computeInningRuns(g.plays);
+      if (!g.maxInning) g.maxInning = Math.max(...g.plays.map(p => p.inning));
+      delete g.plays;
+      changed = true;
+    }
+  });
+  return changed;
+}
+
 // Simulates every game in one round. `teamsByName` is a { name: teamObject }
 // lookup built from teams.json; `opponentGear` is the season save's gear
 // map, merged onto each team's lineup (gear.js's buildGearedTeam) before
-// simulating so opponent gear actually affects the game. Returns one entry
-// per game with the raw engine result (needed for the live-reveal UI on
-// your own game) alongside the already-trimmed history entry (ready to
-// push into gameHistory).
-function simulateRound(schedule, roundIndex, teamsByName, opponentGear) {
+// simulating so opponent gear actually affects the game; `yourTeam` decides
+// which single game (if any) this round keeps its full play-by-play log for.
+// Returns one entry per game with the raw engine result (needed for the
+// live-reveal UI on your own game) alongside the already-trimmed history
+// entry (ready to push into gameHistory).
+function simulateRound(schedule, roundIndex, teamsByName, opponentGear, yourTeam) {
   return schedule[roundIndex].map(({ home, away }) => {
     const awayTeam = buildGearedTeam(teamsByName[away], opponentGear);
     const homeTeam = buildGearedTeam(teamsByName[home], opponentGear);
     const rawResult = simulateGame(awayTeam, homeTeam);
+    const keepFullPlays = away === yourTeam || home === yourTeam;
     return {
       home, away, awayTeam, homeTeam, rawResult,
-      historyEntry: buildGameHistoryEntry(roundIndex, rawResult, awayTeam, homeTeam)
+      historyEntry: buildGameHistoryEntry(roundIndex, rawResult, awayTeam, homeTeam, keepFullPlays)
     };
   });
 }
