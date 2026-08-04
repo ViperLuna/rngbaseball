@@ -36,12 +36,12 @@
 <title>rngbaseball</title>
 <style>
   :root {
-    color-scheme: light dark;
-    --bg: #f4f4f5;
-    --panel: #ffffff;
-    --border: #d4d4d8;
-    --text: #18181b;
-    --muted: #71717a;
+    color-scheme: dark;
+    --bg: #000000;
+    --panel: #232326;
+    --border: #3f3f46;
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
     --accent: #2563eb;
     --good: #16a34a;
   }
@@ -165,17 +165,7 @@
   .base-3b { top: 50%; left: 4px; margin-top: -9px; }
   .base-1b { top: 50%; right: 4px; margin-top: -9px; }
   .base-home { position: absolute; bottom: -2px; left: 50%; width: 12px; height: 12px; margin-left: -6px; border: 2px solid var(--muted); transform: rotate(45deg); }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #18181b;
-      --panel: #232326;
-      --border: #3f3f46;
-      --text: #f4f4f5;
-      --muted: #a1a1aa;
-    }
-    .base.occupied { background: #fbbf24; border-color: #fbbf24; }
-  }
-</style>
+  </style>
 </head>
 <body>
 <main>
