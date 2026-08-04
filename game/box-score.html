@@ -104,7 +104,7 @@
   if (!historyEntry) window.location.href = "season.html";
 
   const awayName = historyEntry.away, homeName = historyEntry.home;
-  const maxInning = Math.max(...historyEntry.plays.map(p => p.inning));
+  const maxInning = historyEntry.maxInning;
 
   async function load() {
     const res = await fetch("../data/teams.json");
@@ -122,27 +122,8 @@
     renderPlays();
   }
 
-  function inningRunsFromPlays() {
-    const inningRuns = {};
-    let halfStartA = 0, halfStartB = 0, prevScoreA = 0, prevScoreB = 0;
-    let lastHalf = null, lastInning = null;
-    historyEntry.plays.forEach(play => {
-      if (play.half !== lastHalf || play.inning !== lastInning) {
-        halfStartA = prevScoreA;
-        halfStartB = prevScoreB;
-        lastHalf = play.half;
-        lastInning = play.inning;
-      }
-      const key = `${play.half}-${play.inning}`;
-      inningRuns[key] = play.half === "top" ? play.scoreA - halfStartA : play.scoreB - halfStartB;
-      prevScoreA = play.scoreA;
-      prevScoreB = play.scoreB;
-    });
-    return inningRuns;
-  }
-
   function renderBoxScore(awayTeam, homeTeam) {
-    const inningRuns = inningRunsFromPlays();
+    const inningRuns = historyEntry.inningRuns;
     const cell = (half, inning) => {
       const value = inningRuns[`${half}-${inning}`];
       return value !== undefined ? value : "-";
@@ -187,6 +168,11 @@
   }
 
   function renderPlays() {
+    if (!historyEntry.plays) {
+      document.getElementById("playLog").innerHTML =
+        `<p style="color:var(--muted); font-size:0.9rem;">Play-by-play isn't kept for other teams' games -- only yours, to save space. The line score and stats above are still complete.</p>`;
+      return;
+    }
     let lastHalf = null, lastInning = null;
     let html = "";
     historyEntry.plays.forEach(play => {

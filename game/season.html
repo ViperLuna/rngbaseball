@@ -138,6 +138,10 @@
   let save = getSave();
   if (!save || !save.seasonInProgress) {
     window.location.href = "index.html";
+  } else if (compactGameHistory(save)) {
+    // Save predates trimming other teams' play-by-play out of history --
+    // shrink it back down now, before it's too big to write at all.
+    setSave(save);
   }
 
   let teamsByName = {};
@@ -276,7 +280,7 @@
   }
 
   function playNextGame() {
-    const results = simulateRound(save.schedule, save.currentRound, teamsByName, fullGearMap(save));
+    const results = simulateRound(save.schedule, save.currentRound, teamsByName, fullGearMap(save), save.yourTeam);
     let yourGameEntry = null, yourAwayName = null, yourHomeName = null;
 
     results.forEach(({ historyEntry, rawResult, away, home }) => {
@@ -317,7 +321,7 @@
     const awayTeam = buildGearedTeam(teamsByName[awayName], gearMap);
 
     const rawResult = simulateGame(awayTeam, homeTeam);
-    const historyEntry = buildGameHistoryEntry("Championship", rawResult, awayTeam, homeTeam);
+    const historyEntry = buildGameHistoryEntry("Championship", rawResult, awayTeam, homeTeam, true);
     save.gameHistory.push(historyEntry);
     mergeGameStatsIntoSeason(save.seasonStats, rawResult.stats);
 
