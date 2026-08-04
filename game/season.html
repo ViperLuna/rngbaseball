@@ -120,7 +120,7 @@
   <div class="panel">
     <h2>Standings</h2>
     <table>
-      <tr><th>Team</th><th class="num">W</th><th class="num">L</th><th class="num">Diff</th></tr>
+      <tr><th>Team</th><th class="num">W</th><th class="num">L</th><th class="num">Diff</th><th class="num">GB</th></tr>
       <tbody id="standingsBody"></tbody>
     </table>
   </div>
@@ -150,9 +150,19 @@
   }
 
   function sortedStandings() {
-    return Object.entries(save.standings)
+    const rows = Object.entries(save.standings)
       .map(([name, rec]) => ({ name, ...rec, diff: rec.runsFor - rec.runsAgainst }))
       .sort((a, b) => b.wins - a.wins || b.diff - a.diff || a.name.localeCompare(b.name));
+    const leader = rows[0];
+    rows.forEach(r => {
+      r.gb = ((leader.wins - r.wins) + (r.losses - leader.losses)) / 2;
+    });
+    return rows;
+  }
+
+  function formatGB(gb) {
+    if (gb === 0) return "-";
+    return Number.isInteger(gb) ? String(gb) : gb.toFixed(1);
   }
 
   function render() {
@@ -173,6 +183,7 @@
         <td class="num">${r.wins}</td>
         <td class="num">${r.losses}</td>
         <td class="num">${r.diff > 0 ? "+" : ""}${r.diff}</td>
+        <td class="num">${formatGB(r.gb)}</td>
       </tr>
     `).join("");
     document.querySelectorAll("#standingsBody tr").forEach(row => {
