@@ -409,6 +409,10 @@
     const idx = meta.inventory.findIndex(i => i._instanceId === instanceId);
     if (idx === -1) return;
     const item = meta.inventory[idx];
+
+    const ok = confirm(`Sell ${item.name} (${item.rarity}) for ${SELL_PRICES[item.rarity]} Basebux? This can't be undone.`);
+    if (!ok) return;
+
     meta.inventory.splice(idx, 1);
     meta.basebux += SELL_PRICES[item.rarity];
     setMeta(meta);
