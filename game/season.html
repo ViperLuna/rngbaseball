@@ -29,15 +29,16 @@
 <title>rngbaseball</title>
 <style>
   :root {
-    color-scheme: light dark;
-    --bg: #f4f4f5;
-    --panel: #ffffff;
-    --border: #d4d4d8;
-    --text: #18181b;
-    --muted: #71717a;
+    color-scheme: dark;
+    --bg: #000000;
+    --panel: #232326;
+    --border: #3f3f46;
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
     --accent: #2563eb;
     --good: #16a34a;
     --bad: #dc2626;
+    --your-team: #fbbf24;
   }
   * { box-sizing: border-box; }
   body {
@@ -94,22 +95,13 @@
   table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
   th, td { text-align: left; padding: 0.3rem 0.5rem; }
   th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
-  tr.your-team { font-weight: 700; }
+  tr.your-team td { font-weight: 700; color: var(--your-team); }
   td.clickable, tr.clickable td { cursor: pointer; }
   tr.clickable:hover { background: var(--bg); }
   .num { text-align: right; }
   #historyList { max-height: 30vh; overflow-y: auto; }
   h2 { font-size: 1.05rem; margin: 0 0 0.5rem; }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #18181b;
-      --panel: #232326;
-      --border: #3f3f46;
-      --text: #f4f4f5;
-      --muted: #a1a1aa;
-    }
-  }
-</style>
+  </style>
 </head>
 <body>
 <main>

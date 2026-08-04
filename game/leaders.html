@@ -23,14 +23,14 @@
 <title>rngbaseball</title>
 <style>
   :root {
-    color-scheme: light dark;
-    --bg: #f4f4f5;
-    --panel: #ffffff;
-    --border: #d4d4d8;
-    --text: #18181b;
-    --muted: #71717a;
+    color-scheme: dark;
+    --bg: #000000;
+    --panel: #232326;
+    --border: #3f3f46;
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
     --accent: #2563eb;
-    --your-team: #d97706;
+    --your-team: #fbbf24;
   }
   * { box-sizing: border-box; }
   body {
@@ -79,17 +79,7 @@
   th:hover { color: var(--text); }
   th.active-sort { color: var(--accent); }
   tr.your-team td { font-weight: 700; color: var(--your-team); }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #18181b;
-      --panel: #232326;
-      --border: #3f3f46;
-      --text: #f4f4f5;
-      --muted: #a1a1aa;
-      --your-team: #fbbf24;
-    }
-  }
-</style>
+  </style>
 </head>
 <body>
 <main>
