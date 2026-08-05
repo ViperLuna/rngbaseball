@@ -25,6 +25,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="theme-color" content="#000000">
 <title>rngbaseball</title>
 <style>
   :root {
@@ -62,6 +66,12 @@
     margin: 0 0 1.5rem;
     font-size: 0.95rem;
   }
+  .logo {
+    max-width: 220px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+  }
   #menuButtons {
     display: flex;
     flex-direction: column;
@@ -88,6 +98,7 @@
 <body>
 <main>
   <h1>rngbaseball</h1>
+  <img class="logo" src="icons/icon-512.png" alt="rngbaseball logo">
   <p class="basebux" id="basebuxLine"></p>
   <div id="menuButtons">
     <button id="seasonBtn" type="button"></button>
