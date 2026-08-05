@@ -430,15 +430,20 @@
   }
 
   function renderBoxScoreLive(inningRuns, currentPlay) {
+    // Only draw columns through the inning the reveal has actually reached --
+    // not the true final inning count (already known the instant the game
+    // was simulated) -- so an extra-innings game doesn't spoil itself by
+    // showing empty 10th/11th/... columns before the reveal ever gets there.
+    const revealedInnings = currentPlay.inning;
     const cell = (half, inning) => {
       const value = inningRuns[`${half}-${inning}`];
       return value !== undefined ? value : "";
     };
     boxScore.innerHTML = `
       <table class="box-score-table">
-        <tr><th>Team</th>${range(1, maxInning).map(i => `<th>${i}</th>`).join("")}<th class="totals">R</th><th class="totals">H</th><th class="totals">E</th></tr>
-        <tr><td>${escapeHtml(awayName)}</td>${range(1, maxInning).map(i => `<td>${cell("top", i)}</td>`).join("")}<td class="totals">${currentPlay.scoreA}</td><td class="totals">-</td><td class="totals">-</td></tr>
-        <tr><td>${escapeHtml(homeName)}</td>${range(1, maxInning).map(i => `<td>${cell("bottom", i)}</td>`).join("")}<td class="totals">${currentPlay.scoreB}</td><td class="totals">-</td><td class="totals">-</td></tr>
+        <tr><th>Team</th>${range(1, revealedInnings).map(i => `<th>${i}</th>`).join("")}<th class="totals">R</th><th class="totals">H</th><th class="totals">E</th></tr>
+        <tr><td>${escapeHtml(awayName)}</td>${range(1, revealedInnings).map(i => `<td>${cell("top", i)}</td>`).join("")}<td class="totals">${currentPlay.scoreA}</td><td class="totals">-</td><td class="totals">-</td></tr>
+        <tr><td>${escapeHtml(homeName)}</td>${range(1, revealedInnings).map(i => `<td>${cell("bottom", i)}</td>`).join("")}<td class="totals">${currentPlay.scoreB}</td><td class="totals">-</td><td class="totals">-</td></tr>
       </table>
     `;
   }

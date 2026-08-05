@@ -401,7 +401,11 @@
   }
 
   function renderBoxScoreLive(result, teamA, teamB, inningRuns, currentPlay) {
-    const totalInnings = result.innings.length;
+    // Only draw columns through the inning the reveal has actually reached --
+    // not the true final inning count (already known the instant the game
+    // was simulated) -- so an extra-innings game doesn't spoil itself by
+    // showing empty 10th/11th/... columns before the reveal ever gets there.
+    const revealedInnings = result.innings.filter(i => i.inning <= currentPlay.inning);
     const teamAHits = sumTeamHits(currentPlay.stats, teamA);
     const teamBHits = sumTeamHits(currentPlay.stats, teamB);
     const cell = (half, inning) => {
@@ -410,9 +414,9 @@
     };
     boxScore.innerHTML = `
       <table class="box-score-table">
-        <tr><th>Team</th>${result.innings.map(i => `<th>${i.inning}</th>`).join("")}<th class="totals">R</th><th class="totals">H</th><th class="totals">E</th></tr>
-        <tr><td>${escapeHtml(teamA.name)}</td>${result.innings.map(i => `<td>${cell("top", i.inning)}</td>`).join("")}<td class="totals">${currentPlay.scoreA}</td><td class="totals">${teamAHits}</td><td class="totals">${currentPlay.errors.A}</td></tr>
-        <tr><td>${escapeHtml(teamB.name)}</td>${result.innings.map(i => `<td>${cell("bottom", i.inning)}</td>`).join("")}<td class="totals">${currentPlay.scoreB}</td><td class="totals">${teamBHits}</td><td class="totals">${currentPlay.errors.B}</td></tr>
+        <tr><th>Team</th>${revealedInnings.map(i => `<th>${i.inning}</th>`).join("")}<th class="totals">R</th><th class="totals">H</th><th class="totals">E</th></tr>
+        <tr><td>${escapeHtml(teamA.name)}</td>${revealedInnings.map(i => `<td>${cell("top", i.inning)}</td>`).join("")}<td class="totals">${currentPlay.scoreA}</td><td class="totals">${teamAHits}</td><td class="totals">${currentPlay.errors.A}</td></tr>
+        <tr><td>${escapeHtml(teamB.name)}</td>${revealedInnings.map(i => `<td>${cell("bottom", i.inning)}</td>`).join("")}<td class="totals">${currentPlay.scoreB}</td><td class="totals">${teamBHits}</td><td class="totals">${currentPlay.errors.B}</td></tr>
       </table>
     `;
   }
