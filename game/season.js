@@ -503,3 +503,162 @@ function determineTopTwo(standings) {
   entries.sort((a, b) => b.wins - a.wins || b.diff - a.diff || b.tiebreak - a.tiebreak);
   return [entries[0].name, entries[1].name];
 }
+
+// --- Season-end bonus ---------------------------------------------------------
+// A one-time payout once the season's final outcome is known: either the
+// championship game resolves, or the player's own team fails to qualify.
+// Three independent pieces -- team placement, total wins, and individual
+// league-leaderboard finishes -- all computed from state that's already
+// fully final by this point, so (like the base win/loss payout) none of it
+// depends on anything being watched. The caller is responsible for only
+// ever applying the result once; computeSeasonEndBonus itself is a pure
+// read of already-settled save state, safe to call repeatedly.
+
+const SEASON_END_PAYOUTS = {
+  championship: 1000,
+  runnerUp: 500,
+  thirdPlace: 250,
+  topTenTeam: 10,   // 4th-10th place
+  perWin: 10,
+  statTopTen: 10,
+  statLeader: 30    // stacks on top of statTopTen for the same category
+};
+
+// Stats worth a season-end leaderboard bonus -- deliberately excludes
+// plain counting stats (AB, BB, R, IP, hits allowed) that mostly just
+// track playing time rather than being something worth leading the league
+// in. `dir` "desc" means highest wins (e.g. HR); "asc" means lowest wins
+// (e.g. batting strikeouts, ERA).
+// `label` (not `key`) is what shows up in the payout breakdown -- matters
+// for K specifically, since a pitcher bats too and can independently place
+// in both the batting-strikeouts and pitching-strikeouts categories; using
+// the bare key for both would make that look like the same bonus twice.
+const BATTING_LEADER_STATS = [
+  { key: "AVG", label: "AVG", dir: "desc" },
+  { key: "HR", label: "HR", dir: "desc" },
+  { key: "doubles", label: "2B", dir: "desc" },
+  { key: "triples", label: "3B", dir: "desc" },
+  { key: "K", label: "K (batting)", dir: "asc" }
+];
+const PITCHING_LEADER_STATS = [
+  { key: "ERA", label: "ERA", dir: "asc" },
+  { key: "K", label: "K (pitching)", dir: "desc" }
+];
+
+// One row per league player for a stat pool -- every batter across every
+// team's lineup (pitchers included, since they bat too), or every team's
+// one starting pitcher. Same shape leaders.html builds for display.
+function battingLeaderRows(teams, seasonStats) {
+  const rows = [];
+  teams.forEach(team => {
+    team.lineup.forEach(p => {
+      const line = (seasonStats[p.name] || newStatLine()).batting;
+      rows.push({
+        name: p.name, team: team.name,
+        AVG: battingAverage(line), HR: line.HR, doubles: line.doubles, triples: line.triples, K: line.K
+      });
+    });
+  });
+  return rows;
+}
+function pitchingLeaderRows(teams, seasonStats) {
+  return teams.map(team => {
+    const pitcher = findPitcher(team);
+    const line = (seasonStats[pitcher.name] || newStatLine()).pitching;
+    return { name: pitcher.name, team: team.name, ERA: era(line), K: line.K };
+  });
+}
+
+// The value at the top-10 cutoff, and the single best value -- ties at
+// either boundary all count (three players tied for 10th means 12 players
+// clear the bar), matching how team placement below treats standings ties.
+function topTenAndLeaderValue(rows, key, dir) {
+  const values = rows.map(r => r[key]).sort((a, b) => dir === "asc" ? a - b : b - a);
+  return { topTenValue: values[Math.min(9, values.length - 1)], leaderValue: values[0] };
+}
+function clearsBar(value, bar, dir) {
+  return dir === "asc" ? value <= bar : value >= bar;
+}
+
+// Every league-leaderboard bonus your own roster earned this season: +10
+// for each stat category a player lands in the league top 10 for, +30 more
+// on top of that for each category they outright lead (leading always
+// counts as clearing the top-10 bar too, so both stack for that category).
+function computeStatBonuses(teams, seasonStats, yourLineupNames, yourPitcherName) {
+  const battingRows = battingLeaderRows(teams, seasonStats);
+  const pitchingRows = pitchingLeaderRows(teams, seasonStats);
+  const lines = [];
+
+  BATTING_LEADER_STATS.forEach(({ key, label, dir }) => {
+    const { topTenValue, leaderValue } = topTenAndLeaderValue(battingRows, key, dir);
+    battingRows.filter(r => yourLineupNames.includes(r.name)).forEach(r => {
+      if (!clearsBar(r[key], topTenValue, dir)) return;
+      const leader = clearsBar(r[key], leaderValue, dir);
+      lines.push({ name: r.name, stat: label, leader, bonus: SEASON_END_PAYOUTS.statTopTen + (leader ? SEASON_END_PAYOUTS.statLeader : 0) });
+    });
+  });
+
+  PITCHING_LEADER_STATS.forEach(({ key, label, dir }) => {
+    const { topTenValue, leaderValue } = topTenAndLeaderValue(pitchingRows, key, dir);
+    const r = pitchingRows.find(row => row.name === yourPitcherName);
+    if (!r || !clearsBar(r[key], topTenValue, dir)) return;
+    const leader = clearsBar(r[key], leaderValue, dir);
+    lines.push({ name: r.name, stat: label, leader, bonus: SEASON_END_PAYOUTS.statTopTen + (leader ? SEASON_END_PAYOUTS.statLeader : 0) });
+  });
+
+  return { lines, total: lines.reduce((sum, l) => sum + l.bonus, 0) };
+}
+
+// Regular-season standings rank, treating a true tie (identical wins and
+// run differential) as a shared rank rather than resolving it -- same
+// "ties count" philosophy as the stat leaderboards above. Only used for the
+// non-qualifying placement tiers below; the top two spots are decided by
+// who actually plays (and wins) the championship game.
+function standingsRank(standings, yourTeam) {
+  const entries = Object.entries(standings).map(([name, rec]) => ({
+    name, wins: rec.wins, diff: rec.runsFor - rec.runsAgainst
+  }));
+  entries.sort((a, b) => b.wins - a.wins || b.diff - a.diff);
+
+  let rank = 1;
+  for (let i = 0; i < entries.length; i++) {
+    if (i > 0 && (entries[i].wins !== entries[i - 1].wins || entries[i].diff !== entries[i - 1].diff)) rank = i + 1;
+    if (entries[i].name === yourTeam) return rank;
+  }
+  return entries.length;
+}
+
+function ordinal(n) {
+  if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
+  return `${n}${["th", "st", "nd", "rd"][n % 10] || "th"}`;
+}
+
+// Championship result decides the top two tiers; everyone else is priced
+// off final standings position. Clipped at "3rd place" for the vanishingly
+// rare case of a team tying a qualifying record but losing the (already
+// random) tiebreak for the actual playoff spot -- keeps the top two payouts
+// tied exclusively to actually playing (and winning) the championship game.
+function computePlacementBonus(save) {
+  if (save.playoff.wonLeague) return { label: "League Champion", bonus: SEASON_END_PAYOUTS.championship };
+  if (save.playoff.yourTeamQualified) return { label: "Runner-Up", bonus: SEASON_END_PAYOUTS.runnerUp };
+
+  const rank = Math.max(3, standingsRank(save.standings, save.yourTeam));
+  if (rank === 3) return { label: "3rd Place", bonus: SEASON_END_PAYOUTS.thirdPlace };
+  if (rank <= 10) return { label: `Finished ${ordinal(rank)}`, bonus: SEASON_END_PAYOUTS.topTenTeam };
+  return { label: `Finished ${ordinal(rank)}`, bonus: 0 };
+}
+
+// The full season-end bonus breakdown. `teams` is teams.json's full team
+// list (needed for every roster + every pitcher across the league, not
+// just yourTeam's).
+function computeSeasonEndBonus(save, teams) {
+  const yourTeamObj = teams.find(t => t.name === save.yourTeam);
+  const yourLineupNames = yourTeamObj.lineup.map(p => p.name);
+  const yourPitcherName = findPitcher(yourTeamObj).name;
+
+  const placement = computePlacementBonus(save);
+  const winBonus = save.standings[save.yourTeam].wins * SEASON_END_PAYOUTS.perWin;
+  const stats = computeStatBonuses(teams, save.seasonStats, yourLineupNames, yourPitcherName);
+
+  return { placement, winBonus, stats: stats.lines, total: placement.bonus + winBonus + stats.total };
+}

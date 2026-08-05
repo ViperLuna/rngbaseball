@@ -210,7 +210,7 @@
   const payloadRaw = sessionStorage.getItem("rngbaseball_reveal_game");
   if (!payloadRaw) window.location.href = "season.html";
   const payload = JSON.parse(payloadRaw);
-  const { historyEntry, teamA: awayName, teamB: homeName, bannerText } = payload;
+  const { historyEntry, teamA: awayName, teamB: homeName, bannerText, seasonEndBonus } = payload;
   // The base payout was already credited back on season.html the instant this
   // game got recorded. Accolades only pay out once for this specific reveal --
   // `payload.accoladesPaid` is persisted back to sessionStorage the first time
@@ -379,7 +379,8 @@
     meta = getMeta();
 
     const won = historyEntry.winner === save.yourTeam;
-    let html = `<div class="payout-line">Basebux earned this game: +${base + accoladeTotal} (balance: ${meta.basebux})</div>`;
+    const seasonBonusTotal = seasonEndBonus ? seasonEndBonus.total : 0;
+    let html = `<div class="payout-line">Basebux earned this game: +${base + accoladeTotal + seasonBonusTotal} (balance: ${meta.basebux})</div>`;
     html += `<div class="payout-sub">Base (${won ? "win" : "loss"}): +${base} (already credited)</div>`;
     accoladeResult.accolades.forEach(a => {
       html += `<div class="payout-sub">${escapeHtml(a.label)}${a.count > 1 ? ` x${a.count}` : ""}: +${a.bonus}</div>`;
@@ -388,6 +389,15 @@
       const forfeitedTotal = accoladeResult.forfeited.reduce((sum, a) => sum + a.bonus, 0);
       const list = accoladeResult.forfeited.map(a => `${a.label}${a.count > 1 ? ` x${a.count}` : ""} (+${a.bonus})`).join(", ");
       html += `<div class="payout-forfeited">Skipped the reveal, so this didn't pay out: ${escapeHtml(list)} — ${forfeitedTotal} Basebux left on the table.</div>`;
+    }
+    if (seasonEndBonus) {
+      html += `<div class="payout-line">Season-end bonus: +${seasonBonusTotal} (already credited)</div>`;
+      html += `<div class="payout-sub">${escapeHtml(seasonEndBonus.placement.label)}: +${seasonEndBonus.placement.bonus}</div>`;
+      html += `<div class="payout-sub">Regular-season wins: +${seasonEndBonus.winBonus}</div>`;
+      seasonEndBonus.stats.forEach(s => {
+        const tag = s.leader ? "league leader" : "top 10";
+        html += `<div class="payout-sub">${escapeHtml(s.name)} — ${escapeHtml(s.stat)} (${tag}): +${s.bonus}</div>`;
+      });
     }
     payoutBox.style.display = "block";
     payoutBox.innerHTML = html;

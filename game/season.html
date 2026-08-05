@@ -88,6 +88,15 @@
   }
   .banner.win { background: var(--good); color: #fff; }
   .banner.lose { background: var(--bad); color: #fff; }
+  .payout-panel {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    margin-bottom: 1rem;
+  }
+  .payout-line { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.3rem; }
+  .payout-sub { color: var(--muted); padding: 0.1rem 0; }
   .action-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
   button {
     padding: 0.65rem 1.1rem;
@@ -253,26 +262,61 @@
     if (!save.playoff) {
       const topTwo = determineTopTwo(save.standings);
       const yourTeamQualified = topTwo.includes(save.yourTeam);
-      save.playoff = { topTwo, yourTeamQualified, completed: false, wonLeague: null };
+      save.playoff = { topTwo, yourTeamQualified, completed: false, wonLeague: null, seasonEndBonus: null };
+
+      // Not qualifying is already a final outcome -- no championship game
+      // left to play -- so the season-end bonus is settled and credited
+      // right here, the only time this block ever runs.
+      if (!yourTeamQualified) {
+        const bonus = computeSeasonEndBonus(save, Object.values(teamsByName));
+        save.playoff.seasonEndBonus = bonus;
+        const meta = getMeta();
+        meta.basebux += bonus.total;
+        setMeta(meta);
+      }
       setSave(save);
     }
 
     if (save.playoff.completed) {
+      const bonus = save.playoff.seasonEndBonus;
       if (save.playoff.wonLeague) {
         const unlocked = nextLeague(save.league);
-        banner.innerHTML = `<div class="banner win">Champions! ${unlocked ? unlocked + " league unlocked." : "You've conquered every league!"}</div>`;
+        banner.innerHTML = `
+          <div class="banner win">Champions! ${unlocked ? unlocked + " league unlocked." : "You've conquered every league!"}</div>
+          ${renderSeasonEndBonus(bonus)}
+        `;
       } else {
-        banner.innerHTML = `<div class="banner lose">Season complete. Lost the championship.</div>`;
+        banner.innerHTML = `
+          <div class="banner lose">Season complete. Lost the championship.</div>
+          ${renderSeasonEndBonus(bonus)}
+        `;
       }
     } else if (save.playoff.yourTeamQualified) {
       const opponent = save.playoff.topTwo.find(t => t !== save.yourTeam);
       addButton(`Play Championship — vs ${opponent}`, playChampionship);
     } else {
-      banner.innerHTML = `<div class="banner lose">Season complete. Didn't qualify for the championship (top two: ${escapeHtml(save.playoff.topTwo.join(", "))}).</div>`;
+      const bonus = save.playoff.seasonEndBonus;
+      banner.innerHTML = `
+        <div class="banner lose">Season complete. Didn't qualify for the championship (top two: ${escapeHtml(save.playoff.topTwo.join(", "))}).</div>
+        ${renderSeasonEndBonus(bonus)}
+      `;
     }
     addButton("Loadouts", () => window.location.href = "loadouts.html", true);
     addButton("Store", () => window.location.href = "store.html", true);
     addButton("Leaders", () => window.location.href = "leaders.html", true);
+  }
+
+  function renderSeasonEndBonus(bonus) {
+    if (!bonus) return "";
+    let html = `<div class="payout-panel"><div class="payout-line">Season-end bonus: +${bonus.total}</div>`;
+    html += `<div class="payout-sub">${escapeHtml(bonus.placement.label)}: +${bonus.placement.bonus}</div>`;
+    html += `<div class="payout-sub">Regular-season wins: +${bonus.winBonus}</div>`;
+    bonus.stats.forEach(s => {
+      const tag = s.leader ? "league leader" : "top 10";
+      html += `<div class="payout-sub">${escapeHtml(s.name)} — ${escapeHtml(s.stat)} (${tag}): +${s.bonus}</div>`;
+    });
+    html += `</div>`;
+    return html;
   }
 
   function addButton(label, onClick, secondary) {
@@ -333,13 +377,21 @@
     const wonLeague = historyEntry.winner === save.yourTeam;
     save.playoff.completed = true;
     save.playoff.wonLeague = wonLeague;
+
+    // Computed after the championship game's stats are merged in, so a
+    // batter's HR (or a pitcher's ERA) from this very game can still swing
+    // a top-10/league-leader finish. Settled and credited here, the only
+    // time this function ever runs -- same reasoning as the base payout
+    // below, nothing about it depends on the reveal being watched.
+    const seasonEndBonus = computeSeasonEndBonus(save, Object.values(teamsByName));
+    save.playoff.seasonEndBonus = seasonEndBonus;
     setSave(save);
 
     // Same immediate-base-payout treatment as a regular round, plus the
     // league unlock -- both credited the moment the result is recorded,
     // not gated behind the reveal.
     const meta = getMeta();
-    meta.basebux += computeBasePayout(historyEntry, save.yourTeam);
+    meta.basebux += computeBasePayout(historyEntry, save.yourTeam) + seasonEndBonus.total;
     let bannerText;
     if (wonLeague) {
       const next = nextLeague(save.league);
@@ -352,7 +404,7 @@
     setMeta(meta);
 
     sessionStorage.setItem("rngbaseball_reveal_game", JSON.stringify({
-      historyEntry, teamA: awayName, teamB: homeName, bannerText, accoladesPaid: false
+      historyEntry, teamA: awayName, teamB: homeName, bannerText, seasonEndBonus, accoladesPaid: false
     }));
     window.location.href = "season-game.html";
   }
