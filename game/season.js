@@ -146,20 +146,184 @@ function fullGearMap(save) {
 // a way to clear out items you don't want to keep in your inventory.
 const SELL_PRICES = { Common: 5, Uncommon: 10, Rare: 20, Epic: 40, Legendary: 75, Mythical: 150 };
 
-// The full per-play stats snapshot on each play (used only to animate the
-// live reveal) would make season-long storage of every game far bigger than
-// it needs to be -- history playback just needs the running score and text,
-// so this strips the snapshot back down before a game gets saved. `bases`
-// is kept (it's tiny, just 3 slots) since season-game.html's live reveal
-// uses it to show the bases-occupied diamond; box-score.html's after-the-
-// fact review never builds that UI at all, so it's simply unused there.
-function trimPlaysForHistory(plays) {
-  return plays.map(p => ({ half: p.half, inning: p.inning, text: p.text, scoreA: p.scoreA, scoreB: p.scoreB, bases: p.bases }));
+// --- Play-by-play cipher: encode ---------------------------------------------
+// Turns a game's raw play array (engine.js's simulateHalfInning output, one
+// entry per plate appearance plus an optional walk-off marker) into the
+// compact newline-delimited string described by PLAY_CATALOG in engine.js --
+// see the comment there for the full format. This is cheap enough to store
+// for every league game every round, not just the player's own, which is
+// what actually caused the localStorage quota to blow past its limit before:
+// a full JSON object with a rendered sentence for every play in every game,
+// every round, rather than a handful of characters per play.
+function encodePlayLine(play) {
+  if (play.walkOff) return "WO";
+  const code = PLAY_CATALOG.types[play.type].code;
+  let line = `${play.side}${play.batterSlot}${code}`;
+  if (play.extraBaseAttempt) {
+    const result = play.extraBaseAttempt.success ? "SC" : "XX";
+    line += `${play.side}${play.extraBaseAttempt.slot}${result}`;
+  }
+  return line;
 }
 
-// A tiny per-half-inning runs summary (box-score.html's inning-by-inning R
-// grid), derived from the full play log -- cheap enough to keep for every
-// game forever, unlike the play-by-play text itself. Keyed "top-3"/"bottom-7".
+function encodeGamePlays(rawPlays) {
+  return rawPlays.map(encodePlayLine).join("\n");
+}
+
+// --- Play-by-play cipher: decode ---------------------------------------------
+
+function pickText(templates) {
+  return templates[Math.floor(Math.random() * templates.length)];
+}
+
+function fillTemplate(str, vars) {
+  return str.replace(/\{(\w+)\}/g, (_, key) => vars[key]);
+}
+
+function namesFromSlots(slots, lineup) {
+  return slots.map(s => lineup[s - 1].name);
+}
+
+// Replays a game's compact cipher string back into the same per-play shape
+// box-score.html and season-game.html already know how to render (text,
+// running score, bases-as-names) -- reconstructed on demand instead of
+// stored, using the exact same advanceAllRunners/forceAdvance/
+// forceAdvanceRunnersOnly functions the live engine uses (they're generic
+// about what "identity" sits in a base, so a lineup slot number works
+// exactly like a runner's name does here). `awayLineup`/`homeLineup` are
+// teams.json lineup arrays -- fixed batting order, needed to resolve a
+// play's slot reference back into a player's name.
+function decodeGamePlays(playCode, awayLineup, homeLineup) {
+  const lines = playCode.split("\n").filter(l => l.length > 0);
+  const decoded = [];
+
+  let bases = emptyBases(); // holds lineup slot numbers, not names, until rendered
+  let outs = 0;
+  let inning = 0;
+  let side = null;
+  let scoreA = 0, scoreB = 0;
+
+  for (const line of lines) {
+    const lineup = side === "A" ? awayLineup : homeLineup;
+
+    if (line === "WO") {
+      decoded.push({
+        half: side === "A" ? "top" : "bottom", inning,
+        text: pickText(PLAY_CATALOG.walkOff),
+        scoreA, scoreB,
+        bases: bases.map(s => s === null ? null : lineup[s - 1].name)
+      });
+      break; // always the last line
+    }
+
+    const lineSide = line[0];
+    if (lineSide !== side) {
+      bases = emptyBases();
+      outs = 0;
+      side = lineSide;
+      if (side === "A") inning++;
+    }
+
+    const battingLineup = side === "A" ? awayLineup : homeLineup;
+    const slot = Number(line[1]);
+    const type = PLAY_CODE_TO_TYPE[line.slice(2, 4)];
+    const tail = line.slice(4);
+    const batterName = battingLineup[slot - 1].name;
+    const half = side === "A" ? "top" : "bottom";
+
+    let resultBases, runsScored, scorerSlots, outsAdded, text;
+
+    if (type === "strikeout" || type === "flyout") {
+      resultBases = bases; runsScored = 0; scorerSlots = []; outsAdded = 1;
+      text = fillTemplate(pickText(PLAY_CATALOG.types[type].text), { batter: batterName });
+    } else if (type === "walk" || type === "error") {
+      const r = forceAdvance(bases, slot);
+      resultBases = r.bases; runsScored = r.runsScored; scorerSlots = r.scorers; outsAdded = 0;
+      text = fillTemplate(pickText(PLAY_CATALOG.types[type].text), { batter: batterName })
+        + scoringSuffix(namesFromSlots(r.scorers, battingLineup));
+    } else if (type === "single" || type === "double" || type === "triple" || type === "home_run") {
+      const basesMap = { single: 1, double: 2, triple: 3, home_run: 4 };
+      const r = advanceAllRunners(bases, slot, basesMap[type]);
+      let finalBases = r.bases, finalRuns = r.runsScored, finalScorers = [...r.scorers], extraOuts = 0;
+      let extraText = "";
+      if (tail) {
+        const atSide = tail[0], atSlot = Number(tail[1]), atResult = tail.slice(2, 4);
+        const runnerName = (atSide === "A" ? awayLineup : homeLineup)[atSlot - 1].name;
+        finalBases = [...finalBases];
+        finalBases[2] = null;
+        if (atResult === "SC") {
+          finalRuns += 1;
+          finalScorers.push(atSlot);
+          extraText = ` ${fillTemplate(pickText(PLAY_CATALOG.extraBaseAttempt.success), { runner: runnerName })}`;
+        } else {
+          extraOuts = 1;
+          extraText = ` ${fillTemplate(pickText(PLAY_CATALOG.extraBaseAttempt.fail), { runner: runnerName })}`;
+        }
+      }
+      resultBases = finalBases; runsScored = finalRuns; scorerSlots = finalScorers; outsAdded = extraOuts;
+      text = fillTemplate(pickText(PLAY_CATALOG.types[type].text), { batter: batterName })
+        + scoringSuffix(namesFromSlots(r.scorers, battingLineup)) + extraText;
+    } else if (type === "sac_fly") {
+      const scorerSlot = bases[2];
+      resultBases = [...bases];
+      resultBases[2] = null;
+      runsScored = 1; scorerSlots = [scorerSlot]; outsAdded = 1;
+      text = fillTemplate(pickText(PLAY_CATALOG.types.sac_fly.text),
+        { batter: batterName, scorer: battingLineup[scorerSlot - 1].name });
+    } else if (type === "groundout") {
+      const forced = forceAdvanceRunnersOnly(bases);
+      const inningEndsHere = outs + 1 >= 3;
+      runsScored = inningEndsHere ? 0 : forced.runsScored;
+      scorerSlots = inningEndsHere ? [] : forced.scorers;
+      resultBases = forced.bases; outsAdded = 1;
+      const bucket = inningEndsHere ? "endsInning" : (bases[0] ? "runnersAdvance" : "routine");
+      text = fillTemplate(pickText(PLAY_CATALOG.types.groundout.text[bucket]), { batter: batterName })
+        + scoringSuffix(namesFromSlots(scorerSlots, battingLineup));
+    } else { // double_play
+      const forced = forceAdvanceRunnersOnly(bases);
+      const dpBases = [...forced.bases];
+      dpBases[1] = null;
+      const dpEndsInning = outs + 2 >= 3;
+      runsScored = dpEndsInning ? 0 : forced.runsScored;
+      scorerSlots = dpEndsInning ? [] : forced.scorers;
+      resultBases = dpBases; outsAdded = 2;
+      const bucket = dpEndsInning ? "endsInning" : "continues";
+      text = fillTemplate(pickText(PLAY_CATALOG.types.double_play.text[bucket]), { batter: batterName })
+        + scoringSuffix(namesFromSlots(scorerSlots, battingLineup));
+    }
+
+    outs += outsAdded;
+    bases = resultBases;
+    if (side === "A") scoreA += runsScored; else scoreB += runsScored;
+
+    decoded.push({
+      half, inning, text, scoreA, scoreB,
+      bases: bases.map(s => s === null ? null : battingLineup[s - 1].name)
+    });
+  }
+
+  return decoded;
+}
+
+function buildGameHistoryEntry(round, rawResult, awayTeam, homeTeam) {
+  return {
+    round,
+    away: awayTeam.name,
+    home: homeTeam.name,
+    scoreAway: rawResult.scoreA,
+    scoreHome: rawResult.scoreB,
+    winner: rawResult.winner,
+    errors: { away: rawResult.errors.A, home: rawResult.errors.B },
+    playCode: encodeGamePlays(rawResult.plays),
+    stats: rawResult.stats,
+    pitchers: { away: findPitcher(awayTeam).name, home: findPitcher(homeTeam).name }
+  };
+}
+
+// A tiny per-half-inning runs summary, only still needed to migrate saves
+// from before the play-by-play cipher existed (compactGameHistory below) --
+// new games never call this, since box-score.html just decodes playCode
+// fresh instead.
 function computeInningRuns(plays) {
   const inningRuns = {};
   let halfStartA = 0, halfStartB = 0, prevScoreA = 0, prevScoreB = 0;
@@ -179,33 +343,13 @@ function computeInningRuns(plays) {
   return inningRuns;
 }
 
-// `keepFullPlays` controls whether the (comparatively large) play-by-play
-// text log is stored at all -- a full season's worth of every league game
-// (not just the ones you played) was blowing past localStorage's quota, so
-// only your own games keep it. Every game still gets the tiny inningRuns/
-// maxInning summary, which is all box-score.html's line-score grid needs.
-function buildGameHistoryEntry(round, rawResult, awayTeam, homeTeam, keepFullPlays) {
-  const trimmedPlays = trimPlaysForHistory(rawResult.plays);
-  return {
-    round,
-    away: awayTeam.name,
-    home: homeTeam.name,
-    scoreAway: rawResult.scoreA,
-    scoreHome: rawResult.scoreB,
-    winner: rawResult.winner,
-    errors: { away: rawResult.errors.A, home: rawResult.errors.B },
-    inningRuns: computeInningRuns(rawResult.plays),
-    maxInning: Math.max(...rawResult.plays.map(p => p.inning)),
-    plays: keepFullPlays ? trimmedPlays : undefined,
-    stats: rawResult.stats,
-    pitchers: { away: findPitcher(awayTeam).name, home: findPitcher(homeTeam).name }
-  };
-}
-
-// One-time (and self-repairing) migration: strips the play-by-play log back
-// out of any already-saved game that isn't yours, for saves created before
-// that trimming existed. Returns true if it actually changed anything, so
-// callers know whether the save needs writing back out.
+// One-time (and self-repairing) migration for saves from before the
+// play-by-play cipher existed: strips the old full play-by-play log back
+// out of any already-saved game that isn't yours (those saves predate
+// playCode entirely, so they can't be upgraded to it -- there's no way to
+// recover which play type/batter slot produced an already-rendered
+// sentence). Returns true if it actually changed anything, so callers know
+// whether the save needs writing back out.
 function compactGameHistory(save) {
   let changed = false;
   save.gameHistory.forEach(g => {
@@ -223,20 +367,18 @@ function compactGameHistory(save) {
 // Simulates every game in one round. `teamsByName` is a { name: teamObject }
 // lookup built from teams.json; `opponentGear` is the season save's gear
 // map, merged onto each team's lineup (gear.js's buildGearedTeam) before
-// simulating so opponent gear actually affects the game; `yourTeam` decides
-// which single game (if any) this round keeps its full play-by-play log for.
-// Returns one entry per game with the raw engine result (needed for the
-// live-reveal UI on your own game) alongside the already-trimmed history
-// entry (ready to push into gameHistory).
-function simulateRound(schedule, roundIndex, teamsByName, opponentGear, yourTeam) {
+// simulating so opponent gear actually affects the game. Returns one entry
+// per game with the raw engine result (needed for the live-reveal UI on
+// your own game) alongside the already cipher-encoded history entry (ready
+// to push into gameHistory).
+function simulateRound(schedule, roundIndex, teamsByName, opponentGear) {
   return schedule[roundIndex].map(({ home, away }) => {
     const awayTeam = buildGearedTeam(teamsByName[away], opponentGear);
     const homeTeam = buildGearedTeam(teamsByName[home], opponentGear);
     const rawResult = simulateGame(awayTeam, homeTeam);
-    const keepFullPlays = away === yourTeam || home === yourTeam;
     return {
       home, away, awayTeam, homeTeam, rawResult,
-      historyEntry: buildGameHistoryEntry(roundIndex, rawResult, awayTeam, homeTeam, keepFullPlays)
+      historyEntry: buildGameHistoryEntry(roundIndex, rawResult, awayTeam, homeTeam)
     };
   });
 }

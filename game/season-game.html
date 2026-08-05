@@ -9,12 +9,13 @@
   and paces through the play-by-play the same way play.html's test screen
   does.
 
-  One real difference from play.html: history entries store a *trimmed*
-  plays array (season.js's trimPlaysForHistory) with no per-play stats
-  snapshot, to keep the season save from ballooning across an entire
-  season's worth of games. So the box score's R column updates live as
-  innings complete, but H and E only fill in once the reveal finishes and
-  the game's final stats are available.
+  One real difference from play.html: history entries store the game's
+  play-by-play as a compact cipher (season.js's playCode/decodeGamePlays --
+  see engine.js's PLAY_CATALOG for the format) rather than a full per-play
+  object with a rendered sentence and stats snapshot, to keep the season
+  save from ballooning across an entire season's worth of games. So the box
+  score's R column updates live as innings complete, but H and E only fill
+  in once the reveal finishes and the game's final stats are available.
 
   The win/loss base payout was already credited back on season.html the
   instant this game got recorded -- it doesn't depend on this page ever
@@ -213,6 +214,7 @@
   // it already finished, before clicking Continue) can't credit them twice.
 
   let awayTeam = null, homeTeam = null;
+  let plays = null, maxInning = null;
   let watched = true; // flips to false the instant Skip to End is clicked
 
   const playLog = document.getElementById("playLog");
@@ -267,6 +269,8 @@
     const data = await res.json();
     awayTeam = data.teams.find(t => t.name === awayName);
     homeTeam = data.teams.find(t => t.name === homeName);
+    plays = decodeGamePlays(historyEntry.playCode, awayTeam.lineup, homeTeam.lineup);
+    maxInning = Math.max(...plays.map(p => p.inning));
 
     document.getElementById("title").textContent =
       historyEntry.round === "Championship" ? "Championship Game" : `Round ${historyEntry.round + 1}`;
@@ -285,8 +289,6 @@
     revealGame();
   }
 
-  const maxInning = Math.max(...historyEntry.plays.map(p => p.inning));
-
   async function revealGame() {
     const myToken = ++revealToken;
     playLog.innerHTML = "";
@@ -300,7 +302,7 @@
     let halfStartA = 0, halfStartB = 0;
     let prevScoreA = 0, prevScoreB = 0;
 
-    for (const play of historyEntry.plays) {
+    for (const play of plays) {
       if (myToken !== revealToken) return;
 
       if (play.half !== lastHalf || play.inning !== lastInning) {
@@ -393,7 +395,7 @@
 
     let lastHalf = null, lastInning = null;
     let html = "";
-    historyEntry.plays.forEach(play => {
+    plays.forEach(play => {
       if (play.half !== lastHalf || play.inning !== lastInning) {
         lastHalf = play.half;
         lastInning = play.inning;
@@ -412,7 +414,7 @@
     const inningRuns = {};
     let halfStartA = 0, halfStartB = 0, prevScoreA = 0, prevScoreB = 0;
     let lastHalf = null, lastInning = null;
-    historyEntry.plays.forEach(play => {
+    plays.forEach(play => {
       if (play.half !== lastHalf || play.inning !== lastInning) {
         halfStartA = prevScoreA;
         halfStartB = prevScoreB;

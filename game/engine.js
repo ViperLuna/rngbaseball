@@ -53,6 +53,60 @@ const STAT_CAP = 25;      // matches the item builder's per-item cap
 const EXTRA_BASE_ATTEMPT_RATE = 65;   // league-average % chance the runner even goes for it
 const EXTRA_BASE_SUCCESS_RATE = 70;   // league-average % chance the attempt actually succeeds
 
+// --- Play-by-play cipher catalog --------------------------------------------
+// The compact storage format for a whole game's play-by-play: one line per
+// play, newline-delimited, each line always starting with a 2-character
+// player reference (H1-H9/A1-A9, their fixed lineup slot) and a 2-character
+// play code from PLAY_CATALOG.types below. Every play type here is fully
+// reconstructable from just its code plus the bases/outs state a decoder
+// tracks as it replays the game (using the exact same advanceAllRunners/
+// forceAdvance/forceAdvanceRunnersOnly functions the live engine uses,
+// since those are already generic about what "identity" sits in a base --
+// a lineup slot number works exactly like a runner's name does) -- that's
+// why only ONE thing below ever needs extra characters appended: a hit
+// followed by a runner's extra-base attempt, since whether that happens
+// and whether it succeeds is the only genuine randomness a play produces
+// beyond which play type got rolled in the first place. A standalone "WO"
+// line (no player prefix) marks a walk-off ending the game.
+//
+// `text` is an array per type/situation (not a single string) so a type can
+// grow randomized commentary variants later just by appending more lines
+// to that array -- nothing else about the format changes. Groundout and
+// double_play key their text by situation (endsInning/runnersAdvance/
+// routine, endsInning/continues) since the wording depends on tracked
+// state, not on anything random.
+const PLAY_CATALOG = {
+  types: {
+    strikeout:  { code: "KK", text: ["{batter} strikes out."] },
+    walk:       { code: "BB", text: ["{batter} draws a walk."] },
+    single:     { code: "SS", text: ["{batter} singles."] },
+    double:     { code: "DD", text: ["{batter} doubles."] },
+    triple:     { code: "TT", text: ["{batter} triples."] },
+    home_run:   { code: "HR", text: ["{batter} homers."] },
+    error:      { code: "EE", text: ["{batter} reaches on an error."] },
+    flyout:     { code: "FO", text: ["{batter} flies out."] },
+    sac_fly:    { code: "SF", text: ["{batter} hits a sac fly. {scorer} scores!"] },
+    groundout:  { code: "GO", text: {
+      endsInning: ["{batter} grounds out to end the inning."],
+      runnersAdvance: ["{batter} grounds out, runners advance."],
+      routine: ["{batter} grounds out, batter out at first."]
+    } },
+    double_play: { code: "DP", text: {
+      endsInning: ["{batter} grounds into a double play to end the inning."],
+      continues: ["{batter} grounds into a double play."]
+    } }
+  },
+  extraBaseAttempt: {
+    success: ["{runner} tries for home and scores!"],
+    fail: ["{runner} tries for home and is thrown out!"]
+  },
+  walkOff: ["Walk-off! The game ends here."]
+};
+
+const PLAY_CODE_TO_TYPE = Object.fromEntries(
+  Object.entries(PLAY_CATALOG.types).map(([type, def]) => [def.code, type])
+);
+
 function clamp(v, lo, hi) {
   return Math.max(lo, Math.min(hi, v));
 }
@@ -301,6 +355,7 @@ function resolvePlateAppearance(batter, pitcher, bases, outs, battingTeamLineup)
     let finalRuns = result.runsScored;
     let finalScorers = result.scorers;
     let extraOuts = 0;
+    let extraBaseAttempt = null;
     let text = `${batter.name} ${labels[hitType]}.${scoringSuffix(result.scorers)}`;
 
     // A pre-existing runner who ends up on third (not the batter, and never on
@@ -316,16 +371,18 @@ function resolvePlateAppearance(batter, pitcher, bases, outs, battingTeamLineup)
         if (rollExtraBaseSuccess(runnerRatings, pitcherRatings)) {
           finalRuns += 1;
           finalScorers = [...finalScorers, runnerOnThird];
+          extraBaseAttempt = { runner: runnerOnThird, success: true };
           text += ` ${runnerOnThird} tries for home and scores!`;
         } else {
           extraOuts = 1;
+          extraBaseAttempt = { runner: runnerOnThird, success: false };
           text += ` ${runnerOnThird} tries for home and is thrown out!`;
         }
       }
     }
 
     return { type: hitType, bases: finalBases, outsAdded: extraOuts, runsScored: finalRuns,
-      scorers: finalScorers, text };
+      scorers: finalScorers, extraBaseAttempt, text };
   }
 
   // What would otherwise be an out has a small flat chance of being an error
@@ -506,7 +563,11 @@ function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, st
   let runs = 0;
   const log = [];
 
+  const side = half === "top" ? "A" : "H"; // teamA (away) bats in the top, teamB (home) in the bottom
+  const slotOf = name => battingTeam.lineup.findIndex(p => p.name === name) + 1;
+
   while (outs < 3) {
+    const batterSlot = lineupState.index + 1;
     const batter = battingTeam.lineup[lineupState.index];
     const result = applyWalkOffCap(resolvePlateAppearance(batter, pitcher, bases, outs, battingTeam.lineup), runs, walkOffTarget);
 
@@ -526,7 +587,24 @@ function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, st
       scoreA: scoreRef.A, scoreB: scoreRef.B,
       stats: JSON.parse(JSON.stringify(stats)),
       errors: { ...errors },
-      bases: [...bases]
+      bases: [...bases],
+      // Everything below here is what the compact cipher encoder needs --
+      // a structured description of the play instead of just its rendered
+      // sentence, so a game's play-by-play can be stored as a handful of
+      // characters per play rather than a full JSON object with a sentence
+      // in it. `side`/`batterSlot` identify who batted (their fixed lineup
+      // position, since rosters never change mid-season); `scorerSlots` and
+      // `extraBaseAttempt` (with the attempting runner's own slot) capture
+      // the only genuinely random parts of the play that can't be replayed
+      // deterministically from the play type and the bases/outs state alone.
+      type: result.type,
+      side,
+      batterSlot,
+      outsAdded: result.outsAdded,
+      scorerSlots: result.scorers.map(slotOf),
+      extraBaseAttempt: result.extraBaseAttempt
+        ? { slot: slotOf(result.extraBaseAttempt.runner), success: result.extraBaseAttempt.success }
+        : null
     });
 
     if (walkOffTarget !== null && runs >= walkOffTarget) {
@@ -536,7 +614,8 @@ function simulateHalfInning(battingTeam, pitcher, lineupState, walkOffTarget, st
         scoreA: scoreRef.A, scoreB: scoreRef.B,
         stats: JSON.parse(JSON.stringify(stats)),
         errors: { ...errors },
-        bases: [...bases]
+        bases: [...bases],
+        walkOff: true
       });
       break;
     }
