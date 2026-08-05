@@ -34,6 +34,8 @@
     --text: #f4f4f5;
     --muted: #a1a1aa;
     --accent: #2563eb;
+    --good: #16a34a;
+    --bad: #dc2626;
   }
   * { box-sizing: border-box; }
   body {
@@ -117,6 +119,8 @@
   .rarity-Epic { color: #9333ea; }
   .rarity-Legendary { color: #d97706; }
   .rarity-Mythical { color: #dc2626; }
+  .stat-up { color: var(--good); }
+  .stat-down { color: var(--bad); }
   #inventoryList { max-height: 30vh; overflow-y: auto; }
   table.inventory-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
   table.inventory-table th, table.inventory-table td { text-align: left; padding: 0.25rem 0.4rem; }
@@ -208,7 +212,11 @@
   }
 
   function formatStats(item) {
-    return item.stats.map(s => `${s.stat} ${s.value >= 0 ? "+" : ""}${s.value}`).join(", ");
+    return item.stats.map(s => {
+      const cls = s.value >= 0 ? "stat-up" : "stat-down";
+      const sign = s.value >= 0 ? "+" : "";
+      return `${escapeHtml(s.stat)} <span class="${cls}">${sign}${s.value}</span>`;
+    }).join(", ");
   }
 
   function renderBalance() {
@@ -261,7 +269,7 @@
       <div style="text-align:center; font-weight:600; margin-bottom:0.4rem;">${escapeHtml(crate.label)} → ${pulled.length} items</div>
       ${pulled.map(({ rarity, item }) => `
         <div class="pull-result rarity-${rarity}">${rarity}: ${escapeHtml(item.name)} ${escapeHtml(item.slot)}</div>
-        <div style="text-align:center; color:var(--muted); font-size:0.85rem; margin-bottom:0.5rem;">${escapeHtml(item.type)} · ${escapeHtml(item.slot)} · ${escapeHtml(formatStats(item))}</div>
+        <div style="text-align:center; color:var(--muted); font-size:0.85rem; margin-bottom:0.5rem;">${escapeHtml(item.type)} · ${escapeHtml(item.slot)} · ${formatStats(item)}</div>
       `).join("")}
     `;
 
@@ -286,10 +294,10 @@
         <tr><th>Item</th><th>Type</th><th>Slot</th><th>Stat</th><th>Rarity</th></tr>
         ${rows.map(item => `
           <tr>
-            <td>${escapeHtml(item.name)}</td>
+            <td><span class="rarity-${item.rarity}">${escapeHtml(item.name)}</span></td>
             <td>${escapeHtml(item.type)}</td>
             <td>${escapeHtml(item.slot)}</td>
-            <td>${escapeHtml(formatStats(item))}</td>
+            <td>${formatStats(item)}</td>
             <td class="rarity-${item.rarity}">${item.rarity}</td>
           </tr>
         `).join("")}
