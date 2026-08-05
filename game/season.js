@@ -417,6 +417,14 @@ const CRATES = {
     label: "Advanced Crate",
     price: 450,
     odds: { Common: 0.10, Uncommon: 0.20, Rare: 0.30, Epic: 0.25, Legendary: 0.12, Mythical: 0.03 }
+  },
+  // Priced and tuned as a late-season "closing the gap before Elite" option,
+  // not something meant to be a day-one buy -- meaningfully better than
+  // Advanced's odds, but still leaves real room to miss.
+  premium: {
+    label: "Premium Crate",
+    price: 1000,
+    odds: { Common: 0.02, Uncommon: 0.08, Rare: 0.20, Epic: 0.30, Legendary: 0.32, Mythical: 0.08 }
   }
 };
 
