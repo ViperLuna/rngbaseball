@@ -33,6 +33,8 @@
     --text: #f4f4f5;
     --muted: #a1a1aa;
     --accent: #2563eb;
+    --good: #16a34a;
+    --bad: #dc2626;
   }
   * { box-sizing: border-box; }
   body {
@@ -75,6 +77,8 @@
   .rarity-Epic { color: #9333ea; }
   .rarity-Legendary { color: #d97706; }
   .rarity-Mythical { color: #dc2626; }
+  .stat-up { color: var(--good); }
+  .stat-down { color: var(--bad); }
   </style>
 </head>
 <body>
@@ -126,7 +130,7 @@
       const cells = slots.map(slot => {
         const item = gear[slot];
         if (!item) return `<td class="slot-empty">${slot}: Empty</td>`;
-        return `<td>${slot}: ${escapeHtml(item.name)} (${escapeHtml(formatStats(item))}) <span class="rarity-${item.rarity}">${item.rarity}</span></td>`;
+        return `<td>${slot}: <span class="rarity-${item.rarity}">${escapeHtml(item.name)}</span> (${formatStats(item)}) <span class="rarity-${item.rarity}">${item.rarity}</span></td>`;
       });
       return `<tr><td>${escapeHtml(p.name)}</td><td>${p.position}</td>${cells.join("")}</tr>`;
     }).join("");
@@ -153,7 +157,11 @@
   }
 
   function formatStats(item) {
-    return item.stats.map(s => `${s.stat} ${s.value >= 0 ? "+" : ""}${s.value}`).join(", ");
+    return item.stats.map(s => {
+      const cls = s.value >= 0 ? "stat-up" : "stat-down";
+      const sign = s.value >= 0 ? "+" : "";
+      return `${escapeHtml(s.stat)} <span class="${cls}">${sign}${s.value}</span>`;
+    }).join(", ");
   }
 
   function escapeHtml(str) {

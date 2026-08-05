@@ -260,7 +260,7 @@
       const slotCells = slots.map(slot => {
         const item = gear[slot];
         if (!item) return `<td class="slot-empty">${slot}: Empty</td>`;
-        return `<td><div class="slot-item">${slot}: ${escapeHtml(item.name)} (${escapeHtml(formatStats(item))})
+        return `<td><div class="slot-item">${slot}: <span class="rarity-${item.rarity}">${escapeHtml(item.name)}</span> (${formatStats(item)})
           <button class="x-btn" data-unequip-player="${escapeHtml(p.name)}" data-unequip-slot="${slot}" title="Remove">✕</button></div></td>`;
       });
       return `<tr><td>${escapeHtml(p.name)}</td><td>${p.position}</td>${slotCells.join("")}</tr>`;
@@ -287,10 +287,10 @@
         <tr><th>Item</th><th>Type</th><th>Slot</th><th>Stat</th><th>Rarity</th><th></th></tr>
         ${rows.map(item => `
           <tr class="inv-row ${item._instanceId === selectedInstanceId ? "selected" : ""}" data-inv-id="${item._instanceId}">
-            <td>${escapeHtml(item.name)}</td>
+            <td><span class="rarity-${item.rarity}">${escapeHtml(item.name)}</span></td>
             <td>${escapeHtml(item.type)}</td>
             <td>${escapeHtml(item.slot)}</td>
-            <td>${escapeHtml(formatStats(item))}</td>
+            <td>${formatStats(item)}</td>
             <td class="rarity-${item.rarity}">${item.rarity}</td>
             <td><button class="sell-btn" data-sell-id="${item._instanceId}">Sell (+${SELL_PRICES[item.rarity]})</button></td>
           </tr>
@@ -330,7 +330,7 @@
     equipPanel.style.display = "block";
     equipPanel.innerHTML = `
       <div class="equip-header">
-        <h2 class="section" style="margin:0;">Equip: ${escapeHtml(item.name)} (${escapeHtml(formatStats(item))}, <span class="rarity-${item.rarity}">${item.rarity}</span>)</h2>
+        <h2 class="section" style="margin:0;">Equip: <span class="rarity-${item.rarity}">${escapeHtml(item.name)}</span> (${formatStats(item)}, <span class="rarity-${item.rarity}">${item.rarity}</span>)</h2>
         <button class="secondary" id="cancelEquipBtn">Cancel</button>
       </div>
       ${eligible.map(p => renderEligiblePlayerRow(p, item)).join("")}
@@ -427,7 +427,11 @@
   }
 
   function formatStats(item) {
-    return item.stats.map(s => `${s.stat} ${s.value >= 0 ? "+" : ""}${s.value}`).join(", ");
+    return item.stats.map(s => {
+      const cls = s.value >= 0 ? "stat-up" : "stat-down";
+      const sign = s.value >= 0 ? "+" : "";
+      return `${escapeHtml(s.stat)} <span class="${cls}">${sign}${s.value}</span>`;
+    }).join(", ");
   }
 
   function escapeHtml(str) {
