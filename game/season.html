@@ -280,7 +280,7 @@
   }
 
   function playNextGame() {
-    const results = simulateRound(save.schedule, save.currentRound, teamsByName, fullGearMap(save), save.yourTeam);
+    const results = simulateRound(save.schedule, save.currentRound, teamsByName, fullGearMap(save));
     let yourGameEntry = null, yourAwayName = null, yourHomeName = null;
 
     results.forEach(({ historyEntry, rawResult, away, home }) => {
@@ -321,7 +321,7 @@
     const awayTeam = buildGearedTeam(teamsByName[awayName], gearMap);
 
     const rawResult = simulateGame(awayTeam, homeTeam);
-    const historyEntry = buildGameHistoryEntry("Championship", rawResult, awayTeam, homeTeam, true);
+    const historyEntry = buildGameHistoryEntry("Championship", rawResult, awayTeam, homeTeam);
     save.gameHistory.push(historyEntry);
     mergeGameStatsIntoSeason(save.seasonStats, rawResult.stats);
 

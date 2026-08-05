@@ -104,13 +104,28 @@
   if (!historyEntry) window.location.href = "season.html";
 
   const awayName = historyEntry.away, homeName = historyEntry.home;
-  const maxInning = historyEntry.maxInning;
+  let plays = null;      // decoded (or legacy-stored) full play-by-play, or null if never kept
+  let inningRuns = null;
+  let maxInning = null;
 
   async function load() {
     const res = await fetch("../data/teams.json");
     const data = await res.json();
     const awayTeam = data.teams.find(t => t.name === awayName);
     const homeTeam = data.teams.find(t => t.name === homeName);
+
+    if (historyEntry.playCode) {
+      plays = decodeGamePlays(historyEntry.playCode, awayTeam.lineup, homeTeam.lineup);
+      inningRuns = computeInningRuns(plays);
+      maxInning = Math.max(...plays.map(p => p.inning));
+    } else if (historyEntry.plays) {
+      plays = historyEntry.plays;
+      inningRuns = computeInningRuns(plays);
+      maxInning = Math.max(...plays.map(p => p.inning));
+    } else {
+      inningRuns = historyEntry.inningRuns;
+      maxInning = historyEntry.maxInning;
+    }
 
     document.title = `rngbaseball — ${awayName} @ ${homeName}`;
     document.getElementById("title").textContent =
@@ -123,7 +138,6 @@
   }
 
   function renderBoxScore(awayTeam, homeTeam) {
-    const inningRuns = historyEntry.inningRuns;
     const cell = (half, inning) => {
       const value = inningRuns[`${half}-${inning}`];
       return value !== undefined ? value : "-";
@@ -168,14 +182,14 @@
   }
 
   function renderPlays() {
-    if (!historyEntry.plays) {
+    if (!plays) {
       document.getElementById("playLog").innerHTML =
-        `<p style="color:var(--muted); font-size:0.9rem;">Play-by-play isn't kept for other teams' games -- only yours, to save space. The line score and stats above are still complete.</p>`;
+        `<p style="color:var(--muted); font-size:0.9rem;">Play-by-play wasn't kept for this game -- the line score and stats above are still complete.</p>`;
       return;
     }
     let lastHalf = null, lastInning = null;
     let html = "";
-    historyEntry.plays.forEach(play => {
+    plays.forEach(play => {
       if (play.half !== lastHalf || play.inning !== lastInning) {
         lastHalf = play.half;
         lastInning = play.inning;
