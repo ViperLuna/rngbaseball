@@ -522,6 +522,24 @@ function isEliminated(save) {
   return teamsAlreadyAhead >= 2;
 }
 
+// Only shows once a playoff spot is truly locked -- not even losing every
+// game left could drop yourTeam out -- and only while there are still
+// enough games left (CLINCH_MIN_GAMES_REMAINING) for the news to mean
+// something; clinching with one game to go is the same information you're
+// about to see resolved on the very next round anyway, so it's suppressed
+// rather than shown as if it were a real moment.
+const CLINCH_MIN_GAMES_REMAINING = 5;
+
+function isClinched(save) {
+  if (save.currentRound >= save.schedule.length) return false;
+  const gamesRemaining = save.schedule.length - save.currentRound;
+  if (gamesRemaining < CLINCH_MIN_GAMES_REMAINING) return false;
+  const floor = save.standings[save.yourTeam].wins;
+  const teamsThatCouldStillPassYou = Object.entries(save.standings)
+    .filter(([name, rec]) => name !== save.yourTeam && rec.wins + gamesRemaining > floor).length;
+  return teamsThatCouldStillPassYou < 2;
+}
+
 // --- Season-end bonus ---------------------------------------------------------
 // A one-time payout once the season's final outcome is known: either the
 // championship game resolves, or the player's own team fails to qualify.
