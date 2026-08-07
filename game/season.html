@@ -72,6 +72,7 @@
   h1 { font-size: 1.4rem; margin: 0 0 0.1rem; }
   p.subhead { color: var(--muted); margin: 0 0 1rem; font-size: 0.9rem; }
   p.subhead.eliminated { color: var(--bad); font-weight: 700; margin-top: -0.5rem; }
+  p.subhead.clinched { color: var(--good); font-weight: 700; margin-top: -0.5rem; }
   .panel {
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -128,6 +129,7 @@
   <p class="subhead" id="pageSubhead"></p>
   <p class="subhead" id="basebuxLine"></p>
   <p class="subhead eliminated" id="eliminatedLine" style="display:none;">Eliminated from playoff contention</p>
+  <p class="subhead clinched" id="clinchedLine" style="display:none;">Clinched a playoff spot!</p>
 
   <div id="banner"></div>
 
@@ -190,6 +192,7 @@
     document.getElementById("pageSubhead").textContent = `Playing as ${save.yourTeam}`;
     document.getElementById("basebuxLine").textContent = `Basebux: ${getMeta().basebux}`;
     document.getElementById("eliminatedLine").style.display = isEliminated(save) ? "block" : "none";
+    document.getElementById("clinchedLine").style.display = isClinched(save) ? "block" : "none";
 
     renderStandings();
     renderHistory();
