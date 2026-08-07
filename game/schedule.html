@@ -1,0 +1,222 @@
+<!--
+  schedule.html
+  -----------------------------------------------------------------------------
+  Full-season schedule browser, reached via the "Schedule" button on
+  season.html. Defaults to the player's own team; a dropdown lets you pick
+  any of the 30 teams to view their schedule instead -- every round already
+  has a full gameHistory entry for every matchup (not just the player's
+  own), so scores for any team's played games are always available.
+
+  Row coloring is two independent signals layered together:
+    - Base color: has this specific round been played yet (round <
+      save.currentRound, a global counter shared by every team since a
+      whole round is simulated at once), and does the game involve the
+      player's own team at all (regardless of which team's schedule is
+      currently being viewed). That's 4 combinations -- gray (played,
+      not yours), white (upcoming, not yours), brown (played, yours),
+      gold (upcoming, yours).
+    - Bold: this round is exactly save.currentRound, i.e. it's the very
+      next round due to be played -- layered on top of whichever color
+      already applies, not a separate color of its own.
+
+  Clicking a played game's row opens its box score (same gameHistory
+  index box-score.html already reads via ?index=).
+  -----------------------------------------------------------------------------
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="theme-color" content="#000000">
+<title>rngbaseball</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #000000;
+    --panel: #232326;
+    --border: #3f3f46;
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
+    --accent: #2563eb;
+    --your-team: #fbbf24;
+    --your-team-played: #b45309;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Lexend', system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  main { width: 100%; max-width: 640px; }
+  .back-row { margin-bottom: 1rem; }
+  .back-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .back-btn:hover { filter: brightness(0.95); }
+  h1 { font-size: 1.4rem; margin: 0 0 1rem; }
+  .team-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .team-row select {
+    flex: 1;
+    padding: 0.4rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .legend span::before {
+    content: "\25CF";
+    margin-right: 0.3rem;
+    font-size: 0.7rem;
+  }
+  .legend .played::before { color: var(--muted); }
+  .legend .future::before { color: var(--text); }
+  .legend .you-future::before { color: var(--your-team); }
+  .legend .you-played::before { color: var(--your-team-played); }
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background: var(--panel);
+    overflow-x: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.3rem 0.5rem; }
+  th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  .num { text-align: right; }
+  tr.row-played td { color: var(--muted); }
+  tr.row-future td { color: var(--text); }
+  tr.row-you-future td { color: var(--your-team); }
+  tr.row-you-played td { color: var(--your-team-played); }
+  tr.row-next td { font-weight: 700; }
+  tr.clickable { cursor: pointer; }
+  tr.clickable:hover td { background: var(--bg); }
+  </style>
+</head>
+<body>
+<main>
+  <div class="back-row"><button type="button" class="back-btn" onclick="window.location.href='season.html'">&larr; Season</button></div>
+  <h1>Schedule</h1>
+
+  <div class="team-row">
+    <label for="teamSelect">Team</label>
+    <select id="teamSelect"></select>
+  </div>
+
+  <div class="legend">
+    <span class="played">Played</span>
+    <span class="future">Upcoming</span>
+    <span class="you-future">vs You (upcoming)</span>
+    <span class="you-played">vs You (played)</span>
+  </div>
+
+  <div class="panel">
+    <table>
+      <tr><th>Round</th><th>Matchup</th><th class="num">Score</th></tr>
+      <tbody id="scheduleBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<script src="engine.js"></script>
+<script src="season.js"></script>
+<script>
+  const save = getSave();
+  if (!save || !save.seasonInProgress) window.location.href = "index.html";
+
+  let teamNames = [];
+  let historyIndex = {}; // `${round}|${teamName}` -> { entry, idx }
+
+  async function load() {
+    const res = await fetch("../data/teams.json");
+    const data = await res.json();
+    teamNames = data.teams.map(t => t.name).sort((a, b) => a.localeCompare(b));
+
+    save.gameHistory.forEach((entry, idx) => {
+      if (entry.round === "Championship") return;
+      historyIndex[`${entry.round}|${entry.home}`] = { entry, idx };
+      historyIndex[`${entry.round}|${entry.away}`] = { entry, idx };
+    });
+
+    const select = document.getElementById("teamSelect");
+    select.innerHTML = teamNames.map(name =>
+      `<option value="${escapeHtml(name)}">${escapeHtml(name)}${name === save.yourTeam ? " (You)" : ""}</option>`
+    ).join("");
+    select.value = save.yourTeam;
+    select.addEventListener("change", () => renderSchedule(select.value));
+
+    renderSchedule(save.yourTeam);
+  }
+
+  function renderSchedule(team) {
+    const rows = save.schedule.map((pairs, round) => {
+      const game = pairs.find(g => g.home === team || g.away === team);
+      const isYourGame = game.home === save.yourTeam || game.away === save.yourTeam;
+      const played = round < save.currentRound;
+      const isNext = round === save.currentRound;
+      const lookup = historyIndex[`${round}|${team}`];
+      return { round, home: game.home, away: game.away, isYourGame, played, isNext, entry: lookup ? lookup.entry : null, idx: lookup ? lookup.idx : null };
+    });
+
+    document.getElementById("scheduleBody").innerHTML = rows.map(r => {
+      const classes = [r.isYourGame ? (r.played ? "row-you-played" : "row-you-future") : (r.played ? "row-played" : "row-future")];
+      if (r.isNext) classes.push("row-next");
+      if (r.entry) classes.push("clickable");
+      const score = r.entry ? `${r.entry.scoreAway}-${r.entry.scoreHome}` : "—";
+      return `
+        <tr class="${classes.join(" ")}" ${r.entry ? `data-idx="${r.idx}"` : ""}>
+          <td>${r.round + 1}</td>
+          <td>${escapeHtml(r.away)} @ ${escapeHtml(r.home)}</td>
+          <td class="num">${score}</td>
+        </tr>
+      `;
+    }).join("");
+
+    document.querySelectorAll("#scheduleBody tr[data-idx]").forEach(row => {
+      row.addEventListener("click", () => {
+        window.location.href = `box-score.html?index=${row.dataset.idx}`;
+      });
+    });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  load();
+</script>
+</body>
+</html>
