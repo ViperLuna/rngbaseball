@@ -504,6 +504,24 @@ function determineTopTwo(standings) {
   return [entries[0].name, entries[1].name];
 }
 
+// True only once there is no possible remaining outcome -- not even winning
+// every game left, plus the friendliest possible tiebreak -- that gets
+// yourTeam into the top two. Every team has the same number of games left
+// (one round advances everyone at once), so yourTeam's ceiling is just its
+// current wins plus that shared remaining-game count. If at least two other
+// teams have *already* banked more wins than that ceiling, those wins are
+// already locked in (a team can only gain more, never lose ones it has),
+// so no scenario -- however the rest of the season plays out -- can still
+// work in yourTeam's favor.
+function isEliminated(save) {
+  if (save.currentRound >= save.schedule.length) return false;
+  const gamesRemaining = save.schedule.length - save.currentRound;
+  const ceiling = save.standings[save.yourTeam].wins + gamesRemaining;
+  const teamsAlreadyAhead = Object.entries(save.standings)
+    .filter(([name, rec]) => name !== save.yourTeam && rec.wins > ceiling).length;
+  return teamsAlreadyAhead >= 2;
+}
+
 // --- Season-end bonus ---------------------------------------------------------
 // A one-time payout once the season's final outcome is known: either the
 // championship game resolves, or the player's own team fails to qualify.
