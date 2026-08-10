@@ -75,6 +75,14 @@ const EXTRA_BASE_SUCCESS_RATE = 70;   // league-average % chance the attempt act
 // double_play key their text by situation (endsInning/runnersAdvance/
 // routine, endsInning/continues) since the wording depends on tracked
 // state, not on anything random.
+//
+// Every template can use {batter}, plus every one of the fielding team's
+// positions by name -- {pitcher}, {catcher}, {first}, {second}, {third},
+// {short}, {left}, {center}, {right} (season.js's fielderVars() resolves
+// these from whichever lineup is fielding at that play). {scorer} is only
+// ever populated for sac_fly, and {runner} only for the two
+// extraBaseAttempt templates -- using either one anywhere else will print
+// the literal word "undefined" instead of a name.
 const PLAY_CATALOG = {
   types: {
     strikeout:  { code: "KK", text: ["{batter} strikes out."] },
