@@ -184,6 +184,26 @@ function namesFromSlots(slots, lineup) {
   return slots.map(s => lineup[s - 1].name);
 }
 
+// Maps teams.json's position codes to the one-word template placeholder
+// each fielder answers to -- {pitcher}, {catcher}, {first}, {second},
+// {third}, {short}, {left}, {center}, {right}. Built fresh from whichever
+// lineup is fielding at a given play, so templates can reference any of
+// them (in addition to {batter}/{scorer}/{runner}) without needing to know
+// which specific play type they're attached to.
+const POSITION_VAR_NAMES = {
+  P: "pitcher", C: "catcher", "1B": "first", "2B": "second", "3B": "third",
+  SS: "short", LF: "left", CF: "center", RF: "right"
+};
+
+function fielderVars(fieldingLineup) {
+  const vars = {};
+  fieldingLineup.forEach(p => {
+    const key = POSITION_VAR_NAMES[p.position];
+    if (key) vars[key] = p.name;
+  });
+  return vars;
+}
+
 // Replays a game's compact cipher string back into the same per-play shape
 // box-score.html and season-game.html already know how to render (text,
 // running score, bases-as-names) -- reconstructed on demand instead of
@@ -225,6 +245,8 @@ function decodeGamePlays(playCode, awayLineup, homeLineup) {
     }
 
     const battingLineup = side === "A" ? awayLineup : homeLineup;
+    const fieldingLineup = side === "A" ? homeLineup : awayLineup;
+    const fielders = fielderVars(fieldingLineup);
     const slot = Number(line[1]);
     const type = PLAY_CODE_TO_TYPE[line.slice(2, 4)];
     const tail = line.slice(4);
@@ -235,11 +257,11 @@ function decodeGamePlays(playCode, awayLineup, homeLineup) {
 
     if (type === "strikeout" || type === "flyout") {
       resultBases = bases; runsScored = 0; scorerSlots = []; outsAdded = 1;
-      text = fillTemplate(pickText(PLAY_CATALOG.types[type].text), { batter: batterName });
+      text = fillTemplate(pickText(PLAY_CATALOG.types[type].text), { batter: batterName, ...fielders });
     } else if (type === "walk" || type === "error") {
       const r = forceAdvance(bases, slot);
       resultBases = r.bases; runsScored = r.runsScored; scorerSlots = r.scorers; outsAdded = 0;
-      text = fillTemplate(pickText(PLAY_CATALOG.types[type].text), { batter: batterName })
+      text = fillTemplate(pickText(PLAY_CATALOG.types[type].text), { batter: batterName, ...fielders })
         + scoringSuffix(namesFromSlots(r.scorers, battingLineup));
     } else if (type === "single" || type === "double" || type === "triple" || type === "home_run") {
       const basesMap = { single: 1, double: 2, triple: 3, home_run: 4 };
@@ -254,14 +276,14 @@ function decodeGamePlays(playCode, awayLineup, homeLineup) {
         if (atResult === "SC") {
           finalRuns += 1;
           finalScorers.push(atSlot);
-          extraText = ` ${fillTemplate(pickText(PLAY_CATALOG.extraBaseAttempt.success), { runner: runnerName })}`;
+          extraText = ` ${fillTemplate(pickText(PLAY_CATALOG.extraBaseAttempt.success), { runner: runnerName, ...fielders })}`;
         } else {
           extraOuts = 1;
-          extraText = ` ${fillTemplate(pickText(PLAY_CATALOG.extraBaseAttempt.fail), { runner: runnerName })}`;
+          extraText = ` ${fillTemplate(pickText(PLAY_CATALOG.extraBaseAttempt.fail), { runner: runnerName, ...fielders })}`;
         }
       }
       resultBases = finalBases; runsScored = finalRuns; scorerSlots = finalScorers; outsAdded = extraOuts;
-      text = fillTemplate(pickText(PLAY_CATALOG.types[type].text), { batter: batterName })
+      text = fillTemplate(pickText(PLAY_CATALOG.types[type].text), { batter: batterName, ...fielders })
         + scoringSuffix(namesFromSlots(r.scorers, battingLineup)) + extraText;
     } else if (type === "sac_fly") {
       const scorerSlot = bases[2];
@@ -269,7 +291,7 @@ function decodeGamePlays(playCode, awayLineup, homeLineup) {
       resultBases[2] = null;
       runsScored = 1; scorerSlots = [scorerSlot]; outsAdded = 1;
       text = fillTemplate(pickText(PLAY_CATALOG.types.sac_fly.text),
-        { batter: batterName, scorer: battingLineup[scorerSlot - 1].name });
+        { batter: batterName, scorer: battingLineup[scorerSlot - 1].name, ...fielders });
     } else if (type === "groundout") {
       const forced = forceAdvanceRunnersOnly(bases);
       const inningEndsHere = outs + 1 >= 3;
@@ -277,7 +299,7 @@ function decodeGamePlays(playCode, awayLineup, homeLineup) {
       scorerSlots = inningEndsHere ? [] : forced.scorers;
       resultBases = forced.bases; outsAdded = 1;
       const bucket = inningEndsHere ? "endsInning" : (bases[0] ? "runnersAdvance" : "routine");
-      text = fillTemplate(pickText(PLAY_CATALOG.types.groundout.text[bucket]), { batter: batterName })
+      text = fillTemplate(pickText(PLAY_CATALOG.types.groundout.text[bucket]), { batter: batterName, ...fielders })
         + scoringSuffix(namesFromSlots(scorerSlots, battingLineup));
     } else { // double_play
       const forced = forceAdvanceRunnersOnly(bases);
@@ -288,7 +310,7 @@ function decodeGamePlays(playCode, awayLineup, homeLineup) {
       scorerSlots = dpEndsInning ? [] : forced.scorers;
       resultBases = dpBases; outsAdded = 2;
       const bucket = dpEndsInning ? "endsInning" : "continues";
-      text = fillTemplate(pickText(PLAY_CATALOG.types.double_play.text[bucket]), { batter: batterName })
+      text = fillTemplate(pickText(PLAY_CATALOG.types.double_play.text[bucket]), { batter: batterName, ...fielders })
         + scoringSuffix(namesFromSlots(scorerSlots, battingLineup));
     }
 
