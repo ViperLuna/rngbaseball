@@ -195,12 +195,24 @@ const POSITION_VAR_NAMES = {
   SS: "short", LF: "left", CF: "center", RF: "right"
 };
 
+// {infield}/{outfield} are a different kind of placeholder than the named
+// fielders above -- they don't resolve to a player, they resolve to a
+// randomly-picked location phrase ("shortstop", "left field", etc.), so a
+// single generic template like "{batter} flies out to {outfield}." reads
+// naturally without naming anyone. Pitcher and catcher are deliberately
+// left out of {infield} -- neither one is "the infield" in the sense a
+// batted ball gets fielded there.
+const INFIELD_LOCATIONS = ["first base", "second base", "third base", "shortstop"];
+const OUTFIELD_LOCATIONS = ["left field", "center field", "right field"];
+
 function fielderVars(fieldingLineup) {
   const vars = {};
   fieldingLineup.forEach(p => {
     const key = POSITION_VAR_NAMES[p.position];
     if (key) vars[key] = p.name;
   });
+  vars.infield = pickText(INFIELD_LOCATIONS);
+  vars.outfield = pickText(OUTFIELD_LOCATIONS);
   return vars;
 }
 

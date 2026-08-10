@@ -83,6 +83,13 @@ const EXTRA_BASE_SUCCESS_RATE = 70;   // league-average % chance the attempt act
 // ever populated for sac_fly, and {runner} only for the two
 // extraBaseAttempt templates -- using either one anywhere else will print
 // the literal word "undefined" instead of a name.
+//
+// {infield}/{outfield} are different from the named-fielder placeholders
+// above -- they don't resolve to a player, they resolve to a randomly
+// picked location phrase ("shortstop", "left field", etc.), for a generic
+// line like "{batter} flies out to {outfield}." that doesn't name anyone.
+// {infield} only ever picks first/second/third/short -- pitcher and
+// catcher aren't part of that pool.
 const PLAY_CATALOG = {
   types: {
     strikeout:  { code: "KK", text: ["{batter} strikes out."] },
