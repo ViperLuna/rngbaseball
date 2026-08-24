@@ -111,6 +111,10 @@
   tr.inv-row { cursor: pointer; }
   tr.inv-row:hover { background: var(--bg); }
   tr.inv-row.selected { background: var(--bg); outline: 2px solid var(--accent); outline-offset: -2px; }
+  tr.inv-row.sell-selected { background: rgba(220, 38, 38, 0.15); outline: 2px solid var(--bad); outline-offset: -2px; }
+  .inv-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; }
+  .inv-header-actions { display: flex; gap: 0.5rem; }
+  #sellModeBtn.active { background: var(--bad); border-color: var(--bad); color: #fff; }
   .rarity-Common { color: #71717a; }
   .rarity-Uncommon { color: #16a34a; }
   .rarity-Rare { color: #2563eb; }
@@ -165,7 +169,13 @@
   <div class="panel" id="equipPanel" style="display:none;"></div>
 
   <div class="panel">
-    <h2 class="section">Inventory</h2>
+    <div class="inv-header">
+      <h2 class="section" style="margin:0;">Inventory</h2>
+      <div class="inv-header-actions">
+        <button type="button" class="secondary" id="sellModeBtn">Sell Items</button>
+        <button type="button" class="sell-btn" id="confirmSellBtn" style="display:none;">Confirm Sell</button>
+      </div>
+    </div>
     <div class="sort-row">
       <label for="sortKey">Sort by</label>
       <select id="sortKey">
@@ -191,6 +201,15 @@
   let sortKey = "order";
   let sortDirection = "desc"; // matches the previous fixed "newest first" behavior
 
+  // Bulk-sell mode: toggled on from the Inventory header. While active,
+  // clicking a row marks/unmarks it for sale instead of opening the equip
+  // panel -- sellSelection tracks which instance IDs are marked. Turning
+  // the mode off (not just confirming a sale) clears the selection, per
+  // the director's spec; confirming a sale clears it too, since the sold
+  // items are gone, but leaves the mode itself on for another round.
+  let sellMode = false;
+  let sellSelection = new Set();
+
   async function load() {
     const res = await fetch("../data/teams.json");
     const data = await res.json();
@@ -206,6 +225,8 @@
       sortDirection = sortDirection === "asc" ? "desc" : "asc";
       renderInventory();
     });
+    document.getElementById("sellModeBtn").addEventListener("click", toggleSellMode);
+    document.getElementById("confirmSellBtn").addEventListener("click", confirmBulkSell);
   }
 
   function sortedInventory(inventory) {
@@ -276,6 +297,11 @@
     document.getElementById("sortKey").value = sortKey;
     document.getElementById("sortDirBtn").textContent = sortDirLabel();
 
+    const sellModeBtn = document.getElementById("sellModeBtn");
+    sellModeBtn.textContent = sellMode ? "Done Selling" : "Sell Items";
+    sellModeBtn.classList.toggle("active", sellMode);
+    document.getElementById("confirmSellBtn").style.display = sellMode && sellSelection.size > 0 ? "inline-block" : "none";
+
     const inventoryList = document.getElementById("inventoryList");
     if (meta.inventory.length === 0) {
       inventoryList.innerHTML = `<p style="color:var(--muted); font-size:0.9rem;">No items yet -- visit the Store to pull some gear.</p>`;
@@ -285,16 +311,25 @@
     inventoryList.innerHTML = `
       <table>
         <tr><th>Item</th><th>Type</th><th>Slot</th><th>Stat</th><th>Rarity</th><th></th></tr>
-        ${rows.map(item => `
-          <tr class="inv-row ${item._instanceId === selectedInstanceId ? "selected" : ""}" data-inv-id="${item._instanceId}">
-            <td><span class="rarity-${item.rarity}">${escapeHtml(item.name)}</span></td>
-            <td>${escapeHtml(item.type)}</td>
-            <td>${escapeHtml(item.slot)}</td>
-            <td>${formatStats(item)}</td>
-            <td class="rarity-${item.rarity}">${item.rarity}</td>
-            <td><button class="sell-btn" data-sell-id="${item._instanceId}">Sell (+${SELL_PRICES[item.rarity]})</button></td>
-          </tr>
-        `).join("")}
+        ${rows.map(item => {
+          const marked = sellSelection.has(item._instanceId);
+          const rowClasses = ["inv-row"];
+          if (!sellMode && item._instanceId === selectedInstanceId) rowClasses.push("selected");
+          if (sellMode && marked) rowClasses.push("sell-selected");
+          const lastCell = sellMode
+            ? `<td>${marked ? "✓ Selected" : ""}</td>`
+            : `<td><button class="sell-btn" data-sell-id="${item._instanceId}">Sell (+${SELL_PRICES[item.rarity]})</button></td>`;
+          return `
+            <tr class="${rowClasses.join(" ")}" data-inv-id="${item._instanceId}">
+              <td><span class="rarity-${item.rarity}">${escapeHtml(item.name)}</span></td>
+              <td>${escapeHtml(item.type)}</td>
+              <td>${escapeHtml(item.slot)}</td>
+              <td>${formatStats(item)}</td>
+              <td class="rarity-${item.rarity}">${item.rarity}</td>
+              ${lastCell}
+            </tr>
+          `;
+        }).join("")}
       </table>
     `;
 
@@ -302,14 +337,55 @@
       row.addEventListener("click", (e) => {
         if (e.target.closest("button")) return; // don't select when clicking Sell
         const id = row.dataset.invId;
+        if (sellMode) {
+          toggleSellSelection(id);
+          return;
+        }
         selectedInstanceId = selectedInstanceId === id ? null : id;
         renderInventory();
         renderEquipPanel();
       });
     });
-    inventoryList.querySelectorAll("[data-sell-id]").forEach(btn => {
-      btn.addEventListener("click", () => sellItem(btn.dataset.sellId));
-    });
+    if (!sellMode) {
+      inventoryList.querySelectorAll("[data-sell-id]").forEach(btn => {
+        btn.addEventListener("click", () => sellItem(btn.dataset.sellId));
+      });
+    }
+  }
+
+  // Turning sell mode on or off both close any open equip panel -- equipping
+  // and bulk-selling for sale don't make sense to have open at the same time.
+  function toggleSellMode() {
+    sellMode = !sellMode;
+    sellSelection.clear();
+    selectedInstanceId = null;
+    renderInventory();
+    renderEquipPanel();
+  }
+
+  function toggleSellSelection(instanceId) {
+    if (sellSelection.has(instanceId)) sellSelection.delete(instanceId);
+    else sellSelection.add(instanceId);
+    renderInventory();
+  }
+
+  // Cancelling the confirm popup does nothing else -- the selection and
+  // highlights stay exactly as they were, only the popup itself closes.
+  function confirmBulkSell() {
+    const meta = getMeta();
+    const itemsToSell = meta.inventory.filter(i => sellSelection.has(i._instanceId));
+    if (itemsToSell.length === 0) return;
+    const total = itemsToSell.reduce((sum, i) => sum + SELL_PRICES[i.rarity], 0);
+
+    const ok = confirm(`Sell ${itemsToSell.length} item${itemsToSell.length === 1 ? "" : "s"} for ${total} Basebux total? This can't be undone.`);
+    if (!ok) return;
+
+    meta.inventory = meta.inventory.filter(i => !sellSelection.has(i._instanceId));
+    meta.basebux += total;
+    setMeta(meta);
+
+    sellSelection.clear();
+    renderAll();
   }
 
   function renderEquipPanel() {
